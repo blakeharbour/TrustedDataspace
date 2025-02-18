@@ -20,4 +20,14 @@ class SampleAlignment(models.Model):
     def __str__(self):
         return f"SampleAlignment - ID: {self.id}, Sample ID: {self.SAMPLE_NUM}, Alignment Result: {self.SAMPLE_NUM_SUCCESS}"
 
+class LoginUser(models.Model):
+    account = models.CharField(max_length=255,unique=True)
+    password = models.CharField(max_length=255)
+    com = models.CharField(max_length=255)
+    comid = models.IntegerField(default=0)
 
+    class Meta:
+        db_table = 'login_user'  # 确保数据库表名是 'login_user'
+
+    def __str__(self):
+        return self.account

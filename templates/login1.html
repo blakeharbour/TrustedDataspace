@@ -17,7 +17,7 @@
   <!--[if IE 6]>
   <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
   <script>DD_belatedPNG.fix('*');</script><![endif]-->
-  <title>铁路隐私计算平台</title>
+  <title>可信数据空间</title>
   <meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
   <meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
 </head>
@@ -47,7 +47,7 @@
         <div class="row clearfix">
           <div class="form-controls col-xs-8 col-xs-offset-3">
             <input name="" type="button" onclick="login()" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;">
-            <input name="" type="button" onclick="cancel_submit()" class="btn btn-default radius size-L" value="&nbsp;取&nbsp;&nbsp;&nbsp;&nbsp;消&nbsp;">
+            <input name="" type="button" onclick="register()" class="btn btn-default radius size-L" value="&nbsp;注&nbsp;&nbsp;&nbsp;&nbsp;册&nbsp;&nbsp;&nbsp;&nbsp;帐&nbsp;&nbsp;&nbsp;&nbsp;号&nbsp;">
           </div>
         </div>
       </form>
@@ -68,7 +68,7 @@
         }
         if (document.getElementById("password").value == "") {
             alert("密码不能为空！");
-            document.getElementById("password").focus();
+            document.getElementById("password").focus();3
 
         }
         var username = document.getElementById("username").value;
@@ -101,6 +101,12 @@
         })
 
     }
+
+   function register() {
+        // 使用 JavaScript 跳转到注册页面
+        location.href = "http://127.0.0.1:8000/registeruser/";
+    }
+
     function cancel(){
         document.getElementById("username").value="";
         document.getElementById("password").value="";

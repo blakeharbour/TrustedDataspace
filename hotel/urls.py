@@ -29,6 +29,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #校验登录
     path('jxclogin/', views.jxclogin),
+    # 校验登录
+    path('register/', views.register),
     #用户增删改查
     path('createuser/', views.createuser),
     path('deleteuser/', views.deleteuser),
@@ -43,6 +45,7 @@ urlpatterns = [
     #跳转到前端页面
     path('login/', views.login),
     path('', views.login),
+    path('registeruser/', views.registeruser),
     path('index/', views.index),
     path('member-list/', views.member_list),
     path('member-add/', views.member_add),
