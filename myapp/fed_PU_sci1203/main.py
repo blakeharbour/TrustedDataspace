@@ -234,7 +234,7 @@ def main():
     draw_error_test_data(data_name, nnPU_result[2], nnPUSB_result[2])
     draw_precision_recall(
         data_name, nnPU_result[0], nnPU_result[1], nnPUSB_result[0], nnPUSB_result[1])
-
+print('a')
 # # 训练结束后保存全局模型
 # path_to_save_global_model = "./result/global_model.pth"
 # torch.save(server_client.top_model.state_dict(), path_to_save_global_model)
