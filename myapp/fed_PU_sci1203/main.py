@@ -236,6 +236,7 @@ def main():
         data_name, nnPU_result[0], nnPU_result[1], nnPUSB_result[0], nnPUSB_result[1])
 print('b')
 print('a')
+print('a')
 # # 训练结束后保存全局模型
 # path_to_save_global_model = "./result/global_model.pth"
 # torch.save(server_client.top_model.state_dict(), path_to_save_global_model)
