@@ -29,7 +29,7 @@ SECRET_KEY = '=@187k!t%72h!*757jpcg9eg1eaf8ldp0qu=6+^09gud0=qies'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost', '192.168.1.121','127.0.0.1','192.168.1.138']
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost', '192.168.1.121','127.0.0.1','192.168.1.138','192.168.1.131','192.168.1.136']
 
 
 # Application definition
@@ -97,9 +97,9 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rail',
-        'USER':'rail',
-        'PASSWORD':'Rail123!',
+        'NAME': 'bjdtd',
+        'USER':'bjdtd',
+        'PASSWORD':'bjdtd',
         'HOST':'0.0.0.0',
         'PORT':'3306'
     }
