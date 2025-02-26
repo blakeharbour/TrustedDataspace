@@ -52,6 +52,7 @@ urlpatterns = [
 
     #以下为旧平台方法
     path('index/', views.index),
+    path('mutiindex/', views.mutiindex),
     path('member-list/', views.member_list),
     path('member-add/', views.member_add),
     path('member-edit/', views.member_edit),

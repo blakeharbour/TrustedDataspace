@@ -52,6 +52,9 @@ def tdindex(request):
 def index(request):
     return render(request, 'index.html')
 
+def mutiindex(request):
+    return render(request, 'mutiindex.html')
+
 def registeruser(request):
     return render(request, 'registeruser.html')
 
