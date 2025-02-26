@@ -46,6 +46,11 @@ urlpatterns = [
     path('login/', views.login),
     path('', views.login),
     path('registeruser/', views.registeruser),
+    path('tdindex/', views.tdindex),
+    path('user-list/', views.user_list),
+
+
+    #以下为旧平台方法
     path('index/', views.index),
     path('member-list/', views.member_list),
     path('member-add/', views.member_add),

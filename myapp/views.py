@@ -46,12 +46,18 @@ from .service import TensorBoardService
 def login(request):
     return render(request, 'login1.html')
 
+def tdindex(request):
+    return render(request, 'tdindex.html')
 
 def index(request):
     return render(request, 'index.html')
 
 def registeruser(request):
     return render(request, 'registeruser.html')
+
+# 用户管理
+def user_list(request):
+    return render(request, 'user-list.html')
 
 # 参与者列表
 def guest_list(request):
