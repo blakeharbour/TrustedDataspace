@@ -70,6 +70,8 @@ def guest_list(request):
 # 参与者添加
 def guest_add(request):
     return render(request, 'guest-add.html')
+def login_add(request):
+    return render(request, 'login-add.html')
 
 
 # 参与者编辑
@@ -182,20 +184,26 @@ def createguest(request):
     username = projs[0]["username"]
     password = projs[0]["password"]
     data_share_url = projs[0]["data_share_url"]
-
-
-
-    # username = "lucy"
-    # password = "123456"
-    # phone="12345687"
-    # remark=""
-    # print(res_dict)
     # 在userlist这个表里新建一条记录
     pro_js = "'" + guest + "','" + ip + "','" + remark + "','" + username + "','" + password + "','" + data_share_url + "'"
     inserttable(pro_js, tablename="guest_list", con1="guest,ip,remark,username,password,data_share_url")
 
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
+
+def createlogin(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    account = projs[0]["account"]
+    password = projs[0]["password"]
+    com = projs[0]["com"]
+    comid = projs[0]["comid"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + account + "','" + password + "','" + com + "','" + comid + "'"
+    inserttable(pro_js, tablename="login_user", con1="account,password,com,comid")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
 import subprocess
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -205,6 +213,14 @@ def searchguest(request):
     print('查找成功')
     print(guestlist)
     return JsonResponse({'status': 0, 'data': guestlist, 'msg': 'success'})
+
+def searchlogin(request):
+    loginlist = selecttable("login_user", "id,account,com,comid", '',
+                            '', '', '')
+    print('查找成功')
+    print(loginlist)
+    return JsonResponse({'status': 0, 'data': loginlist, 'msg': 'success'})
+
 from datetime import datetime
 def editguest(guestlist):
     # userid=None

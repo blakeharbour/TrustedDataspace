@@ -169,15 +169,9 @@
 								<thead>
 									<tr class="text-c">
 										<th width="80">ID</th>
-										<th width="100">参与者</th>
-                                        {% comment %}<th width="100">用户名</th>
-                                        <th width="100">密码</th>{% endcomment %}
-                                        <th width="100">共享数据地址</th>
-										<th width="90">ip地址</th>
-										<th width="100">操作</th>
-                                        <th width="100">状态</th>
-                                        <th width="100">测试时间</th>
-                                        {% comment %}<th width="100">备注</th>{% endcomment %}
+										<th width="100">用户</th>
+                                        <th width="100">所属方</th>
+										<th width="90">所属方id</th>
                                         <th width="100">管理</th>
 									</tr>
 								</thead>
@@ -207,7 +201,7 @@
 		$(function(){
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/searchguest/",
+				url:"http://127.0.0.1:8000/searchlogin/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -219,15 +213,8 @@
                             str+='<tr class="text-c">'+
                              '<td>'+Result[j][0]+'</td>'+
                             '<td>'+Result[j][1]+'</td>'+
-                                {% comment %}'<td>'+Result[j][6]+'</td>'+
-                                '<td>'+Result[j][7]+'</td>'+{% endcomment %}
-                                '<td>'+Result[j][8]+'</td>'+
-
-                            '<td>'+Result[j][2]+'</td>'+
-                            '<td><a title="测试" onclick="guest_test(this,\''+Result[j][0]+'\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe6df;</i>测试</a>'+
-                               '<td>'+Result[j][3]+'</td>'+
-                                '<td>'+Result[j][4]+'</td>'+
-                                {% comment %}'<td>'+Result[j][5]+'</td>'+{% endcomment %}
+                               '<td>'+Result[j][2]+'</td>'+
+                                '<td>'+Result[j][3]+'</td>'+
                                 '<td><a title="编辑" onclick="member_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="member_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
                             '</tr>'
 						}
@@ -237,44 +224,7 @@
 			})
 		});
 
-        function guest_test(obj, id) {
-            console.log("id是", id);
-            var csrf_token = getCookie("csrftoken");
-            var userinfo=[];
-            var userdic={
-                id:id,
-            };
-            userinfo.push(userdic);
-            console.log("userinfo",userinfo);
-            var userdata = JSON.stringify(userinfo);
-            $.ajax({
-                type: 'POST',
-                url: "http://127.0.0.1:8000/pingtest/",
-                dataType:'json',
-                data: userdata,
-                headers: {
-                    'X-CSRFToken': csrf_token
-                },
-                success: function (res) {
-                    console.log(res);
-                    if (res.status == "0") {
-                        alert("连接成功！");
-                    } else if (res.status == "1") {
-                        alert("测试未成功！");
-                    } else {
-                        alert("连接失败！");
-                    }
-                }
-            });
-            location.href = "http://127.0.0.1:8000/guest-list/";
-        }
 
-        // 获取 Cookie 中的 CSRF 令牌
-        function getCookie(name) {
-            var value = "; " + document.cookie;
-            var parts = value.split("; " + name + "=");
-            if (parts.length == 2) return parts.pop().split(";").shift();
-        }
 
 		function member_edit(obj,userid) {
 			var id=JSON.stringify(userid);
@@ -284,7 +234,7 @@
 		}
 
 		function guest_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/guest-add/";
+			location.href = "http://127.0.0.1:8000/login-add/";
 		}
 
 		function member_dele(obj,id) {
