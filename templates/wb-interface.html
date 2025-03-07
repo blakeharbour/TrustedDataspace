@@ -176,18 +176,22 @@
 				<div class="panel mt-20">
 					<div class="panel-body"发布>
 						<div class="clearfix">
-							<span class="f-l">
-                                <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 新增数据接口</a>
-								{% comment %}<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>{% endcomment %}
-							</span>
-							{% comment %}<span class="f-r">共有数据：<strong>3</strong> 条</span>{% endcomment %}
-						</div>
+                            <span class="f-l">
+                                <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
+                                    <i class="Hui-iconfont">&#xe600;</i> 新增数据接口
+                                </a>
+                                <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
+                                    调用数据接口
+                                </a>
+                            </span>
+                        </div>
 						<div class="clearfix mt-20">
 							<table class="table table-border table-bordered table-hover table-bg table-sort">
 								<thead>
 									<tr class="text-c">
+                                        <th width="30">选择</th>
 										<th width="80">ID</th>
-										<th width="100">接口名称</th>
+										<th width="100">接口所存数据名称</th>
                                         <th width="100">接口地址（URL）</th>
 										<th width="90">接口协议</th>
                                         <th width="100">接口类型</th>
@@ -218,8 +222,25 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
+        // 在全局作用域定义变量
+        let selectedInterface = {
+            url: null,
+            filename: null
+        };
+
+        // 监听单选按钮变化（事件委托）
+        $(document).on('change', 'input[name="selected_interface"]', function() {
+            selectedInterface.url = $(this).data('url');
+            selectedInterface.filename = $(this).data('filename');
+        });
 
 		$(function(){
+            // 全选/全不选功能
+            $("#checkAll").click(function(){
+                $("input[name=selected_ids]").prop('checked', this.checked);
+            });
+
+
 			$.ajax({
 				type:"post",
 				url:"http://127.0.0.1:8000/searchinterface/",
@@ -232,6 +253,10 @@
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
                             str+='<tr class="text-c">'+
+                            '<td>' +
+                                '<input type="radio" name="selected_interface" ' +
+                                       'data-url="' + Result[j][3] + '" ' +  // 存储接口地址到 data-url
+                            '</td>' +
                              '<td>'+Result[j][0]+'</td>'+
                             '<td>'+Result[j][1]+'</td>'+
                                '<td>'+Result[j][2]+'</td>'+
@@ -249,9 +274,21 @@
 		});
 
 
+        function downloadSelected() {
+            const selectedRadio = document.querySelector('input[name="selected_interface"]:checked');
+            if (!selectedRadio) {
+                layer.msg('请先选择一条数据', {icon: 2});
+                return;
+            }
+
+            const apiUrl = selectedRadio.dataset.url;
+            window.location.href = apiUrl;  // 直接跳转触发下载
+        }
+
 		function interface_add(obj,userid) {
 			location.href = "http://127.0.0.1:8000/interface-add/";
 		}
+
 
         function interface_edit(obj,id) {
         var id=JSON.stringify(id);
@@ -259,6 +296,7 @@
 
         location.href = "http://127.0.0.1:8000/interface-edit/";
 		}
+
 		function interface_dele(obj,id) {
 			console.log("id:",id);
 			var interfaceinfo={
