@@ -61,25 +61,28 @@ def registeruser(request):
 # 用户管理
 def user_list(request):
     return render(request, 'user-list.html')
-
-# 参与者列表
-def guest_list(request):
-    return render(request, 'guest-list.html')
-
-
-# 参与者添加
-def guest_add(request):
-    return render(request, 'guest-add.html')
 def login_add(request):
     return render(request, 'login-add.html')
 def login_edit(request):
     return render(request, 'login-edit.html')
 
-
+# 参与者列表
+def guest_list(request):
+    return render(request, 'guest-list.html')
+# 参与者添加
+def guest_add(request):
+    return render(request, 'guest-add.html')
 # 参与者编辑
 def guest_edit(request):
     return render(request, 'guest-edit.html')
 
+#数据接口界面
+def wb_interface(request):
+    return render(request, 'wb-interface.html')
+def interface_add(request):
+    return render(request, 'interface-add.html')
+def interface_edit(request):
+    return render(request, 'interface-edit.html')
 
 # 发起训练
 def model_list(request):
@@ -264,6 +267,55 @@ def editguest(guestlist):
     if result==0:
         print('xiugaishibai')
     return result
+
+def searchinterface(request):
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", '',
+                            '', '', '')
+    print('查找成功')
+    print(interfacelist)
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+def createinterface(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    webname = projs[0]["webname"]
+    weburl = projs[0]["weburl"]
+    webprotocol = projs[0]["webprotocol"]
+    webtype = projs[0]["webtype"]
+    datatype = projs[0]["datatype"]
+    comallowed = projs[0]["comallowed"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "'"
+    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
+def deleteinterface(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(id)
+    fiterstr="id = "+id
+    deletetable("webinterface", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
+def searchoneinterface(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    print(id)
+    fiterstr="id = "+id
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", fiterstr, '', '', '')
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
 #测试参与者
 import pytz
 @csrf_exempt

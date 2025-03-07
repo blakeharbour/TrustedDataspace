@@ -58,7 +58,14 @@ urlpatterns = [
     path('deletelogin/', views.deletelogin),
     path('searchonelogin/', views.searchonelogin),
 
-
+    #数据接口界面
+    path('wb-interface/', views.wb_interface),
+    path('searchinterface/', views.searchinterface),
+    path('interface-add/', views.interface_add),
+    path('createinterface/', views.createinterface),
+    path('deleteinterface/', views.deleteinterface),
+    path('interface-edit/', views.interface_edit),
+    path('searchoneinterface/', views.searchoneinterface),
 
     #以下为旧平台方法
     path('index/', views.index),

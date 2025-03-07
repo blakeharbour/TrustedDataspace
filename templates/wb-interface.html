@@ -1,10 +1,292 @@
-<!DOCTYPE html>
-<html lang="en">
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+
+	<title>h-ui.admin.pro v1.0</title>
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
 </head>
 <body>
+	<!--_menu 作为公共模版分离出去-->
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-model" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+					</ul>
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+					</ul>
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+					</ul>
+                </dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
 
+	<!--/_menu 作为公共模版分离出去-->
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+
+	<section class="Hui-admin-article-wrapper">
+		<!--_header 作为公共模版分离出去-->
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
+              <li class="dropDown dropDown_hover">
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+							{% comment %}<li>超级管理员</li>{% endcomment %}
+							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+								<ul class="dropDown-menu menu radius box-shadow">
+									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+									<li><a href="#">切换账户</a></li>
+									<li><a href="#">退出</a></li>
+								</ul>
+							</li>
+							{% comment %}<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
+							<li id="Hui-skin" class="dropDown dropDown_hover right">
+								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
+								<ul class="dropDown-menu menu radius box-shadow">
+									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
+									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
+									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
+									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
+									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
+									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
+								</ul>
+							</li>{% endcomment %}
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<!--/_header 作为公共模版分离出去-->
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				数据共享方法
+				<span class="c-gray en">/</span>
+				数据接口
+			</nav>
+
+			<article class="Hui-admin-content clearfix">
+{#				<div class="panel">#}
+{#					<div class="panel-body"发布>#}
+{#						<div class="text-c"> 日期范围：#}
+{#							<input type="text" id="search-datetime-start" class="input-text datetimepicker-input" style="width:120px;">#}
+{#							-#}
+{#							<input type="text" id="search-datetime-end" class="input-text datetimepicker-input" style="width:120px;">#}
+{#							<input type="text" class="input-text" style="width:250px" placeholder="输入会员名称、电话、邮箱" id="" name="">#}
+{#							<button type="submit" class="btn btn-success radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>#}
+{#						</div>#}
+{#					</div>#}
+{#				</div>#}
+				<div class="panel mt-20">
+					<div class="panel-body"发布>
+						<div class="clearfix">
+							<span class="f-l">
+                                <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 新增数据接口</a>
+								{% comment %}<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>{% endcomment %}
+							</span>
+							{% comment %}<span class="f-r">共有数据：<strong>3</strong> 条</span>{% endcomment %}
+						</div>
+						<div class="clearfix mt-20">
+							<table class="table table-border table-bordered table-hover table-bg table-sort">
+								<thead>
+									<tr class="text-c">
+										<th width="80">ID</th>
+										<th width="100">接口名称</th>
+                                        <th width="100">接口地址（URL）</th>
+										<th width="90">接口协议</th>
+                                        <th width="100">接口类型</th>
+                                        <th width="100">相应格式</th>
+                                        <th width="100">访问授权范围</th>
+                                        <th width="100">操作</th>
+									</tr>
+								</thead>
+								<tbody id="info">
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</article>
+		</div>
+	</section>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="/static/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.js"></script>
+<!--/_footer /作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
+	<script type="text/javascript">
+
+		$(function(){
+			$.ajax({
+				type:"post",
+				url:"http://127.0.0.1:8000/searchinterface/",
+				dataType:'json',
+				success:function (res) {
+					console.log("res",res);
+					str=''
+					if(res.status=="0"){
+						var Result=res.data;
+						console.log(Result);
+						for(var j=0;j<Result.length;j++){
+                            str+='<tr class="text-c">'+
+                             '<td>'+Result[j][0]+'</td>'+
+                            '<td>'+Result[j][1]+'</td>'+
+                               '<td>'+Result[j][2]+'</td>'+
+                                '<td>'+Result[j][3]+'</td>'+
+                                '<td>'+Result[j][4]+'</td>'+
+                                '<td>'+Result[j][5]+'</td>'+
+                                '<td>'+Result[j][6]+'</td>'+
+                                '<td><a title="编辑" onclick="interface_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="interface_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
+                            '</tr>'
+						}
+						$("#info").append(str)
+					}
+				}
+			})
+		});
+
+
+		function interface_add(obj,userid) {
+			location.href = "http://127.0.0.1:8000/interface-add/";
+		}
+
+        function interface_edit(obj,id) {
+        var id=JSON.stringify(id);
+        sessionStorage.setItem("id",id);
+
+        location.href = "http://127.0.0.1:8000/interface-edit/";
+		}
+		function interface_dele(obj,id) {
+			console.log("id:",id);
+			var interfaceinfo={
+			    id:id
+            };
+			var interfacedata = JSON.stringify(interfaceinfo)
+            console.log(interfaceinfo)
+            console.log(interfacedata)
+			layer.confirm('确认要删除吗？', function (index) {
+				$.ajax({
+					type: 'post',
+					url: 'http://127.0.0.1:8000/deleteinterface/',
+					dataType: 'json',
+					data: interfacedata,
+					success: function (data) {
+                        console.log("data",data);
+                        if(data.status=="0") {
+                            $(obj).parents("tr").remove();
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        }
+					},
+					error: function (data) {
+						console.log("data",data);
+					},
+				});
+			});
+		}
+	</script>
+	<!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>
