@@ -48,11 +48,16 @@ urlpatterns = [
     path('registeruser/', views.registeruser),
     path('tdindex/', views.tdindex),
 
+
     #用户管理界面
     path('user-list/', views.user_list),
     path('searchlogin/', views.searchlogin),
     path('login-add/', views.login_add),
+    path('login-edit/', views.login_edit),
     path('createlogin/', views.createlogin),
+    path('deletelogin/', views.deletelogin),
+    path('searchonelogin/', views.searchonelogin),
+
 
 
     #以下为旧平台方法

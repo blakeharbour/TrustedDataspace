@@ -72,6 +72,8 @@ def guest_add(request):
     return render(request, 'guest-add.html')
 def login_add(request):
     return render(request, 'login-add.html')
+def login_edit(request):
+    return render(request, 'login-edit.html')
 
 
 # 参与者编辑
@@ -204,6 +206,19 @@ def createlogin(request):
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
 
+def editlogin(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    account = projs[0]["account"]
+    password = projs[0]["password"]
+    com = projs[0]["com"]
+    comid = projs[0]["comid"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + account + "','" + password + "','" + com + "','" + comid + "'"
+    inserttable(pro_js, tablename="login_user", con1="account,password,com,comid")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
 import subprocess
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -220,6 +235,18 @@ def searchlogin(request):
     print('查找成功')
     print(loginlist)
     return JsonResponse({'status': 0, 'data': loginlist, 'msg': 'success'})
+
+def searchonelogin(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    userid = projs["userid"]
+    print(userid)
+    fiterstr="id = "+userid
+    userlist = selecttable("login_user", "id,account,password,com,comid", fiterstr, '', '', '')
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': userlist, 'msg': 'success'})
 
 from datetime import datetime
 def editguest(guestlist):
@@ -686,6 +713,21 @@ def deleteguest(request):
     deletetable("guest_list", fiterstr)
     print('删除成功')
     return JsonResponse({'status': 0})
+
+def deletelogin(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    userid = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(userid)
+    fiterstr="id = "+userid
+    deletetable("login_user", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
 def createuser(request):
     proobj = request.body
     projs = json.loads(proobj)

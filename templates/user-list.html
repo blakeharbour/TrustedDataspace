@@ -159,7 +159,7 @@
 					<div class="panel-body"发布>
 						<div class="clearfix">
 							<span class="f-l">
-                                <a href="javascript:;" onclick="guest_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加用户</a>
+                                <a href="javascript:;" onclick="login_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加用户</a>
 								{% comment %}<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>{% endcomment %}
 							</span>
 							{% comment %}<span class="f-r">共有数据：<strong>3</strong> 条</span>{% endcomment %}
@@ -215,7 +215,7 @@
                             '<td>'+Result[j][1]+'</td>'+
                                '<td>'+Result[j][2]+'</td>'+
                                 '<td>'+Result[j][3]+'</td>'+
-                                '<td><a title="编辑" onclick="member_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="member_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
+                                '<td><a title="编辑" onclick="login_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="login_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
                             '</tr>'
 						}
 						$("#info").append(str)
@@ -226,21 +226,21 @@
 
 
 
-		function member_edit(obj,userid) {
-			var id=JSON.stringify(userid);
-			sessionStorage.setItem("userid",id);
+		function login_edit(obj,id) {
+			var id=JSON.stringify(id);
+			sessionStorage.setItem("id",id);
 
-			location.href = "http://127.0.0.1:8000/member-edit/";
+			location.href = "http://127.0.0.1:8000/login-edit/";
 		}
 
-		function guest_add(obj,userid) {
+		function login_add(obj,userid) {
 			location.href = "http://127.0.0.1:8000/login-add/";
 		}
 
-		function member_dele(obj,id) {
+		function login_dele(obj,id) {
 			console.log("id:",id);
 			var userinfo={
-			    userid:id
+			    id:id
             };
 			var userdata = JSON.stringify(userinfo)
             console.log(userinfo)
@@ -248,15 +248,18 @@
 			layer.confirm('确认要删除吗？', function (index) {
 				$.ajax({
 					type: 'post',
-					url: 'http://127.0.0.1:8000/deleteguest/',
+					url: 'http://127.0.0.1:8000/deletelogin/',
 					dataType: 'json',
 					data: userdata,
 					success: function (data) {
-						$(obj).parents("tr").remove();
-						layer.msg('已删除!', {icon: 1, time: 1000});
+                        console.log("data",data);
+                        if(data.status=="0") {
+                            $(obj).parents("tr").remove();
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        }
 					},
 					error: function (data) {
-						console.log("1");
+						console.log("data",data);
 					},
 				});
 			});
