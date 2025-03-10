@@ -231,16 +231,10 @@
         // 监听单选按钮变化（事件委托）
         $(document).on('change', 'input[name="selected_interface"]', function() {
             selectedInterface.url = $(this).data('url');
-            selectedInterface.filename = $(this).data('filename');
+            console.log(selectedInterface.url);
         });
 
 		$(function(){
-            // 全选/全不选功能
-            $("#checkAll").click(function(){
-                $("input[name=selected_ids]").prop('checked', this.checked);
-            });
-
-
 			$.ajax({
 				type:"post",
 				url:"http://127.0.0.1:8000/searchinterface/",
@@ -253,12 +247,12 @@
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
                             str+='<tr class="text-c">'+
-                            '<td>' +
-                                '<input type="radio" name="selected_interface" ' +
-                                       'data-url="' + Result[j][3] + '" ' +  // 存储接口地址到 data-url
-                            '</td>' +
-                             '<td>'+Result[j][0]+'</td>'+
-                            '<td>'+Result[j][1]+'</td>'+
+                                 '<td>' +
+                                    '<input type="radio" name="selected_interface" ' +
+                                           'data-url="' + Result[j][2] + '" />' +
+                                '</td>' +
+                                 '<td>'+Result[j][0]+'</td>'+
+                                '<td>'+Result[j][1]+'</td>'+
                                '<td>'+Result[j][2]+'</td>'+
                                 '<td>'+Result[j][3]+'</td>'+
                                 '<td>'+Result[j][4]+'</td>'+
@@ -280,8 +274,8 @@
                 layer.msg('请先选择一条数据', {icon: 2});
                 return;
             }
-
             const apiUrl = selectedRadio.dataset.url;
+            console.log(apiUrl)
             window.location.href = apiUrl;  // 直接跳转触发下载
         }
 
