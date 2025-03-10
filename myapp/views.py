@@ -46,27 +46,43 @@ from .service import TensorBoardService
 def login(request):
     return render(request, 'login1.html')
 
+def tdindex(request):
+    return render(request, 'tdindex.html')
 
 def index(request):
     return render(request, 'index.html')
 
+def mutiindex(request):
+    return render(request, 'mutiindex.html')
+
 def registeruser(request):
     return render(request, 'registeruser.html')
+
+# 用户管理
+def user_list(request):
+    return render(request, 'user-list.html')
+def login_add(request):
+    return render(request, 'login-add.html')
+def login_edit(request):
+    return render(request, 'login-edit.html')
 
 # 参与者列表
 def guest_list(request):
     return render(request, 'guest-list.html')
-
-
 # 参与者添加
 def guest_add(request):
     return render(request, 'guest-add.html')
-
-
 # 参与者编辑
 def guest_edit(request):
     return render(request, 'guest-edit.html')
 
+#数据接口界面
+def wb_interface(request):
+    return render(request, 'wb-interface.html')
+def interface_add(request):
+    return render(request, 'interface-add.html')
+def interface_edit(request):
+    return render(request, 'interface-edit.html')
 
 # 发起训练
 def model_list(request):
@@ -173,20 +189,39 @@ def createguest(request):
     username = projs[0]["username"]
     password = projs[0]["password"]
     data_share_url = projs[0]["data_share_url"]
-
-
-
-    # username = "lucy"
-    # password = "123456"
-    # phone="12345687"
-    # remark=""
-    # print(res_dict)
     # 在userlist这个表里新建一条记录
     pro_js = "'" + guest + "','" + ip + "','" + remark + "','" + username + "','" + password + "','" + data_share_url + "'"
     inserttable(pro_js, tablename="guest_list", con1="guest,ip,remark,username,password,data_share_url")
 
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
+
+def createlogin(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    account = projs[0]["account"]
+    password = projs[0]["password"]
+    com = projs[0]["com"]
+    comid = projs[0]["comid"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + account + "','" + password + "','" + com + "','" + comid + "'"
+    inserttable(pro_js, tablename="login_user", con1="account,password,com,comid")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
+def editlogin(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    account = projs[0]["account"]
+    password = projs[0]["password"]
+    com = projs[0]["com"]
+    comid = projs[0]["comid"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + account + "','" + password + "','" + com + "','" + comid + "'"
+    inserttable(pro_js, tablename="login_user", con1="account,password,com,comid")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
 import subprocess
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -196,6 +231,26 @@ def searchguest(request):
     print('查找成功')
     print(guestlist)
     return JsonResponse({'status': 0, 'data': guestlist, 'msg': 'success'})
+
+def searchlogin(request):
+    loginlist = selecttable("login_user", "id,account,com,comid", '',
+                            '', '', '')
+    print('查找成功')
+    print(loginlist)
+    return JsonResponse({'status': 0, 'data': loginlist, 'msg': 'success'})
+
+def searchonelogin(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    userid = projs["userid"]
+    print(userid)
+    fiterstr="id = "+userid
+    userlist = selecttable("login_user", "id,account,password,com,comid", fiterstr, '', '', '')
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': userlist, 'msg': 'success'})
+
 from datetime import datetime
 def editguest(guestlist):
     # userid=None
@@ -212,6 +267,55 @@ def editguest(guestlist):
     if result==0:
         print('xiugaishibai')
     return result
+
+def searchinterface(request):
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", '',
+                            '', '', '')
+    print('查找成功')
+    print(interfacelist)
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+def createinterface(request):
+    proobj = request.body
+    projs = json.loads(proobj)
+    webname = projs[0]["webname"]
+    weburl = projs[0]["weburl"]
+    webprotocol = projs[0]["webprotocol"]
+    webtype = projs[0]["webtype"]
+    datatype = projs[0]["datatype"]
+    comallowed = projs[0]["comallowed"]
+    # 在userlist这个表里新建一条记录
+    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "'"
+    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed")
+    print('xinzengchenggong')
+    return JsonResponse({'status': 0})
+
+def deleteinterface(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(id)
+    fiterstr="id = "+id
+    deletetable("webinterface", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
+def searchoneinterface(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    print(id)
+    fiterstr="id = "+id
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", fiterstr, '', '', '')
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
 #测试参与者
 import pytz
 @csrf_exempt
@@ -661,6 +765,21 @@ def deleteguest(request):
     deletetable("guest_list", fiterstr)
     print('删除成功')
     return JsonResponse({'status': 0})
+
+def deletelogin(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    userid = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(userid)
+    fiterstr="id = "+userid
+    deletetable("login_user", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
 def createuser(request):
     proobj = request.body
     projs = json.loads(proobj)

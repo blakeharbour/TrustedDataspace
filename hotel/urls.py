@@ -46,7 +46,30 @@ urlpatterns = [
     path('login/', views.login),
     path('', views.login),
     path('registeruser/', views.registeruser),
+    path('tdindex/', views.tdindex),
+
+
+    #用户管理界面
+    path('user-list/', views.user_list),
+    path('searchlogin/', views.searchlogin),
+    path('login-add/', views.login_add),
+    path('login-edit/', views.login_edit),
+    path('createlogin/', views.createlogin),
+    path('deletelogin/', views.deletelogin),
+    path('searchonelogin/', views.searchonelogin),
+
+    #数据接口界面
+    path('wb-interface/', views.wb_interface),
+    path('searchinterface/', views.searchinterface),
+    path('interface-add/', views.interface_add),
+    path('createinterface/', views.createinterface),
+    path('deleteinterface/', views.deleteinterface),
+    path('interface-edit/', views.interface_edit),
+    path('searchoneinterface/', views.searchoneinterface),
+
+    #以下为旧平台方法
     path('index/', views.index),
+    path('mutiindex/', views.mutiindex),
     path('member-list/', views.member_list),
     path('member-add/', views.member_add),
     path('member-edit/', views.member_edit),

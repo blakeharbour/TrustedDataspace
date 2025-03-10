@@ -110,9 +110,9 @@
 				<div class="container-fluid clearfix">
           <nav id="Hui-topNav" class="nav navbar-nav">
             <ul class="clearfix">
-              <li><a href="">顶部菜单</a></li>
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
               <li class="dropDown dropDown_hover">
-                <a class="dropDown_A" href="javascript:;">顶部菜单</a>
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
                 <ul class="dropDown-menu menu radius box-shadow">
                   <li class="">
                     <a href="#">二级导航</a>
@@ -126,7 +126,7 @@
           </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
-							<li>超级管理员</li>
+							{% comment %}<li>超级管理员</li>{% endcomment %}
 							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
 								<ul class="dropDown-menu menu radius box-shadow">
 									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
@@ -134,7 +134,7 @@
 									<li><a href="#">退出</a></li>
 								</ul>
 							</li>
-							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
+							{% comment %}<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
 							<li id="Hui-skin" class="dropDown dropDown_hover right">
 								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
 								<ul class="dropDown-menu menu radius box-shadow">
@@ -145,177 +145,61 @@
 									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
 									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
 								</ul>
-							</li>
+							</li>{% endcomment %}
 						</ul>
 					</nav>
 				</div>
 			</div>
 		</header>
 		<!--/_header 作为公共模版分离出去-->
-
 		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				用户管理
+				<span class="c-gray en">/</span>
+				用户管理
+			</nav>
+
 			<article class="Hui-admin-content clearfix">
-                    <div class="row-24 clearfix" style="margin-left: -12px; margin-right: -12px;">
-                        <div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-                            <div class="panel">
-                                <div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总销售额：</div>
-                                <div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-                                    <div class="c-primary" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-                                        &yen; 9,999,999
-                                    </div>
-                                    <div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日销售额</span> <span>&yen; 1,234</span></div>
-                                </div>
-                            </div>
-                        </div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总访问量：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-success" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									9,999,999
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日访问量</span> <span>1,234</span></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总会员数：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-danger" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									99,999 人
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增会员</span> <span>1,234 人</span></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总文章数：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-warning" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									99,999
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增文章</span> <span>1,234</span></div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="panel">
+{#				<div class="panel">#}
+{#					<div class="panel-body"发布>#}
+{#						<div class="text-c"> 日期范围：#}
+{#							<input type="text" id="search-datetime-start" class="input-text datetimepicker-input" style="width:120px;">#}
+{#							-#}
+{#							<input type="text" id="search-datetime-end" class="input-text datetimepicker-input" style="width:120px;">#}
+{#							<input type="text" class="input-text" style="width:250px" placeholder="输入会员名称、电话、邮箱" id="" name="">#}
+{#							<button type="submit" class="btn btn-success radius"  name=""><i class="Hui-iconfont">&#xe665;</i> 搜用户</button>#}
+{#						</div>#}
+{#					</div>#}
+{#				</div>#}
+				<div class="panel mt-20">
 					<div class="panel-body"发布>
-						<p class="f-20 text-success">欢迎使用H-ui.admin
-							<span class="f-14">v2.3</span>
-							后台模版！
-						</p>
-						<p>登录次数：18 </p>
-						<p>上次登录IP：222.35.131.79.1  上次登录时间：2014-6-14 11:19:55</p>
-						<table class="table table-border table-bordered table-bg mt-20">
-							<thead>
-								<tr>
-									<th colspan="2" scope="col">服务器信息</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<th width="30%">服务器计算机名</th>
-									<td><span id="lbServerName">http://127.0.0.1/</span></td>
-								</tr>
-								<tr>
-									<td>服务器IP地址</td>
-									<td>127.17.109.1</td>
-								</tr>
-								<tr>
-									<td>服务器域名</td>
-									<td>www.h-ui.net</td>
-								</tr>
-								<tr>
-									<td>服务器端口 </td>
-									<td>80</td>
-								</tr>
-								<tr>
-									<td>服务器IIS版本 </td>
-									<td>Microsoft-IIS/6.0</td>
-								</tr>
-								<tr>
-									<td>本文件所在文件夹 </td>
-									<td>D:\WebSite\HanXiPuTai.com\XinYiCMS.Web\</td>
-								</tr>
-								<tr>
-									<td>服务器操作系统 </td>
-									<td>Microsoft Windows NT 5.2.3790 Service Pack 2</td>
-								</tr>
-								<tr>
-									<td>系统所在文件夹 </td>
-									<td>C:\WINDOWS\system32</td>
-								</tr>
-								<tr>
-									<td>服务器脚本超时时间 </td>
-									<td>30000秒</td>
-								</tr>
-								<tr>
-									<td>服务器的语言种类 </td>
-									<td>Chinese (People's Republic of China)</td>
-								</tr>
-								<tr>
-									<td>.NET Framework 版本 </td>
-									<td>2.050727.3655</td>
-								</tr>
-								<tr>
-									<td>服务器当前时间 </td>
-									<td>2014-6-14 12:06:23</td>
-								</tr>
-								<tr>
-									<td>服务器IE版本 </td>
-									<td>6.0000</td>
-								</tr>
-								<tr>
-									<td>服务器上次启动到现在已运行 </td>
-									<td>7210分钟</td>
-								</tr>
-								<tr>
-									<td>逻辑驱动器 </td>
-									<td>C:\D:\</td>
-								</tr>
-								<tr>
-									<td>CPU 总数 </td>
-									<td>4</td>
-								</tr>
-								<tr>
-									<td>CPU 类型 </td>
-									<td>x86 Family 6 Model 42 Stepping 1, GenuineIntel</td>
-								</tr>
-								<tr>
-									<td>虚拟内存 </td>
-									<td>52480M</td>
-								</tr>
-								<tr>
-									<td>当前程序占用内存 </td>
-									<td>3.29M</td>
-								</tr>
-								<tr>
-									<td>Asp.net所占内存 </td>
-									<td>51.46M</td>
-								</tr>
-								<tr>
-									<td>当前Session数量 </td>
-									<td>8</td>
-								</tr>
-								<tr>
-									<td>当前SessionID </td>
-									<td>gznhpwmp34004345jz2q3l45</td>
-								</tr>
-								<tr>
-									<td>当前系统用户名 </td>
-									<td>NETWORK SERVICE</td>
-								</tr>
-							</tbody>
-						</table>
+						<div class="clearfix">
+							<span class="f-l">
+                                <a href="javascript:;" onclick="login_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加用户</a>
+								{% comment %}<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>{% endcomment %}
+							</span>
+							{% comment %}<span class="f-r">共有数据：<strong>3</strong> 条</span>{% endcomment %}
+						</div>
+						<div class="clearfix mt-20">
+							<table class="table table-border table-bordered table-hover table-bg table-sort">
+								<thead>
+									<tr class="text-c">
+										<th width="80">ID</th>
+										<th width="100">用户</th>
+                                        <th width="100">所属方</th>
+										<th width="90">所属方id</th>
+                                        <th width="100">管理</th>
+									</tr>
+								</thead>
+								<tbody id="info">
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</article>
-			<footer class="footer Hui-admin-footer">
-				<p>感谢jQuery、layer、laypage、Validform、UEditor、iconfont、Datatables、WebUploaded、icheck、highcharts、bootstrap-Switch<br> Copyright &copy;2015 h-ui.admin.pro v1.0 All Rights Reserved.<br> 本后台系统由<a href="http://www.h-ui.net/" target="_blank" title="H-ui前端框架">H-ui前端框架</a>提供前端技术支持</p>
-			</footer>
 		</div>
 	</section>
 
@@ -326,8 +210,79 @@
 <script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.js"></script>
 <!--/_footer /作为公共模版分离出去-->
 
-<!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="/static/static/business/js/main.js">
-</script>
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
+	<script type="text/javascript">
+
+		$(function(){
+			$.ajax({
+				type:"post",
+				url:"http://127.0.0.1:8000/searchlogin/",
+				dataType:'json',
+				success:function (res) {
+					console.log("res",res);
+					str=''
+					if(res.status=="0"){
+						var Result=res.data;
+						console.log(Result);
+						for(var j=0;j<Result.length;j++){
+                            str+='<tr class="text-c">'+
+                             '<td>'+Result[j][0]+'</td>'+
+                            '<td>'+Result[j][1]+'</td>'+
+                               '<td>'+Result[j][2]+'</td>'+
+                                '<td>'+Result[j][3]+'</td>'+
+                                '<td><a title="编辑" onclick="login_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="login_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
+                            '</tr>'
+						}
+						$("#info").append(str)
+					}
+				}
+			})
+		});
+
+
+
+		function login_edit(obj,id) {
+			var id=JSON.stringify(id);
+			sessionStorage.setItem("id",id);
+
+			location.href = "http://127.0.0.1:8000/login-edit/";
+		}
+
+		function login_add(obj,userid) {
+			location.href = "http://127.0.0.1:8000/login-add/";
+		}
+
+		function login_dele(obj,id) {
+			console.log("id:",id);
+			var userinfo={
+			    id:id
+            };
+			var userdata = JSON.stringify(userinfo)
+            console.log(userinfo)
+            console.log(userdata)
+			layer.confirm('确认要删除吗？', function (index) {
+				$.ajax({
+					type: 'post',
+					url: 'http://127.0.0.1:8000/deletelogin/',
+					dataType: 'json',
+					data: userdata,
+					success: function (data) {
+                        console.log("data",data);
+                        if(data.status=="0") {
+                            $(obj).parents("tr").remove();
+                            layer.msg('已删除!', {icon: 1, time: 1000});
+                        }
+					},
+					error: function (data) {
+						console.log("data",data);
+					},
+				});
+			});
+		}
+	</script>
+	<!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>
