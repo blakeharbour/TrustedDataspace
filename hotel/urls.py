@@ -29,8 +29,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #校验登录
     path('jxclogin/', views.jxclogin),
-    # 校验登录
-    path('register/', views.register),
     #用户增删改查
     path('createuser/', views.createuser),
     path('deleteuser/', views.deleteuser),
@@ -45,7 +43,6 @@ urlpatterns = [
     #跳转到前端页面
     path('login/', views.login),
     path('', views.login),
-    path('registeruser/', views.registeruser),
     path('index/', views.index),
     path('member-list/', views.member_list),
     path('member-add/', views.member_add),
@@ -62,7 +59,7 @@ urlpatterns = [
     path('editguest/', views.editguest),
     path('pingtest/', views.ping_view),
     # 返回全部用户信息
-    path('searchguest/', views.searchguest),
+    path('/', views.searchguest),
 
     #模型训练页面
     path('model-list/', views.model_list),
@@ -93,6 +90,16 @@ urlpatterns = [
     path('train-model/', views.train_model),
     path('train_model_board/', views.train_model_board),
     path('train_model_boardnew/', views.train_model_boardnew),
+
+    #项目管理
+    path('project_notarization/', views.project_notarization),
+    path('pengding_project/', views.pengding_project),
+    path('project_notarization_add/', views.project_notarization_add),
+    # path('datasharing_add/', views.datasharing_add),
+    # 返回所有存证信息
+    path('search_notarization/', views.search_notarization),
+    # 返回按项目名称查询存证信息
+    path('search_notarization_by_projectname/', views.search_notarization_by_projectname),
 
     #模型应用
     path('model-application/', modelappview.model_application),

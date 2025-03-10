@@ -11,8 +11,6 @@ from django.conf import settings
 from django.shortcuts import render
 from django.http import JsonResponse
 import torch
-from .models import LoginUser
-from django.views.decorators.csrf import csrf_exempt
 
 from torch.utils.tensorboard import SummaryWriter
 import os
@@ -48,10 +46,8 @@ def login(request):
 
 
 def index(request):
-    return render(request, 'index.html')
+    return render(request, 'tdindex.html')
 
-def registeruser(request):
-    return render(request, 'registeruser.html')
 
 # 参与者列表
 def guest_list(request):
@@ -115,17 +111,24 @@ def sample_alignment(request):
 
 def train_model(request):
     return render(request, 'model_training.html')
+
+def project_notarization(request):
+    return render(request, 'project_notarization.html')
+def pengding_project(request):
+    return render(request, 'pending_project.html')
+def project_notarization_add(request):
+    return render(request, 'project_notarization_add.html')
 def jxclogin(request):
     proobj=request.body
     projs=json.loads(proobj)
-    account=projs[0]["username"]
+    username=projs[0]["username"]
     password=projs[0]["password"]
-    print(account)
+    print(username)
     print(password)
     # username='wu'
     # password='123'
-    filterstr="account= "+"'"+account+"'"
-    passwordlist=selecttable("login_user","password",filterstr,'','','')
+    filterstr="username= "+"'"+username+"'"
+    passwordlist=selecttable("rail_user","password",filterstr,'','','')
     print(passwordlist)
     # (('123',),)
     if passwordlist !=():
@@ -135,33 +138,6 @@ def jxclogin(request):
             return JsonResponse({'status':'1', 'data': 'fail！', 'msg': 'success'})
     else:
         return JsonResponse({'status': '2', 'data': 'fail！', 'msg': 'success'})
-
-@csrf_exempt
-def register(request):
-    if request.method == 'POST':
-        # 解析 JSON 数据
-        data = json.loads(request.body)
-        print(data)
-        data=data[0]
-        account = data.get('account')
-        password = data.get('password')
-        com = data.get('com')
-
-        # 数据验证：确保所有字段都不为空
-        if not account or not password or not com:
-            return JsonResponse({'status': 'error', 'message': '所有字段不能为空'})
-
-        # 检查账号是否已存在
-        if LoginUser.objects.filter(account=account).exists():
-            return JsonResponse({'status': 'error', 'message': '账号已存在'})
-
-        # 创建新用户并保存到数据库
-        user = LoginUser(account=account, password=password, com=com)
-        user.save()
-
-        return JsonResponse({'status': 'success', 'message': '注册成功'})
-    else:
-        return JsonResponse({'status': 'error', 'message': 'error'})
 
 #创建参与者
 def createguest(request):
@@ -173,7 +149,6 @@ def createguest(request):
     username = projs[0]["username"]
     password = projs[0]["password"]
     data_share_url = projs[0]["data_share_url"]
-
 
 
     # username = "lucy"
@@ -828,3 +803,41 @@ async def train_model_boardnew(request):
     return JsonResponse({'status': 'success'})
 
 
+#查找存证信息
+def search_notarization(request):
+    notarizationlist = selecttable("project_notarization", "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
+    print('查找成功')
+    print(notarizationlist)
+    return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
+
+#根据项目名称查找存证信息
+def search_notarization_by_projectname(request):
+    # 获取查询参数
+    project_name = request.GET.get('project_name', '')
+
+    # 按项目名称模糊查询
+    if project_name:
+        # 构造查询条件
+        condition = f"projectName LIKE '%{project_name}%'"
+        notarizationlist = selecttable(
+            "project_notarization",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            condition,  # 添加查询条件
+            '',
+            '',
+            ''
+        )
+    else:
+        # 如果没有输入项目名称，返回所有数据
+        notarizationlist = selecttable(
+            "project_notarization",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            '',
+            '',
+            '',
+            ''
+        )
+
+    print('查找成功')
+    print(notarizationlist)
+    return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
