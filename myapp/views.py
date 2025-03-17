@@ -3,6 +3,7 @@ import json
 import subprocess
 
 import corsheaders
+from django.contrib.auth import authenticate
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -39,7 +40,9 @@ from django.shortcuts import render
 from .models import SampleAlignment
 from .myjob import *
 from .service import TensorBoardService
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 
 # from myapp.fed_PU_sci1203.maincf import main
 
@@ -115,6 +118,14 @@ def sample_alignment(request):
 
 def train_model(request):
     return render(request, 'model_training.html')
+
+def established_project(request):
+    return render(request, 'establish-project.html')
+def pending_project(request):
+    return render(request, 'pending_project.html')
+def project_add(request):
+    return render(request, 'project_add.html')
+
 def jxclogin(request):
     proobj=request.body
     projs=json.loads(proobj)
@@ -826,5 +837,146 @@ async def train_model_boardnew(request):
     print('tensor train finsh')
 
     return JsonResponse({'status': 'success'})
+
+@csrf_exempt
+def create_project(request):
+        try:
+            proobj = request.body
+            projs = json.loads(proobj)
+            projectName = projs['projectName']
+            dataDemand = projs['dataDemand']
+            dataOwner = projs['dataOwner']
+            dataAsset = projs['dataAsset']
+            dataSecurity = projs['dataSecurity']
+            shareWay = projs['shareWay']
+            isDeleted = 'N'
+            currentStatus = '0'
+
+            print(projectName)
+
+            # 调用 inserttable 函数插入数据到 pb8_ProjectAdd 表
+            pro_js = "'" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','" + dataSecurity + "','" + shareWay + "','" + isDeleted + "','" + currentStatus +"'"
+            inserttable(pro_js, tablename="pb8_ProjectAdd",
+                        con1="projectName,dataDemand,dataOwner,dataAsset,dataSecurity,shareWay,isDeleted,currentStatus")
+
+            print('项目新增成功,状态更新成功')
+            return JsonResponse({'status': '0', 'message': '新增成功'})
+        except Exception as e:
+            return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+def submit_project(request):
+    if request.method == 'POST':
+        project_name = request.POST.get('project_name')
+        data_demander = request.POST.get('data_demander')
+        data_owner = request.POST.get('data_owner')
+        data_asset = request.POST.get('data_asset')
+        security_level = request.POST.get('security_level')
+        trans_mode = request.POST.get('trans_mode')
+
+        constr = ""
+        conditions = []
+        if project_name:
+            conditions.append(f"projectName = '{project_name}'")
+        if data_demander:
+            conditions.append(f"dataDemand = '{data_demander}'")
+        if data_owner:
+            conditions.append(f"dataOwner = '{data_owner}'")
+        if data_asset:
+            conditions.append(f"dataAsset = '{data_asset}'")
+        if security_level:
+            conditions.append(f"dataSecurity = '{security_level}'")
+        if trans_mode:
+            conditions.append(f"shareWay = '{trans_mode}'")
+
+        if conditions:
+            constr = " AND ".join(conditions)
+
+        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay'
+        order = 'ID DESC'
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
+
+        if result:
+            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode = result[0]
+
+            blockchainData = {
+                'transactionID': ID,
+                'projectName': project_name,
+                'assetName': data_asset,
+                'assetOwner': data_owner,
+                'assetDemander': data_demander,
+                'assetLevel': security_level,
+                'assetSharingType': trans_mode,
+                'ipfs': ''
+            }
+            blockchainDataStr = json.dumps(blockchainData)
+
+            try:
+                response = requests.put('http://192.168.1.135:8080/datasharing/add', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                if response.status_code == 200:
+                    print("区块链接口响应:", response.json())
+                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功'})
+                else:
+                    print("区块链接口调用失败:", response.text)
+                    return JsonResponse({'status': 'error','message': '区块链接口调用失败，请稍后重试'})
+            except requests.RequestException as e:
+                print("请求异常:", e)
+                return JsonResponse({'status': 'error','message': '请求区块链接口时发生异常，请稍后重试'})
+        else:
+            print("数据库查询无结果")
+            return JsonResponse({'status': 'error','message': '数据库查询无结果'})
+    return JsonResponse({'status': 'error','message': '无效的请求方法'})
+
+def get_project_data(request):
+    try:
+
+        # 构建查询条件
+        constr = f"isDeleted != 'Y'"
+        fields = "projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'projectName': row[0],
+                    'dataDemand': row[1],
+                    'dataOwner': row[2],
+                    'dataAsset': row[3],
+                    'dataSecurity': row[4],
+                   'shareWay': row[5],
+                    'currentStatus': row[6]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+def delete_project(request):
+    if request.method == 'POST':
+        projectName = request.POST.get('projectName')
+        dataDemand = request.POST.get('dataDemand')
+        dataOwner = request.POST.get('dataOwner')
+        dataAsset = request.POST.get('dataAsset')
+
+        if projectName and dataDemand and dataOwner and dataAsset:
+            updatstr = "isDeleted = 'Y'"
+            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
+            result = updatetable('pb8_ProjectAdd', updatstr, constr)
+            if result == 1:
+                return JsonResponse({'status': '0','message': '删除成功'})
+            else:
+                return JsonResponse({'status': '1','message': '删除失败'})
+        else:
+            return JsonResponse({'status': '1','message': '缺少必要的参数'})
+    else:
+        return JsonResponse({'status': '1','message': '请求方法错误，仅支持POST请求'})
+
+
+
+
+
+
 
 

@@ -201,6 +201,7 @@ label {
     font-weight: bold;
     color: #555;
 }
+
 .form-control {
     display: block;
     width: 100%;
@@ -804,7 +805,8 @@ ul.portfolio-categ li a{
 	color:#353535;
 }
 ul.portfolio-categ li.active{
-border: 1px solid #A71F4A;
+
+border: 1px solid #A71F4A;
 }
 ul.portfolio-categ li.active a:hover, ul.portfolio-categ li a:hover,ul.portfolio-categ li a:focus,ul.portfolio-categ li a:active {
 	text-decoration:none;

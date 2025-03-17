@@ -94,6 +94,11 @@ urlpatterns = [
     path('train_model_board/', views.train_model_board),
     path('train_model_boardnew/', views.train_model_boardnew),
 
+    # 项目管理
+    path('established_project/', views.established_project),
+    path('pengding_project/', views.pending_project),
+    path('project_add/', views.project_add),
+
     #模型应用
     path('model-application/', modelappview.model_application),
     path('model-application_search/', modelappview.searchModelApplication),
@@ -188,4 +193,11 @@ urlpatterns = [
 
     path('multmodel_application_result_analysis/', viewsmult.multmodel_application_result_analysis),
     path('multmodel_application_status_modify/', viewsmult.editMultModelApplicationStatus),
+
+    path('create_project/', views.create_project),
+
+    path('submit_project/', views.submit_project),
+    path('get_project_data/', views.get_project_data),
+    path('delete_project/', views.delete_project),
+
 ]

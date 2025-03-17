@@ -1,4 +1,4 @@
-﻿<!--_meta 作为公共模版分离出去-->
+<!--_meta 作为公共模版分离出去-->
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -123,7 +123,7 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
 					</ul>
 					<ul>
 						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
@@ -151,10 +151,10 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+						<li ><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">项目申请</a></li>
 					</ul>
 					<ul>
-						<li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+						<li class="current"><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -265,9 +265,9 @@
 			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
 				首页
 				<span class="c-gray en">/</span>
-				模型管理
+				项目信息管理
 				<span class="c-gray en">/</span>
-				模型列表
+				项目申请
 			</nav>
 
 			<article class="Hui-admin-content clearfix">
@@ -275,7 +275,7 @@
 					<div class="panel-body"发布>
 						<div class="clearfix">
 							<span class="f-l">
-                                <a href="javascript:;" onclick="model_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加模型</a>
+                                <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 上传数据</a>
 {#								<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>#}
 							</span>
 {#							<span class="f-r">共有数据：<strong>3</strong> 条</span>#}
@@ -284,17 +284,20 @@
 							<table class="table table-border table-bordered table-hover table-bg table-sort">
 								<thead>
 									<tr class="text-c">
-										<th width="80">模型ID</th>
-										<th width="100">参与者</th>
-										<th width="90">模型名称</th>
-										<th width="100">建模目的</th>
-                                        <th width="100">申请状态</th>
-                                        <th width="120">样本对齐成功数量</th>
 {#                                        <th width="100">Learning-Rate(学习率)</th>#}
 {#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
 {#                                        <th width="100">Batch-Size(批次大小)</th>#}
-                                        <th width="100">联邦学习</th>
-                                        <th width="100">操作</th>
+										<th width="80">项目名称</th>
+										<th width="100">数据需求方</th>
+										<th width="90">数据所有方</th>
+										<th width="100">提供数据资产</th>
+                                        <th width="100">所需数据资产</th>
+                                        <th width="120">安全等级</th>
+{#                                        <th width="100">Learning-Rate(学习率)</th>#}
+{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
+{#                                        <th width="100">Batch-Size(批次大小)</th>#}
+                                         <th width="100">共享方式</th>
+                                        <th width="120">审核状态</th>
 {#                                        <th width="100">精确度</th>#}
 {#                                        <th width="100">召回率</th>#}
 {#                                        <th width="80">错误率</th>#}
@@ -343,67 +346,126 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
-        // 显示模态框
+		// 显示模态框
         function showModal() {
-          document.getElementById('myModal').style.display = "block";
+            document.getElementById('myModal').style.display = "block";
         }
 
         // 隐藏模态框
         function hideModal() {
-          document.getElementById('myModal').style.display = "none";
+            document.getElementById('myModal').style.display = "none";
         }
 
         function showModal1() {
-          document.getElementById('myModal1').style.display = "block";
+            document.getElementById('myModal1').style.display = "block";
         }
 
         // 隐藏模态框
         function hideModal1() {
-          document.getElementById('myModal1').style.display = "none";
+            document.getElementById('myModal1').style.display = "none";
         }
 
-		$(function(){
+        // 模拟 statusMethod 方法
+        function statusMethod(modelId) {
+            return '未审核';
+        }
+        $(function () {
+    // 注释掉AJAX请求
+    /*
+    $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/searchmodel/",
+        dataType: 'json',
+        success: function (res) {
+            console.log("res", res);
+            let str = '';
+            if (res.status === "0" && res.data && res.data.length > 0) {
+                const Result = res.data;
+                console.log("Result", Result);
+                for (let j = 0; j < Result.length; j++) {
+                    const link = "http://127.0.0.1:8000/application_result_shappng/" + Result[j][0];
+                    const status = statusMethod(Result[j][0]);
+                    let statusHtml = `<button onclick="approve(this)" id="status_${Result[j][0]}">${status}</button>`;
 
-			$.ajax({
-				type:"post",
-				url:"http://127.0.0.1:8000/searchmodel/",
-				dataType:'json',
-				success:function (res) {
-					console.log("res",res);
-					str=''
-					if(res.status=="0"){
-						var Result=res.data;
-						console.log(Result);
-						for(var j=0;j<Result.length;j++){
-                            var link="http://127.0.0.1:8000/application_result_shappng/"+Result[j][0];
-                            str+='<tr class="text-c">'+
-                             '<td><a onclick="modeldel_list(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont"></i>'+Result[j][0]+'</a></td>'+
-                            '<td>'+Result[j][1]+'</td>'+
-                            '<td>'+Result[j][2]+'</td>'+
-                            '<td>'+Result[j][3]+'</td>'+
-                            '<td>'+Result[j][4]+'</td>'+
-                                '<td>77258</td>'+
-                            {% comment %}'<td>'+Result[j][5]+'</td>'+
-                            '<td>'+Result[j][6]+'</td>'+
-                            '<td>'+Result[j][7]+'</td>'+{% endcomment %}
-                            {% comment %}'<td><br><a title="联邦训练" onclick="model_test(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont"></i>联邦训练</a>' +
-                            '<br><a title="删除" onclick="model_dele(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+{% endcomment %}
-                            {% comment %}'<td><a onclick="model_view(this,\''+Result[j][12]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][8]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][13]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][9]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][14]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][10]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][15]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][11]+'</a></td>'+{% endcomment %}
-                                {% comment %}'<td> <a onclick="open_file(this,\''+Result[j][12]+'\')"><i class="Hui-iconfont"></i>'+Result[j][12]+'</a></td>'+{% endcomment %}
-                                '<td> <a href="javascript:;" onclick="trainModelresultshow() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 开始联邦训练</a></td>'+
-                                '<td> <a title="删除" onclick="model_dele(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
-                                '</tr>'
-						}
-						$("#info").append(str)
-					}
-				}
-			})
-		});
+                    const sharingMethods = ['沙箱传输', 'IP追踪', '隐私计算'];
+                    const randomIndex = Math.floor(Math.random() * sharingMethods.length);
+                    const sharingMethod = sharingMethods[randomIndex];
+
+                    str += `<tr class="text-c">
+                        <td><a onclick="modeldel_list(this,'${Result[j][0]}')"><i class="Hui-iconfont"></i>${Result[j][0]}</a></td>
+                        <td>铁路</td>
+                        <td>海关</td>
+                        <td>货物类型</td>
+                        <td>货物类型字段</td>
+                        <td>敏感</td>
+                        <td>${sharingMethod}</td>
+                        <td>${statusHtml}</td>
+                    </tr>`;
+                }
+                $("#info").html(str);
+            } else {
+                console.log("No data found or status is not 0");
+                $("#info").html("<tr><td colspan='8'>No data available</td></tr>");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("AJAX 请求出错:", status, error);
+            $("#info").html("<tr><td colspan='8'>Error loading data</td></tr>");
+        }
+    });
+    */
+});
+        $(function () {
+    // 模拟从后端获取数据
+    const mockData = [
+        {
+            id: "project1",
+            name: "项目1",
+            requester: "铁路",
+            owner: "海关",
+            providedData: "货物类型",
+            requiredData: "货物类型字段",
+            securityLevel: "敏感",
+            sharingMethod: "沙箱传输",
+            status: "未审核"
+        },
+        {
+            id: "project2",
+            name: "项目2",
+            requester: "铁路",
+            owner: "海关",
+            providedData: "货物类型",
+            requiredData: "货物类型字段",
+            securityLevel: "敏感",
+            sharingMethod: "隐私计算",
+            status: "未审核"
+        }
+    ];
+
+    let str = '';
+    mockData.forEach(item => {
+        str += `<tr class="text-c">
+            <td><a onclick="modeldel_list(this,'${item.id}')"><i class="Hui-iconfont"></i>${item.name}</a></td>
+            <td>${item.requester}</td>
+            <td>${item.owner}</td>
+            <td>${item.providedData}</td>
+            <td>${item.requiredData}</td>
+            <td>${item.securityLevel}</td>
+            <td>${item.sharingMethod}</td>
+            <td><button onclick="approve(this)" id="status_${item.id}">${item.status}</button></td>
+        </tr>`;
+    });
+
+    $("#info").html(str); // 将生成的行插入到表格中
+});
 
 
+        function approve(btn) {
+            btn.disabled = true;
+            btn.textContent = '已审核';
+            btn.style.backgroundColor = 'green';
+            btn.style.color = 'white';
+        }
 
         function model_test(obj, modelid) {
             console.log("id是", modelid);
@@ -467,10 +529,10 @@
 			location.href = "http://127.0.0.1:8000/member-edit/";
 		}
 
-		function model_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/model-add/";
+		function project_add(obj,userid) {
+			location.href = "http://127.0.0.1:8000/project_add/";
 		}
-		
+
 		function model_dele(obj,id) {
 			console.log("id:",id);
 			var userinfo={
