@@ -82,7 +82,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">项目申请</a></li>
+						<li class="current"><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
 					</ul>
 					<ul>
 						<li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
@@ -267,8 +267,7 @@
     }
 });
 
-
-function submit_order() {
+  function submit_order() {
     var project_name = $("#project_name").val();
     var data_demander = $("#data_demander").val();
     var data_owner = $("#data_owner").val();
@@ -313,60 +312,115 @@ function submit_order() {
         dataOwner: data_owner,
         dataAsset: data_asset,
         dataSecurity: security_level,
-        shareWay: trans_mode,
-
+        shareWay: trans_mode
     };
 
-    var modeldata = JSON.stringify(modelinfo);
+    // 检查 URL 参数中是否包含 id
+    var urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get('id');
 
-    // 先调用创建项目接口
-    $.ajax({
-        type: "post",
-        url: "http://127.0.0.1:8000/create_project/",
-        data: modeldata,
-        dataType: "json",
-        contentType: "application/json",
-        success: function (res) {
-            console.log("res", res);
-            if (res.status == "0") {
-                alert("新增成功");
-                // 项目创建成功后，发起查询数据的请求
-                $.ajax({
-                    type: "POST",
-                    url: "http://127.0.0.1:8000/submit_project/",
-                    data: {
-                        project_name: project_name,
-                        data_demander: data_demander,
-                        data_owner: data_owner,
-                        data_asset: data_asset,
-                        security_level: security_level,
-                        trans_mode: trans_mode
-                    },
-                    success: function (res) {
-                        console.log("响应:", res);
-                        if (res.status === "ok") {
-                            alert("区块链接口调用成功");
-                            // 刷新项目列表页面
-                            window.location.href = "http://127.0.0.1:8000/established_project/";
-                        } else {
-                            alert("区块链接口调用失败，请稍后重试");
+    if (id) {
+        // 修改操作
+        $.ajax({
+            type: "post",
+            url: "http://127.0.0.1:8000/update_project/",
+            data: {
+                id: id,
+               ...modelinfo
+            },
+            success: function (res) {
+                console.log("res", res);
+                if (res.status == "0") {
+                    alert("修改成功");
+                    // 项目修改成功后，发起查询数据的请求（区块链接口）
+                    $.ajax({
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/submit_project/",
+                        data: {
+                            project_name: project_name,
+                            data_demander: data_demander,
+                            data_owner: data_owner,
+                            data_asset: data_asset,
+                            security_level: security_level,
+                            trans_mode: trans_mode
+                        },
+                        success: function (res) {
+                            console.log("响应:", res);
+                            if (res.status === "ok") {
+                                alert("区块链接口调用成功");
+                                // 刷新项目列表页面
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } else {
+                                alert("区块链接口调用失败，请稍后重试");
+                            }
+                        },
+                        error: function (error) {
+                            console.error("请求失败:", error);
+                            alert("请求失败，请稍后重试");
                         }
-                    },
-                    error: function (error) {
-                        console.error("请求失败:", error);
-                        alert("请求失败，请稍后重试");
-                    }
-                });
-            } else {
-                alert("出现错误");
+                    });
+                } else {
+                    alert("出现错误");
+                }
+            },
+            error: function (error) {
+                console.error("修改项目接口调用失败:", error);
+                alert("修改项目接口调用失败，请稍后重试");
             }
-        },
-        error: function (error) {
-            console.error("创建项目接口调用失败:", error);
-            alert("创建项目接口调用失败，请稍后重试");
-        }
-    });
+        });
+    } else {
+        // 新增操作
+        var modeldata = JSON.stringify(modelinfo);
+        $.ajax({
+            type: "post",
+            url: "http://127.0.0.1:8000/create_project/",
+            data: modeldata,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (res) {
+                console.log("res", res);
+                if (res.status == "0") {
+                    alert("新增成功");
+                    // 项目创建成功后，发起查询数据的请求
+                    $.ajax({
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/submit_project/",
+                        data: {
+                            project_name: project_name,
+                            data_demander: data_demander,
+                            data_owner: data_owner,
+                            data_asset: data_asset,
+                            security_level: security_level,
+                            trans_mode: trans_mode
+                        },
+                        success: function (res) {
+                            console.log("响应:", res);
+                            if (res.status === "ok") {
+                                alert("区块链接口调用成功");
+                                // 刷新项目列表页面
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } else {
+                                alert("区块链接口调用失败，请稍后重试");
+                            }
+                        },
+                        error: function (error) {
+                            console.error("请求失败:", error);
+                            alert("请求失败，请稍后重试");
+                        }
+                    });
+                } else {
+                    alert("出现错误");
+                }
+            },
+            error: function (error) {
+                console.error("创建项目接口调用失败:", error);
+                alert("创建项目接口调用失败，请稍后重试");
+            }
+        });
+    }
 }
+
+
 
 	</script>
 	<!--/请在上方写此页面业务相关的脚本-->

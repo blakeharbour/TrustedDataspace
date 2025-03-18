@@ -199,5 +199,7 @@ urlpatterns = [
     path('submit_project/', views.submit_project),
     path('get_project_data/', views.get_project_data),
     path('delete_project/', views.delete_project),
+    path('update_project/', views.update_project),
+
 
 ]

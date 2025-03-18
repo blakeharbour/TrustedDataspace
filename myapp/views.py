@@ -931,20 +931,21 @@ def get_project_data(request):
 
         # 构建查询条件
         constr = f"isDeleted != 'Y'"
-        fields = "projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
 
         if result:
             data_list = []
             for row in result:
                 row_data = {
-                    'projectName': row[0],
-                    'dataDemand': row[1],
-                    'dataOwner': row[2],
-                    'dataAsset': row[3],
-                    'dataSecurity': row[4],
-                   'shareWay': row[5],
-                    'currentStatus': row[6]
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                   'shareWay': row[6],
+                    'currentStatus': row[7]
                 }
                 data_list.append(row_data)
             return JsonResponse({'status': '0', 'data': data_list})
@@ -972,6 +973,50 @@ def delete_project(request):
             return JsonResponse({'status': '1','message': '缺少必要的参数'})
     else:
         return JsonResponse({'status': '1','message': '请求方法错误，仅支持POST请求'})
+
+
+def update_project(request):
+    try:
+        if request.method == 'POST':
+            id = request.POST.get('id')
+            projectName = request.POST.get('projectName')
+            dataDemand = request.POST.get('dataDemand')
+            dataOwner = request.POST.get('dataOwner')
+            dataAsset = request.POST.get('dataAsset')
+            dataSecurity = request.POST.get('dataSecurity')
+            shareWay = request.POST.get('shareWay')
+
+            # 构建更新字符串
+            update_str_list = []
+            if projectName is not None:
+                update_str_list.append(f"projectName = '{projectName}'")
+            if dataDemand is not None:
+                update_str_list.append(f"dataDemand = '{dataDemand}'")
+            if dataOwner is not None:
+                update_str_list.append(f"dataOwner = '{dataOwner}'")
+            if dataAsset is not None:
+                update_str_list.append(f"dataAsset = '{dataAsset}'")
+            if dataSecurity is not None:
+                update_str_list.append(f"dataSecurity = '{dataSecurity}'")
+            if shareWay is not None:
+                update_str_list.append(f"shareWay = '{shareWay}'")
+
+            if not update_str_list:
+                return JsonResponse({'status': '1', 'message': '没有提供需要更新的字段'})
+
+            update_str = ", ".join(update_str_list)
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '修改成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '修改失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
 
 
 
