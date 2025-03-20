@@ -43,8 +43,8 @@ urlpatterns = [
     path('changepassword/', views.changepassword),
 
     #跳转到前端页面
-    path('login/', views.login),
-    path('', views.login),
+    path('login/', views.login_page),
+    path('', views.login_page),
     path('registeruser/', views.registeruser),
     path('tdindex/', views.tdindex),
 

@@ -1,156 +1,155 @@
-# -*- coding:utf-8 -*-
-import json
-import subprocess
-
-import corsheaders
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-
-from django.conf import settings
-
-from django.shortcuts import render
-from django.http import JsonResponse
 import torch
 from .models import LoginUser
-from django.views.decorators.csrf import csrf_exempt
-
-from torch.utils.tensorboard import SummaryWriter
-import os
-import json
 import torch.optim as optim
 from torch.utils.tensorboard import SummaryWriter
 from sklearn.datasets import load_iris
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from django.views.decorators.csrf import csrf_exempt
-import webbrowser
-import asyncio
-from myapp import api_views
-
-from django.forms.models import *
-import pymysql
-
-# from hotel import settings
-from . import models
-
-from django.http import JsonResponse
-from django.shortcuts import render
-
+from django.contrib.auth import authenticate, login
 from .models import SampleAlignment
 from .myjob import *
 from .service import TensorBoardService
+from django.contrib.auth.decorators import login_required
 
+def login_page(request):
+    return render(request, 'login.html')
 
-# from myapp.fed_PU_sci1203.maincf import main
-
-def login(request):
-    return render(request, 'login1.html')
-
+@login_required(login_url='/login/')
 def tdindex(request):
     return render(request, 'tdindex.html')
 
+@login_required(login_url='/login/')
 def index(request):
     return render(request, 'index.html')
 
+@login_required(login_url='/login/')
 def mutiindex(request):
     return render(request, 'mutiindex.html')
 
+@login_required(login_url='/login/')
 def registeruser(request):
     return render(request, 'registeruser.html')
 
+@login_required(login_url='/login/')
 # 用户管理
 def user_list(request):
     return render(request, 'user-list.html')
+
+@login_required(login_url='/login/')
 def login_add(request):
     return render(request, 'login-add.html')
+
+@login_required(login_url='/login/')
 def login_edit(request):
     return render(request, 'login-edit.html')
 
+
+@login_required(login_url='/login/')
 # 参与者列表
 def guest_list(request):
     return render(request, 'guest-list.html')
+
+@login_required(login_url='/login/')
 # 参与者添加
 def guest_add(request):
     return render(request, 'guest-add.html')
+
+@login_required(login_url='/login/')
 # 参与者编辑
 def guest_edit(request):
     return render(request, 'guest-edit.html')
 
+@login_required(login_url='/login/')
 #数据接口界面
 def wb_interface(request):
-    return render(request, 'wb-interface.html')
+    return render(request, 'wb-interface.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+@login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
+
+@login_required(login_url='/login/')
 def interface_edit(request):
     return render(request, 'interface-edit.html')
 
+@login_required(login_url='/login/')
 # 发起训练
 def model_list(request):
     return render(request, 'model-list.html')
 
-
+@login_required(login_url='/login/')
 # 增加模型
 def model_add(request):
     return render(request, 'model-add.html')
 
-
+@login_required(login_url='/login/')
 # 发起训练
 def modeldel_list(request, parameter):
     context = {'parameter': parameter}
     return render(request, 'modeldel-list.html', context)
 
-
+@login_required(login_url='/login/')
 def modeldel_add(request, parameter):
     context = {'parameter': parameter}
     return render(request, 'modeldel-add.html', context)
 
-
+@login_required(login_url='/login/')
 def member_list(request):
     return render(request,'member-list.html')
 
-
+@login_required(login_url='/login/')
 def member_add(request):
     return render(request,'member-add.html')
 
-
+@login_required(login_url='/login/')
 def member_edit(request):
     return render(request,'member-edit.html')
 
-
+@login_required(login_url='/login/')
 def welcome(request):
     return render(request, 'welcome.html')
 
-
+@login_required(login_url='/login/')
 def changepassword(request):
     return render(request, 'change-password.html')
 
-
+@login_required(login_url='/login/')
 def sample_alignment(request):
     return render(request, 'sample-alignment.html')
 
-
+@login_required(login_url='/login/')
 def train_model(request):
     return render(request, 'model_training.html')
+
+
 def jxclogin(request):
-    proobj=request.body
-    projs=json.loads(proobj)
-    account=projs[0]["username"]
-    password=projs[0]["password"]
-    print(account)
-    print(password)
-    # username='wu'
-    # password='123'
-    filterstr="account= "+"'"+account+"'"
-    passwordlist=selecttable("login_user","password",filterstr,'','','')
-    print(passwordlist)
-    # (('123',),)
-    if passwordlist !=():
-        if passwordlist[0][0]==password:
-            return JsonResponse({'status':'0','data':'success！','msg':'success'})
-        else:
-            return JsonResponse({'status':'1', 'data': 'fail！', 'msg': 'success'})
-    else:
-        return JsonResponse({'status': '2', 'data': 'fail！', 'msg': 'success'})
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            data=data[0]
+            print(data)
+            account = data.get('username')
+            password = data.get('password')
+
+            print(account)
+            print(password)
+            # 使用 Django 认证系统
+            user = authenticate(request, username=account, password=password)
+            print(user)
+
+            if user is not None:
+                login(request, user)
+                return JsonResponse({'status':'0','data':'success！','msg':'success'})
+            else:
+                return JsonResponse({'status': '1', 'msg': '账号或密码错误'})
+
+        except Exception as e:
+            return JsonResponse({'status': '2', 'msg': '请求解析失败'})
+
+    return JsonResponse({'status': '3', 'msg': '仅支持 POST 请求'})
 
 @csrf_exempt
 def register(request):
