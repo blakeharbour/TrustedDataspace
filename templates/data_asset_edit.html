@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据资产列表</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">铁路隐私计算平台</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+      <dl id="menu-home" class="Hui-menu">
+        <dd class="Hui-menu-item-frist">
+          <ul>
+            <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 单方</a></li>
+          </ul>
+        </dd>
+      </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+					</ul>
+				</dd>
+			</dl>
+			<dl id="menu-model" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+					</ul>
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+					</ul>
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+					</ul>
+                </dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+					</ul>
+				</dd>
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/application_model-main/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+		</div>
+        <div class="Hui-admin-menu-dropdown bk_2">
+      <dl id="menu-home" class="Hui-menu">
+        <dd class="Hui-menu-item-frist">
+          <ul>
+            <li><a href="_blank.html" title="多方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 多方</a></li>
+          </ul>
+        </dd>
+      </dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 外部合作者管理<i
+                        class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-model" class="Hui-menu">
+            <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i
+                    class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li ><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>
+                </ul>
+                <ul>
+                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                </ul>
+                <ul>
+                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                </ul>
+            </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/multapplication_model-main/" title="模型使用">模型使用</a></li>
+					</ul>
+					<ul>
+						<li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+    </aside>
+    <div class="Hui-admin-aside-mask"></div>
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+	<section class="Hui-admin-article-wrapper">
+		<!--_header 作为公共模版分离出去-->
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
+              <li class="dropDown dropDown_hover">
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+							{% comment %}<li>超级管理员</li>{% endcomment %}
+							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+								<ul class="dropDown-menu menu radius box-shadow">
+									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+									<li><a href="#">切换账户</a></li>
+									<li><a href="#">退出</a></li>
+								</ul>
+							</li>
+</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<!--/_header 作为公共模版分离出去-->
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				数据管理
+				<span class="c-gray en">/</span>
+				数据列表
+                <span class="c-gray en">/</span>
+				编辑数据
+			</nav>
+
+      <article class="Hui-admin-content clearfix">
+    <div class="panel mt-20">
+        <div class="panel-body">
+            <form method="post" action="/data_asset_edit/{{ asset.assetID }}/">
+                {% csrf_token %}
+                <table class="table table-border table-bordered table-hover table-bg table-sort" style="width: 100%;">
+                    <!-- 名称 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">名称</td>
+                        <td>
+                            <input type="text" name="assetName" class="form-control" value="{{ asset.assetName }}" required style="width: 100%;">
+                        </td>
+                    </tr>
+                    <!-- 所有者 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">所有者</td>
+                        <td>
+                            <input type="text" name="assetOwner" class="form-control" value="{{ asset.assetOwner }}" required style="width: 100%;">
+                        </td>
+                    </tr>
+                    <!-- 描述 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">描述</td>
+                        <td>
+                            <textarea name="description" class="form-control" required style="width: 100%; height: 100px;">{{ asset.description }}</textarea>
+                        </td>
+                    </tr>
+                    <!-- 格式 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">格式</td>
+                        <td>
+                            <input type="text" name="assetFormat" class="form-control" value="{{ asset.assetFormat }}" required style="width: 100%;">
+                        </td>
+                    </tr>
+                    <!-- 安全等级 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">安全等级</td>
+                        <td>
+                            <select name="assetLevel" class="form-control" required style="width: 100%;">
+                                <option value="L1" {% if asset.assetLevel == 'L1' %}selected{% endif %}>高敏感密文</option>
+                                <option value="L2" {% if asset.assetLevel == 'L2' %}selected{% endif %}>高敏感</option>
+                                <option value="L3" {% if asset.assetLevel == 'L3' %}selected{% endif %}>敏感</option>
+                                <option value="L4" {% if asset.assetLevel == 'L4' %}selected{% endif %}>低敏感</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- 状态 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">状态</td>
+                        <td>
+                            <select name="status" class="form-control" required style="width: 100%;">
+                                <option value="pending" {% if asset.status == 'pending' %}selected{% endif %}>未开始</option>
+                                <option value="started" {% if asset.status == 'started' %}selected{% endif %}>开始</option>
+                                <option value="completed" {% if asset.status == 'completed' %}selected{% endif %}>完成</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <!-- 访问路径 -->
+                    <tr class="text-c">
+                        <td style="width: 150px; text-align: center;">访问路径</td>
+                        <td>
+                            <input type="text" name="assetPath" class="form-control" value="{{ asset.assetPath }}" style="width: 100%;">
+                        </td>
+                    </tr>
+                    <!-- 提交按钮 -->
+                    <tr class="text-c">
+                        <td colspan="2" style="text-align: center;">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</article>
+
+
+    </div>
+    </section>
+</body>
+<style>
+    .form-control {
+        display: block; /* 将输入框设置为块级元素，独占一行 */
+        width: 100%; /* 使输入框宽度占满父容器 */
+        padding: 8px; /* 增加内边距 */
+        border: 1px solid #ccc; /* 添加边框 */
+        border-radius: 4px; /* 添加圆角 */
+    }
+
+    .form-control:focus {
+        border-color: #66afe9; /* 设置焦点状态下的边框颜色 */
+        outline: none; /* 移除默认的焦点轮廓 */
+        box-shadow: 0 0 5px rgba(102, 175, 233, 0.6); /* 添加阴影效果 */
+    }
+
+    textarea.form-control {
+        height: 100px; /* 设置文本区域的高度 */
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse; /* 合并表格边框 */
+    }
+
+    .table td {
+        padding: 10px; /* 设置单元格内边距 */
+        border: 1px solid #ccc; /* 设置单元格边框 */
+    }
+
+    .table tr.text-c td {
+        text-align: center; /* 设置单元格内容居中 */
+    }
+</style>
+<script>
+ $(document).ready(function() {
+    $('#asset-form').submit(function(event) {
+        event.preventDefault();  // 阻止表单默认提交行为
+
+        var data = {
+            assetName: $('#id_assetName').val(),
+            assetOwner: $('#id_assetOwner').val(),
+            description: $('#id_description').val(),
+            assetFormat: $('#id_assetFormat').val(),
+            assetLevel: $('#id_assetLevel').val(),
+            status: $('#id_status').val(),
+            assetPath: $('#id_assetPath').val(),
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        };
+
+        $.ajax({
+            url: '/data_asset_edit/' + asset_id + '/',
+            type: 'POST',
+            data: data,
+            success: function(response) {
+                if (response.status === "success") {
+                    $("#message").removeClass("alert-danger").addClass("alert-success")
+                        .text("数据资产更新成功！").show().delay(3000).fadeOut();
+                    location.href = "/data_asset_list/";  // 跳转到列表页
+                } else {
+                    $("#message").removeClass("alert-success").addClass("alert-danger")
+                        .text("更新失败：" + response.message).show().delay(3000).fadeOut();
+                }
+            },
+            error: function(response) {
+                $("#message").removeClass("alert-success").addClass("alert-danger")
+                    .text("请求失败，请检查网络或后端服务！").show().delay(3000).fadeOut();
+            }
+        });
+    });
+});
+</script>
+
+</html>

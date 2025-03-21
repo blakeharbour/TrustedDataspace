@@ -3,15 +3,16 @@ import json
 import subprocess
 
 import corsheaders
+from django.db import transaction
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 import torch
-from .models import LoginUser
+from .models import LoginUser, AssetRecord
 from django.views.decorators.csrf import csrf_exempt
 
 from torch.utils.tensorboard import SummaryWriter
@@ -945,5 +946,176 @@ async def train_model_boardnew(request):
     print('tensor train finsh')
 
     return JsonResponse({'status': 'success'})
+from django.core.paginator import Paginator
+def data_asset_list(request):
+    data_assets = DataAsset.objects.all().order_by('assetID')  # 获取所有数据资产并按ID排序
+    paginator = Paginator(data_assets, 10)  # 每页显示10条数据
+    page_number = request.GET.get('page')  # 获取当前页码
+    page_obj = paginator.get_page(page_number)  # 获取当前页的数据
+    return render(request, 'data_asset_list.html', {'page_obj': page_obj})
+from django.contrib import messages
 
 
+
+
+
+
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import DataAsset
+import requests
+import json
+import logging
+
+logger = logging.getLogger(__name__)
+
+def add_data_asset(request):
+    if request.method == 'POST':
+        try:
+            # 创建数据资产
+            asset = DataAsset.objects.create(
+                assetName=request.POST['assetName'],
+                assetOwner=request.POST['assetOwner'],
+                description=request.POST['description'],
+                assetFormat=request.POST['assetFormat'],
+                assetLevel=request.POST['assetLevel'],
+                status=request.POST['status'],
+                assetPath=request.POST['assetPath'],
+            )
+
+            # 上传到区块链
+            blockchain_url = "http://202.112.151.253:8080/datasharing/asset/add"
+            payload = {
+                "assetID": str(asset.assetID),
+                "assetName": asset.assetName,
+                "assetOwner": asset.assetOwner,
+                "assetField": asset.description,
+                "assetFormat": asset.assetFormat,
+                "assetLevel": asset.assetLevel,
+                "assetPath": asset.assetPath,
+                "assetRole": "test"  # 根据需求调整
+            }
+            headers = {'Content-Type': 'application/json'}
+
+            response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+            if response.status_code == 200:
+                # 区块链上传成功
+                messages.success(request, '数据资产已成功添加并上传到区块链！')
+                return redirect('data_asset_list')  # 修正：使用 URL 名称
+            else:
+                # 区块链上传失败，删除已创建的数据资产
+                asset.delete()
+                logger.error(f"区块链上传失败，状态码: {response.status_code}, 响应内容: {response.text}")
+                messages.error(request, f'区块链上传失败，状态码: {response.status_code}, 响应内容: {response.text}')
+                return render(request, 'data_asset_add.html')
+        except Exception as e:
+            # 区块链请求异常，删除已创建的数据资产
+            if 'asset' in locals():
+                asset.delete()
+            logger.error(f"区块链请求失败: {str(e)}")
+            messages.error(request, f'区块链请求失败: {str(e)}')
+            return render(request, 'data_asset_add.html')
+
+    return render(request, 'data_asset_add.html')
+
+def edit_data_asset(request, asset_id):
+    asset = get_object_or_404(DataAsset, assetID=asset_id)
+    if request.method == 'POST':
+        # 更新数据资产字段
+        asset.assetName = request.POST.get('assetName')
+        asset.assetOwner = request.POST.get('assetOwner')
+        asset.description = request.POST.get('description')
+        asset.assetFormat = request.POST.get('assetFormat')
+        asset.assetLevel = request.POST.get('assetLevel')
+        asset.status = request.POST.get('status')
+        asset.assetPath = request.POST.get('assetPath')
+        asset.save()
+        # 构建上传到区块链的数据
+        asset_data = {
+            "assetID": asset.assetID,
+            "assetName": asset.assetName,
+            "assetOwner": asset.assetOwner,
+            "description": asset.description,
+            "assetFormat": asset.assetFormat,
+            "assetLevel": asset.assetLevel,
+            "status": asset.status,
+            "assetPath": asset.assetPath if asset.status == 'started' else "未开始",
+        }
+        # 上传到区块链
+        # 更新区块链中的数据
+
+        return redirect('/data_asset_list/')
+    return render(request, 'data_asset_edit.html', {'asset': asset})
+
+
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_protect
+
+
+@require_http_methods(["POST"])
+@csrf_protect
+def batch_delete_data_asset(request):
+    try:
+        # 验证CSRF token
+        if not request.META.get('HTTP_X_CSRFTOKEN', '') == request.COOKIES.get('csrftoken', ''):
+            return JsonResponse({'status': 'error', 'message': 'CSRF验证失败'}, status=403)
+
+        selected_ids = list(map(int, request.POST.getlist('selected_assets')))
+        DataAsset.objects.filter(assetID__in=selected_ids).delete()
+        return JsonResponse({'status': 'success'})
+    except ValueError:
+        return JsonResponse({'status': 'error', 'message': '无效的ID格式'}, status=400)
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+# @transaction.atomic
+# def renumber_assets():
+#     assets = DataAsset.objects.all().order_by('id')
+#     for index, asset in enumerate(assets, start=1):
+#         if asset.assetID != index:  # 仅当 ID 不同时更新
+#             asset.assetID = index
+#             asset.save()
+def fetch_and_save_asset_data(request):
+
+    # 接口地址
+    url = "http://202.112.151.253:8080/datasharing/addRaw"
+    # headers = {
+    #     "Authorization": "your_auth_token",  # 替换为实际的授权令牌
+    #     "Content-Type": "application/json"
+    # }
+    headers = {'Content-Type': 'application/json'}
+
+    # 发送请求到接口
+    response = requests.put(url, headers=headers)
+    logger.info("Sending PUT request to URL: %s", url)
+    logger.info("Response status code: %s", response.status_code)
+    logger.info("Response data: %s", response.json())
+    if response.status_code == 200:
+        response_data = response.json()
+
+        # 假设接口返回的数据是一个列表
+        for item in response_data:
+            # 解析每条数据
+            tx_time = datetime.strptime(item.get("txTime"), "%Y-%m-%d %H:%M:%S")  # 解析时间
+            asset_record = AssetRecord(
+                assetName=item.get("assetName"),
+                assetOwner=item.get("assetOwner"),
+                assetField=item.get("assetField"),
+                assetFormat=item.get("assetFormat"),
+                assetLevel=item.get("assetLevel"),
+                assetPath=item.get("assetPath"),
+                txTime=tx_time,
+                txID=item.get("txID"),
+                txHash=item.get("txHash"),
+                status=item.get("status")
+            )
+            asset_record.save()  # 保存到数据库
+
+        return JsonResponse({"status": "success", "message": "数据已成功获取并保存"})
+    else:
+        return JsonResponse({"status": "error", "message": "无法从接口获取数据"}, status=400)
+
+def asset_record_list(request):
+    # 从数据库中获取所有资产记录
+    records = AssetRecord.objects.all()
+    # 渲染模板并传递数据
+    return render(request, 'data_asset_record.html', {'records': records})
