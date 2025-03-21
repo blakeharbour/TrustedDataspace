@@ -146,6 +146,7 @@ urlpatterns = [
     path('open_file_manager1/', open_views.open_file_manager1),
     path('application_result_shappng/<int:i>', open_views.application_result_shappng),
 
+
     # 参与者管理页面
     path('multguest-list/', viewsmult.multguest_list),
     path('multguest-add/', viewsmult.multguest_add),
@@ -182,6 +183,14 @@ urlpatterns = [
     path('multmodel-list/', viewsmult.multmodel_list),
     path('multupload/', viewsmult.upload_multmodelapply),
     path('multmodeltest/', viewsmult.multmodel_test),  # 测试
+    # 数据管理
+    path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确
+    path('data_asset_add/', views.add_data_asset, name='data_asset_add'),
+    path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),
+    path('batch-delete-data-asset/', views.batch_delete_data_asset, name='batch_delete_data_asset'),
+
+    path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
+    path('records/', views.asset_record_list, name='asset_record_list'),
 
     # 外部调用
     path('mult_check_apply_re/', api_multviews.mult_check_apply_re),
