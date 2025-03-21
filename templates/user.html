@@ -47,36 +47,31 @@
 <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 <script type="text/javascript">
     $(function() {
-        // var getData = sessionStorage.getItem("loginData");
-        // var username = $.parseJSON(getData)[0].username;
-        // var userid = $.parseJSON(getData)[0].userid;
-        // sessionStorage.removeItem("loginData");
-
-        $.ajax({
-            type: "post",
-            url:"http://127.0.0.1:8000/searchuser/",//接口地址
-            dataType:'json',
-            success: function (data) {
-                console.log(data);
-                if(data.status == "0"){
-                    var result=data.data;
-                    var str='';
-                    if (result instanceof Array && result.length > 0) {
-                        for (var i = 0; i < result.length; i++) {
-                            str += '<tr class="text-c">' +
-                                '<td>'+result[i].userid+'</td>' +
-                                '<td>'+result[i].username+'</td>' +
-                                '<td>'+result[i].phone+'</td>' +
-                                '<td><a title="编辑" href="javascript:;" onclick="user_edit(this,\'' + result[i].userid + '\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a><a title="删除" href="javascript:;" onclick="user_dele(this,\'' + result[i].userid + '\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>'+
-                                '</tr>'
+            $.ajax({
+                type: "post",
+                url: "http://127.0.0.1:8000/searchuser/",//接口地址
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == "0") {
+                        var result = data.data;
+                        var str = '';
+                        if (result instanceof Array && result.length > 0) {
+                            for (var i = 0; i < result.length; i++) {
+                                str += '<tr class="text-c">' +
+                                    '<td>' + result[i].userid + '</td>' +
+                                    '<td>' + result[i].username + '</td>' +
+                                    '<td>' + result[i].phone + '</td>' +
+                                    '<td><a title="编辑" href="javascript:;" onclick="user_edit(this,\'' + result[i].userid + '\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a><a title="删除" href="javascript:;" onclick="user_dele(this,\'' + result[i].userid + '\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>' +
+                                    '</tr>'
+                            }
                         }
+                        $('#info').append(str)
+                    } else {
+                        alert("出现错误！");
                     }
-                    $('#info').append(str)
-                }else{
-                    alert("出现错误！");
                 }
-            }
-        });
+            });
     });
 
     function member_add() {

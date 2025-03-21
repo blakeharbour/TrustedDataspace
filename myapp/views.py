@@ -34,7 +34,9 @@ def registeruser(request):
 @login_required(login_url='/login/')
 # 用户管理
 def user_list(request):
-    return render(request, 'user-list.html')
+    return render(request, 'user-list.html',{
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
 @login_required(login_url='/login/')
 def login_add(request):
@@ -232,7 +234,14 @@ def searchguest(request):
     return JsonResponse({'status': 0, 'data': guestlist, 'msg': 'success'})
 
 def searchlogin(request):
-    loginlist = selecttable("login_user", "id,account,com,comid", '',
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    com = projs["com"]
+    print(com)
+    fiterstr = f"com = '{com}'"
+    loginlist = selecttable("login_user", "id,account,com,comid", fiterstr,
                             '', '', '')
     print('查找成功')
     print(loginlist)
@@ -268,7 +277,12 @@ def editguest(guestlist):
     return result
 
 def searchinterface(request):
-    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", '',
+    # proobj = request.body
+    # projs = json.loads(proobj)
+    # print(projs)
+    # projectName = projs["projectName"]
+    # fiterstr = "projectName = " + projectName
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed,projectName", '',
                             '', '', '')
     print('查找成功')
     print(interfacelist)
@@ -283,9 +297,10 @@ def createinterface(request):
     webtype = projs[0]["webtype"]
     datatype = projs[0]["datatype"]
     comallowed = projs[0]["comallowed"]
+    projectName = projs[0]["projectName"]
     # 在userlist这个表里新建一条记录
-    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "'"
-    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed")
+    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
+    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
 
@@ -311,7 +326,7 @@ def searchoneinterface(request):
     id = projs["id"]
     print(id)
     fiterstr="id = "+id
-    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed", fiterstr, '', '', '')
+    interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed,projectName", fiterstr, '', '', '')
     print('查找成功')
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
