@@ -196,6 +196,12 @@
 					<input type="text" class="input-text" value="" placeholder="" id="comallowed" name="comallowed">
 				</div>
 			</div>
+            <div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>项目名称：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="projectName" name="projectName">
+				</div>
+			</div>
 			<div class="row clearfix">
 				<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
 					<input class="btn btn-primary radius" type="button" onclick="submit_order()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
@@ -225,6 +231,7 @@
             var webtype=$("#webtype").val();
             var datatype=$("#datatype").val();
             var comallowed=$("#comallowed").val();
+            var projectName=$("#projectName").val();
 			if(webname==""){
 				alert("接口名称不能为空");
 				$("#webname").focus();
@@ -238,6 +245,7 @@
                 webtype:webtype,
                 datatype:datatype,
                 comallowed:comallowed,
+                projectName:projectName,
             };
 			webinfo.push(webdic);
 			console.log(webinfo);
@@ -250,7 +258,7 @@
 				success:function (res) {
 					console.log("res",res)
 					if(res.status=="0"){
-						alert("新增成功");
+						alert("新增成功,已通过区块链存证");
 						location.href="http://127.0.0.1:8000/wb-interface/"
 					}else{
 						alert("出现错误")

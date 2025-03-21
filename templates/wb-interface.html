@@ -178,7 +178,7 @@
 						<div class="clearfix">
                             <span class="f-l">
 {#                                 {% if current_user.id == 18 %}#}
-                                <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
+                                <a href="javascript:;" id="interfaceAdd" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
                                     <i class="Hui-iconfont">&#xe600;</i> 新增数据接口
                                 </a>
 {#                                {% endif %}#}
@@ -201,6 +201,7 @@
                                         <th width="100">接口类型</th>
                                         <th width="100">相应格式</th>
                                         <th width="100">访问授权范围</th>
+                                        <th width="100">项目名称</th>
                                         <th width="100">操作</th>
 									</tr>
 								</thead>
@@ -244,6 +245,26 @@
             console.log(selectedInterface.url);
         });
 
+        // 页面加载时检查 sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+          // 从 sessionStorage 读取值
+          const targetId = sessionStorage.getItem('target_id');
+          console.log(targetId)
+          // 根据值是否存在控制按钮显示
+          const btn = document.getElementById('interfaceAdd');
+          //数据所有方
+          if (parseInt(targetId) === 1) {
+            btn.style.display = 'inline-block';  // 显示按钮
+          }
+          //数据需求方
+          else {
+            {#btn.style.display = 'none';  // 隐藏按钮#}
+          }
+
+          // 如果只需使用一次，可清除 sessionStorage
+          sessionStorage.removeItem('target_id');
+        });
+
 		$(function(){
             // 或通过 JavaScript 变量获取
             console.log("当前用户ID:", currentUser.id);
@@ -271,6 +292,7 @@
                                 '<td>'+Result[j][4]+'</td>'+
                                 '<td>'+Result[j][5]+'</td>'+
                                 '<td>'+Result[j][6]+'</td>'+
+                                '<td>'+Result[j][7]+'</td>'+
                                 '<td><a title="编辑" onclick="interface_edit(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6df;</i>编辑</a><a title="删除" onclick="interface_dele(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
                             '</tr>'
 						}
@@ -290,6 +312,7 @@
             const apiUrl = selectedRadio.dataset.url;
             console.log(apiUrl)
             window.location.href = apiUrl;  // 直接跳转触发下载
+            alert("调用成功，已通过区块链存证");
         }
 
 		function interface_add(obj,userid) {

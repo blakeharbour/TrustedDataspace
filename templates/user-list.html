@@ -215,12 +215,23 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
-
+        // 全局变量存储用户信息
+        var currentUser = {
+            id: "{{ current_user.id }}",
+            com: "{{ current_user.com }}",
+        };
 		$(function(){
+            var com = currentUser.com
+             var cominfo = {
+                    com: com
+                };
+            var comdata = JSON.stringify(cominfo)
+            console.log(comdata)
 			$.ajax({
 				type:"post",
 				url:"http://127.0.0.1:8000/searchlogin/",
 				dataType:'json',
+                data: comdata,
 				success:function (res) {
 					console.log("res",res);
 					str=''

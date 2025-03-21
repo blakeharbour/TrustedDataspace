@@ -184,6 +184,12 @@
 					<input type="text" class="input-text" value="" placeholder="" id="comallowed" name="comallowed">
 				</div>
 			</div>
+             <div class="row clearfix">
+				<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>项目名称：</label>
+				<div class="form-controls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" value="" placeholder="" id="projectName" name="projectName">
+				</div>
+			</div>
 			<div class="row clearfix">
 				<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
 					<input class="btn btn-primary radius" type="button" onclick="submit_order()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
@@ -231,6 +237,7 @@
                         $("#webtype").val(result[0][4]);
                         $("#datatype").val(result[0][5]);
                         $("#comallowed").val(result[0][6]);
+                        $("#projectName").val(result[0][7]);
                     },
                 })
             });
@@ -242,6 +249,7 @@
             var webtype=$("#webtype").val();
             var datatype=$("#datatype").val();
             var comallowed=$("#comallowed").val();
+            var projectName=$("#projectName").val();
 			if(webname==""){
 				alert("用户名不能为空");
 				$("#webname").focus();
@@ -255,6 +263,7 @@
                 webtype:webtype,
                 datatype:datatype,
                 comallowed:comallowed,
+                projectName:projectName,
             };
 			webinfo.push(webdic);
 			console.log(webinfo);
