@@ -29,7 +29,7 @@ SECRET_KEY = '=@187k!t%72h!*757jpcg9eg1eaf8ldp0qu=6+^09gud0=qies'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost', '192.168.1.121','127.0.0.1','192.168.1.138']
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','192.168.1.121','192.168.1.132','127.0.0.1','192.168.1.138','202.112.151.253']
 
 
 # Application definition
@@ -54,11 +54,17 @@ CHANNEL_LAYERS = {
     },
 }
 
+AUTH_USER_MODEL = 'myapp.LoginUser'
+
+# 使用数据库存储会话（默认）
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 86400  # 1天后过期
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # 浏览器关闭后也过期
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -97,10 +103,10 @@ pymysql.install_as_MySQLdb()
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rail',
-        'USER':'rail',
-        'PASSWORD':'Rail123!',
-        'HOST':'0.0.0.0',
+        'NAME': 'bjdtd',
+        'USER':'bjdtd',
+        'PASSWORD':'bjdtd',
+        'HOST':'202.112.151.253',
         'PORT':'3306'
     }
 }
