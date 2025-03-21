@@ -177,9 +177,13 @@
 					<div class="panel-body"发布>
 						<div class="clearfix">
                             <span class="f-l">
+{#                                 {% if current_user.id == 18 %}#}
                                 <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
                                     <i class="Hui-iconfont">&#xe600;</i> 新增数据接口
                                 </a>
+{#                                {% endif %}#}
+
+
                                 <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
                                     调用数据接口
                                 </a>
@@ -228,6 +232,12 @@
             filename: null
         };
 
+        // 全局变量存储用户信息
+        var currentUser = {
+            id: "{{ current_user.id }}",
+            account: "{{ current_user.account }}",
+        };
+
         // 监听单选按钮变化（事件委托）
         $(document).on('change', 'input[name="selected_interface"]', function() {
             selectedInterface.url = $(this).data('url');
@@ -235,6 +245,9 @@
         });
 
 		$(function(){
+            // 或通过 JavaScript 变量获取
+            console.log("当前用户ID:", currentUser.id);
+            console.log("当前用户名:", currentUser.account);
 			$.ajax({
 				type:"post",
 				url:"http://127.0.0.1:8000/searchinterface/",
