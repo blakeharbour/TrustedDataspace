@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from myapp import views, api_multviews, mult_open_views, modelapp_portview
 from myapp import  viewsmult
 from myapp import  api_views
 from myapp import  open_views
-
+from django.contrib import admin
+from django.urls import path, include
 from myapp import views, modelappview
+from myapp.views import show_latest_ip
 
 # from django.conf.urls.static import static
 # from django.conf import settings
@@ -185,4 +187,11 @@ urlpatterns = [
 
     path('multmodel_application_result_analysis/', viewsmult.multmodel_application_result_analysis),
     path('multmodel_application_status_modify/', viewsmult.editMultModelApplicationStatus),
+
+    #-------
+    path('data-model/', views.data_model),
+    #path('show_latest_ip/', show_latest_ip, name='show_latest_ip'),
+    #path('admin/', admin.site.urls),
+    path('myapp/', include('myapp.urls')),  # 包含 myapp 的 URL 配置
+
 ]
