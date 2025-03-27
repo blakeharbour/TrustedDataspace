@@ -88,6 +88,18 @@ def wb_interface(request):
     })
 
 @login_required(login_url='/login/')
+#数据沙箱界面
+def sjsx_interface(request):
+    return render(request, 'sjsx-interface.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+def sjtzadd(request):
+    return render(request, 'sjtzadd.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+@login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
 
@@ -305,6 +317,25 @@ def searchinterface(request):
     print('查找成功')
     print(interfacelist)
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+def searchinsbsxterface(request):
+    # 如果后续需要根据请求体过滤，可以恢复下面的注释代码
+    # proobj = request.body
+    # projs = json.loads(proobj)
+    # projectName = projs["projectName"]
+    # fiterstr = "projectName = '" + projectName + "'"
+
+    # 使用 webinsjsxterface 表，并提取所有字段
+    interfacelist = selecttable(
+        "webinsjsxterface",
+        "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+        '', '', '', ''
+    )
+    print('查找成功')
+    print(interfacelist)
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
 
 def createinterface(request):
     proobj = request.body
