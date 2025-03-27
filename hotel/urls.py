@@ -117,6 +117,16 @@ urlpatterns = [
     path('train_model_board/', views.train_model_board),
     path('train_model_boardnew/', views.train_model_boardnew),
 
+    #项目管理
+    path('project_notarization/', views.project_notarization),
+    path('pengding_project/', views.pengding_project),
+    path('project_notarization_add/', views.project_notarization_add),
+    # path('datasharing_add/', views.datasharing_add),
+    # 返回所有存证信息
+    path('search_notarization/', views.search_notarization),
+    # 返回按项目名称查询存证信息
+    path('search_notarization_by_projectname/', views.search_notarization_by_projectname),
+
     #模型应用
     path('model-application/', modelappview.model_application),
     path('model-application_search/', modelappview.searchModelApplication),

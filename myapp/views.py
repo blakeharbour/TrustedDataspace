@@ -145,6 +145,13 @@ def train_model(request):
     return render(request, 'model_training.html')
 
 
+
+def project_notarization(request):
+    return render(request, 'project_notarization.html')
+def pengding_project(request):
+    return render(request, 'pending_project.html')
+def project_notarization_add(request):
+    return render(request, 'project_notarization_add.html')
 def jxclogin(request):
     if request.method == 'POST':
         try:
@@ -1150,3 +1157,42 @@ def asset_record_list(request):
     records = AssetRecord.objects.all()
     # 渲染模板并传递数据
     return render(request, 'data_asset_record.html', {'records': records})
+
+#查找存证信息
+def search_notarization(request):
+    notarizationlist = selecttable("project_notarization", "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
+    print('查找成功')
+    print(notarizationlist)
+    return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
+
+#根据项目名称查找存证信息
+def search_notarization_by_projectname(request):
+    # 获取查询参数
+    project_name = request.GET.get('project_name', '')
+
+    # 按项目名称模糊查询
+    if project_name:
+        # 构造查询条件
+        condition = f"projectName LIKE '%{project_name}%'"
+        notarizationlist = selecttable(
+            "project_notarization",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            condition,  # 添加查询条件
+            '',
+            '',
+            ''
+        )
+    else:
+        # 如果没有输入项目名称，返回所有数据
+        notarizationlist = selecttable(
+            "project_notarization",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            '',
+            '',
+            '',
+            ''
+        )
+
+    print('查找成功')
+    print(notarizationlist)
+    return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
