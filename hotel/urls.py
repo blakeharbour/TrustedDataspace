@@ -73,6 +73,8 @@ urlpatterns = [
     path('searchinsbsxterface/', views.searchinsbsxterface),
 
     path('sjtzadd/', views.sjtzadd),
+    path('create-sandbox/', views.createsandbox),
+
 
 
     #以下为旧平台方法

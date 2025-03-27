@@ -353,6 +353,35 @@ def createinterface(request):
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
 
+def createsandbox(request):
+    projs = json.loads(request.body)  # 是 dict，不是 list
+
+    confirmman = projs["confirmman"]
+    confirmtime = projs["confirmtime"]
+    saveurl = projs["saveurl"]
+    zichanname = projs["zichanname"]
+    staytime = projs["staytime"]
+    jiamipro = projs["jiamipro"]
+    autoscope = projs["autoscope"]
+    delchannle = projs["delchannle"]
+
+    pro_js = (
+        "'" + confirmman + "','" + confirmtime + "','" + saveurl + "','" +
+        zichanname + "','" + staytime + "','" + jiamipro + "','" +
+        autoscope + "','" + delchannle + "'"
+    )
+
+    inserttable(
+        pro_js,
+        tablename="webinsjsxterface",
+        con1="confirmman,confirmtime,saveurl,zichanname,staytime,jiamipro,autoscope,delchannle"
+    )
+
+    print("xinzengchenggong")
+    return JsonResponse({'status': 0})
+
+
+
 def deleteinterface(request):
     proobj = request.body
     print(proobj)
