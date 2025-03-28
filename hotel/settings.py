@@ -29,7 +29,7 @@ SECRET_KEY = '=@187k!t%72h!*757jpcg9eg1eaf8ldp0qu=6+^09gud0=qies'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost','192.168.1.121','192.168.1.132','127.0.0.1','192.168.1.138','202.112.151.253']
+ALLOWED_HOSTS = ['0.0.0.0','127.0.0.1', 'localhost', '192.168.1.121','127.0.0.1','192.168.1.138','192.168.1.132','192.168.1.131','192.168.1.136']
 
 
 # Application definition
@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -106,7 +107,7 @@ DATABASES = {
         'NAME': 'bjdtd',
         'USER':'bjdtd',
         'PASSWORD':'bjdtd',
-        'HOST':'202.112.151.253',
+        'HOST':'0.0.0.0',
         'PORT':'3306'
     }
 }
