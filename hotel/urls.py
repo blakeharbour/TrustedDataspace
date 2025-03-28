@@ -67,6 +67,16 @@ urlpatterns = [
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
 
+    # 数据沙箱界面
+    path('sjsx-interface/', views.sjsx_interface),
+
+    path('searchinsbsxterface/', views.searchinsbsxterface),
+
+    path('sjtzadd/', views.sjtzadd),
+    path('create-sandbox/', views.createsandbox),
+
+
+
     #以下为旧平台方法
     path('index/', views.index),
     path('mutiindex/', views.mutiindex),

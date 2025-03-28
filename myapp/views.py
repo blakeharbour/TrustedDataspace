@@ -88,6 +88,18 @@ def wb_interface(request):
     })
 
 @login_required(login_url='/login/')
+#数据沙箱界面
+def sjsx_interface(request):
+    return render(request, 'sjsx-interface.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+def sjtzadd(request):
+    return render(request, 'sjtzadd.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+@login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
 
@@ -320,6 +332,25 @@ def searchinterface(request):
     print(interfacelist)
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
+
+def searchinsbsxterface(request):
+    # 如果后续需要根据请求体过滤，可以恢复下面的注释代码
+    # proobj = request.body
+    # projs = json.loads(proobj)
+    # projectName = projs["projectName"]
+    # fiterstr = "projectName = '" + projectName + "'"
+
+    # 使用 webinsjsxterface 表，并提取所有字段
+    interfacelist = selecttable(
+        "webinsjsxterface",
+        "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+        '', '', '', ''
+    )
+    print('查找成功')
+    print(interfacelist)
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
 def createinterface(request):
     proobj = request.body
     projs = json.loads(proobj)
@@ -335,6 +366,35 @@ def createinterface(request):
     inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
     print('xinzengchenggong')
     return JsonResponse({'status': 0})
+
+def createsandbox(request):
+    projs = json.loads(request.body)  # 是 dict，不是 list
+
+    confirmman = projs["confirmman"]
+    confirmtime = projs["confirmtime"]
+    saveurl = projs["saveurl"]
+    zichanname = projs["zichanname"]
+    staytime = projs["staytime"]
+    jiamipro = projs["jiamipro"]
+    autoscope = projs["autoscope"]
+    delchannle = projs["delchannle"]
+
+    pro_js = (
+        "'" + confirmman + "','" + confirmtime + "','" + saveurl + "','" +
+        zichanname + "','" + staytime + "','" + jiamipro + "','" +
+        autoscope + "','" + delchannle + "'"
+    )
+
+    inserttable(
+        pro_js,
+        tablename="webinsjsxterface",
+        con1="confirmman,confirmtime,saveurl,zichanname,staytime,jiamipro,autoscope,delchannle"
+    )
+
+    print("xinzengchenggong")
+    return JsonResponse({'status': 0})
+
+
 
 def deleteinterface(request):
     proobj = request.body
