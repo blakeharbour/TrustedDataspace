@@ -74,6 +74,17 @@ urlpatterns = [
 
     path('sjtzadd/', views.sjtzadd),
     path('create-sandbox/', views.createsandbox),
+path('sjsxinterface-edit/', views.sjsxinterface_edit),
+    path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
+path('sysxdeleteinterface/', views.sysxdeleteinterface),
+path('upload_to_sandbox/', views.upload_to_sandbox),
+
+# 沙箱接口
+# path('api/listSandboxes', views.list_sandboxes),
+# path('api/createSandbox', views.create_sandbox),
+# path('api/destroySandbox/<str:sandbox_name>', views.destroy_sandbox),
+
+
 
 
 

@@ -14,7 +14,14 @@ from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import LoginUser, AssetRecord
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+import os
+import time
+import uuid
+import shutil
 from torch.utils.tensorboard import SummaryWriter
 import os
 import json
@@ -99,6 +106,14 @@ def sjtzadd(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+def upload_to_sandbox(request):
+    return render(request, 'upload_to_sandbox.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+
+
+
 @login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
@@ -106,6 +121,11 @@ def interface_add(request):
 @login_required(login_url='/login/')
 def interface_edit(request):
     return render(request, 'interface-edit.html')
+
+
+@login_required(login_url='/login/')
+def sjsxinterface_edit(request):
+    return render(request, 'sjsxinterface-edit.html')
 
 @login_required(login_url='/login/')
 # 发起训练
@@ -396,6 +416,20 @@ def deleteinterface(request):
     print('删除成功')
     return JsonResponse({'status': 0})
 
+def sysxdeleteinterface(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(id)
+    fiterstr="id = "+id
+    deletetable("webinterface", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
 def searchoneinterface(request):
     proobj = request.body
 
@@ -407,6 +441,33 @@ def searchoneinterface(request):
     interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed,projectName", fiterstr, '', '', '')
     print('查找成功')
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+def sysxsearchoneinterface(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    confirmman = projs["confirmman"]
+    print(confirmman)
+    fiterstr = "confirmman = " + confirmman
+
+
+
+
+
+    interfacelist = selecttable(
+            "webinsjsxterface",
+            "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+            fiterstr,
+            '', '', ''
+        )
+
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+
 
 #测试参与者
 import pytz
