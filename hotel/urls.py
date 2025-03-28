@@ -67,6 +67,16 @@ urlpatterns = [
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
 
+    # 数据沙箱界面
+    path('sjsx-interface/', views.sjsx_interface),
+
+    path('searchinsbsxterface/', views.searchinsbsxterface),
+
+    path('sjtzadd/', views.sjtzadd),
+    path('create-sandbox/', views.createsandbox),
+
+
+
     #以下为旧平台方法
     path('index/', views.index),
     path('mutiindex/', views.mutiindex),
@@ -116,6 +126,16 @@ urlpatterns = [
     path('train-model/', views.train_model),
     path('train_model_board/', views.train_model_board),
     path('train_model_boardnew/', views.train_model_boardnew),
+
+    #项目管理
+    path('project_notarization/', views.project_notarization),
+    path('pengding_project/', views.pengding_project),
+    path('project_notarization_add/', views.project_notarization_add),
+    # path('datasharing_add/', views.datasharing_add),
+    # 返回所有存证信息
+    path('search_notarization/', views.search_notarization),
+    # 返回按项目名称查询存证信息
+    path('search_notarization_by_projectname/', views.search_notarization_by_projectname),
 
     #模型应用
     path('model-application/', modelappview.model_application),
@@ -220,4 +240,16 @@ urlpatterns = [
 
     path('multmodel_application_result_analysis/', viewsmult.multmodel_application_result_analysis),
     path('multmodel_application_status_modify/', viewsmult.editMultModelApplicationStatus),
+
+    # 项目管理
+    # 项目管理
+    path('established_project/', views.established_project),
+    path('pengding_project/', views.pending_project),
+    path('project_add/', views.project_add),
+    path('create_project/', views.create_project),
+
+    path('submit_project/', views.submit_project),
+    path('get_project_data/', views.get_project_data),
+    path('delete_project/', views.delete_project),
+    path('update_project/', views.update_project),
 ]
