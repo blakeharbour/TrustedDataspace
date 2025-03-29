@@ -246,68 +246,69 @@
 </section>
 <script>
   window.onload = function () {
-    const path = sessionStorage.getItem("currentSandboxPath");
-    document.getElementById("sandboxPath").value = path || "<未选择路径>";
-  };
-
-  function encryptData() {
-    const fileInput = document.getElementById("fileInput");
-    const docSpecInput = document.getElementById("docSpecInput");
-
-    if (fileInput.files.length === 0) {
-      alert("请先选择文件");
-      return;
-    }
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-
-    if (file.name.endsWith(".csv")) {
-      reader.onload = function (e) {
-        const text = e.target.result;
-        const lines = text.trim().split(/\r?\n/);
-        const rowCount = lines.length;
-        const colCount = lines[0]?.split(',').length || 0;
-
-        // 对 CSV 内容（除表头）加密并存入 Blob 形式
-        const content = lines.slice(1).join("\n");
-        const encryptedContent = btoa(content); // 简单 base64 加密，可换为更安全的方式
-
-        const blob = new Blob([encryptedContent], { type: 'text/plain' });
-        const encryptedFile = new File([blob], 'encrypted_data.txt', { type: 'text/plain' });
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(encryptedFile);
-        document.getElementById("fileInput").files = dataTransfer.files;
-
-        alert(`📄 CSV文档规格：共${rowCount}行，${colCount}列，数据内容已加密`);
-        docSpecInput.value = `CSV格式，约${rowCount}行${colCount}列`;
-      };
-      reader.readAsText(file);
-    } else {
-      alert("目前仅支持自动识别 CSV 文件行列数");
-      docSpecInput.value = "非CSV格式，字段信息请手动填写";
-    }
+  const path = sessionStorage.getItem("currentSandboxPath");
+  const pathInput = document.getElementById("sandboxPath");
+  if (pathInput) {
+    pathInput.value = path || "<未选择路径>";
   }
+};
 
-function submitUpload() {
+// ✅ 点击“对数据进行加密处理”按钮时，只展示 CSV 行列数，不修改文件
+function encryptData() {
   const fileInput = document.getElementById("fileInput");
+  const docSpecInput = document.getElementById("docSpecInput");
 
-  if (!fileInput.files.length) {
-    alert("请先选择要上传的文件");
+  if (!fileInput || fileInput.files.length === 0) {
+    alert("请先选择文件");
     return;
   }
 
-  // ✅ 从上传的文件名拼出 container_name（模拟后端的 Python 逻辑）
-  const fileName = fileInput.files[0].name; // e.g., "test.csv" 或 IP 文件名
-  const safeName = fileName.replace(/\./g, "_"); // 全部 "." 替换为 "_"
-  const containerName = "sandbox_" + safeName;
+  const file = fileInput.files[0];
+  const reader = new FileReader();
 
-  console.log("📦 拼出的容器名：", containerName);
+  if (file.name.endsWith(".csv")) {
+    reader.onload = function (e) {
+      const text = e.target.result;
+      const lines = text.trim().split(/\r?\n/);
+      const rowCount = lines.length;
+      const colCount = lines[0]?.split(',').length || 0;
+
+      // ✅ 仅展示行列数，不做 base64、不替换上传文件
+      alert(`📄 CSV文档规格：共 ${rowCount} 行，${colCount} 列`);
+      if (docSpecInput) {
+        docSpecInput.value = `CSV格式，约${rowCount}行${colCount}列`;
+      }
+    };
+    reader.readAsText(file);
+  } else {
+    alert("目前仅支持自动识别 CSV 文件行列数");
+    if (docSpecInput) {
+      docSpecInput.value = "非CSV格式，字段信息请手动填写";
+    }
+  }
+}
+
+function submitUpload() {
+  const fileInput = document.getElementById("fileInput");
+  const sandboxPath = document.getElementById("sandboxPath").value;
+
+  if (!fileInput.files.length || !sandboxPath || sandboxPath.includes("未选择")) {
+    alert("❗ 缺少文件或沙箱路径");
+    return;
+  }
+
+  // 使用输入框中提供的路径作为容器名
+  const containerName = "sandbox_" + sandboxPath
+  .replace(/^https?:\/\//, "")  // 去掉 http://
+  .replace(/\./g, "_")          // 替换点
+  .replace(/\//g, "_");         // 替换斜杠 ✅ 必须加这一句！
+
+
+  console.log("📦 使用路径构造容器名：", containerName);
 
   const formData = new FormData();
   formData.append("file", fileInput.files[0]);
-  formData.append("sandbox_path", containerName); // ✅ 使用拼出来的容器名
+  formData.append("sandbox_path", containerName);
 
   fetch("http://127.0.0.1:5001/api/uploadToSandbox", {
     method: "POST",
@@ -319,8 +320,7 @@ function submitUpload() {
         alert("✅ 上传成功！");
         fileInput.value = "";
         document.getElementById("exportArea").style.display = "block";
-        currentContainerName = containerName;
-
+        currentContainerName = containerName; // 绑定导出按钮用
       } else {
         alert("❌ 上传失败：" + data.message);
       }
@@ -330,6 +330,7 @@ function submitUpload() {
       alert("❌ 上传请求失败");
     });
 }
+
 function exportSandbox() {
   if (!currentContainerName) {
     alert("❗ 未知沙箱名，无法导出");
@@ -341,23 +342,30 @@ function exportSandbox() {
     headers: {
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({ container_name: currentContainerName })
+    body: JSON.stringify({
+      container_name: currentContainerName // 例如：sandbox_202_151_254_253_shaxiang215
+    })
   })
     .then(res => {
       if (!res.ok) {
         throw new Error("后端返回失败");
       }
-      return res.blob(); // 获取 tar.gz 文件流
+      return res.blob(); // 获取 tar.gz
     })
     .then(blob => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${currentContainerName}_export.tar.gz`;
+
+      // 提取简洁后缀名用于导出包名，例如 encrypted_shaxiang215.csv
+      const shortName = currentContainerName.split("_").slice(-1)[0];
+      a.download = `encrypted_${shortName}_sandbox.tar.gz`;
+
       document.body.appendChild(a);
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
+
       alert("✅ 沙箱封存导出成功！");
     })
     .catch(err => {
@@ -365,6 +373,8 @@ function exportSandbox() {
       alert("❌ 沙箱导出失败：" + err.message);
     });
 }
+
+
 
 </script>
 </body>

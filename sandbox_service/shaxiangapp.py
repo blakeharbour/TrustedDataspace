@@ -96,51 +96,72 @@ def create_sandbox():
 BASE_SANDBOX_DIR = os.path.abspath("sandbox_data")  # 沙箱基目录（建议用绝对路径）
 os.makedirs(BASE_SANDBOX_DIR, exist_ok=True)
 @app.route('/api/uploadToSandbox', methods=['POST'])
+
 def upload_to_sandbox():
+    print("📥 收到上传请求")
+
     try:
         if 'file' not in request.files:
+            print("❌ 未收到文件 file 字段")
             return jsonify(success=False, message="缺少文件")
 
         file = request.files['file']
-        container_name = request.form.get('sandbox_path')  # 其实是沙箱容器名
+        container_name = request.form.get('sandbox_path')  # 沙箱容器名
+        print("📦 沙箱容器名（前端传入）:", container_name)
 
         if not file or not container_name:
+            print("❌ 缺少文件或容器名")
             return jsonify(success=False, message="缺少文件或沙箱容器名")
 
-        # 安全生成保存路径
-        safe_container = secure_filename(container_name)  # 防止路径注入
+        # ✅ 安全生成沙箱路径（容器名中将 / 替换为 _）
+        safe_container = secure_filename(container_name.replace("/", "_"))
         sandbox_path = os.path.abspath(os.path.join(BASE_SANDBOX_DIR, safe_container))
         os.makedirs(sandbox_path, exist_ok=True)
+        print("📁 沙箱保存路径:", sandbox_path)
 
-        # 保存原始文件
-        filename = secure_filename(file.filename)
-        save_path = os.path.join(sandbox_path, filename)
-        file.save(save_path)
+        # ✅ 检查是否为 CSV 文件
+        if not file.filename.endswith('.csv'):
+            print("⚠️ 只支持 CSV 文件")
+            return jsonify(success=False, message="仅支持 CSV 文件加密")
 
-        # 加密 CSV 文件
-        if filename.endswith('.csv'):
-            df = pd.read_csv(save_path)
+        print("🔐 检测到 CSV，开始加密...")
+        df = pd.read_csv(file)
 
-            # AES 加密逻辑
-            key = b"1234567890abcdef"  # 16字节密钥
-            cipher = AES.new(key, AES.MODE_ECB)
+        # ✅ AES 加密逻辑
+        key = b"1234567890abcdef"  # 固定 16 字节密钥
+        cipher = AES.new(key, AES.MODE_ECB)
 
-            encrypted_rows = []
-            for _, row in df.iterrows():
-                row_str = ','.join(map(str, row.values))
-                encrypted = cipher.encrypt(pad(row_str.encode('utf-8'), AES.block_size))
-                encrypted_b64 = base64.b64encode(encrypted).decode('utf-8')
-                encrypted_rows.append(encrypted_b64)
+        encrypted_rows = []
+        for _, row in df.iterrows():
+            row_str = ','.join(map(str, row.values))
+            encrypted = cipher.encrypt(pad(row_str.encode('utf-8'), AES.block_size))
+            encrypted_b64 = base64.b64encode(encrypted).decode('utf-8')
+            encrypted_rows.append(encrypted_b64)
 
-            encrypted_path = os.path.join(sandbox_path, "encrypted_" + filename)
-            with open(encrypted_path, "w", encoding="utf-8") as f:
-                for line in encrypted_rows:
-                    f.write(line + "\n")
+        # ✅ 构造目标加密文件名
+        suffix = container_name.split("/")[-1]
+        encrypted_filename = f"encrypted_{secure_filename(suffix)}.csv"
+        encrypted_path = os.path.join(sandbox_path, encrypted_filename)
 
-        return jsonify(success=True, message="✅ 上传并加密成功", path=sandbox_path)
+        # ✅ 若旧加密文件存在，先删除
+        if os.path.exists(encrypted_path):
+            print("🧹 检测到旧加密文件，正在删除：", encrypted_path)
+            os.remove(encrypted_path)
+
+        # ✅ 保存加密数据
+        with open(encrypted_path, "w", encoding="utf-8") as f:
+            for line in encrypted_rows:
+                f.write(line + "\n")
+
+        print(f"✅ 加密文件已保存：{encrypted_path}")
+        return jsonify(success=True, message="✅ 上传并加密成功", path=encrypted_path)
 
     except Exception as e:
+        print("❌ 后端异常：", str(e))
         return jsonify(success=False, message="❌ 后端异常：" + str(e))
+
+
+
 
 # ✅ 查看所有沙箱
 @app.route('/api/listSandboxes', methods=['GET'])
@@ -169,19 +190,22 @@ def export_sandbox():
     try:
         data = request.get_json()
         container_name = data.get('container_name')
+        print("📦 收到导出请求，container_name:", container_name)
 
         if not container_name:
             return jsonify(success=False, message="缺少容器名"), 400
 
         sandbox_path = os.path.abspath(os.path.join("sandbox_data", container_name))
+        print("📁 尝试查找目录：", sandbox_path)
+
         if not os.path.exists(sandbox_path):
+            print("❌ 目录不存在")
             return jsonify(success=False, message="沙箱目录不存在"), 404
 
-        # ✅ 打包目录为 tar.gz（内存打包，不写磁盘）
+        # 正常导出
         tar_stream = io.BytesIO()
         with tarfile.open(fileobj=tar_stream, mode="w:gz") as tar:
             tar.add(sandbox_path, arcname=container_name)
-
         tar_stream.seek(0)
 
         return send_file(
@@ -190,7 +214,9 @@ def export_sandbox():
             download_name=f"{container_name}_export.tar.gz",
             mimetype="application/gzip"
         )
+
     except Exception as e:
+        print("❌ 异常：", str(e))
         return jsonify(success=False, message=f"导出异常：{str(e)}"), 500
 
 # ✅ 定时销毁线程（每分钟自动检测）
