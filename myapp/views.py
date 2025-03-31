@@ -13,6 +13,7 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 from .models import LoginUser, AssetRecord
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from torch.utils.tensorboard import SummaryWriter
@@ -163,7 +164,9 @@ def pending_project(request):
     return render(request, 'pending_project.html')
 @login_required(login_url='/login/')
 def project_add(request):
-    return render(request, 'project_add.html')
+    return render(request, 'project_add.html',{
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
 def project_notarization(request):
     return render(request, 'project_notarization.html')
