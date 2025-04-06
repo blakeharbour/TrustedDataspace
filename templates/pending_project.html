@@ -1,87 +1,119 @@
-<!--_meta 作为公共模版分离出去-->
 <!DOCTYPE HTML>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="renderer" content="webkit|ie-comp|ie-stand">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-	<meta http-equiv="Cache-Control" content="no-siteapp" />
-	<link rel="Bookmark" href="favicon.ico" >
-	<link rel="Shortcut Icon" href="favicon.ico" />
-	<!--[if lt IE 9]>
-	<script type="text/javascript" src="lib/html5.js"></script>
-	<script type="text/javascript" src="lib/respond.min.js"></script>
-	<![endif]-->
-	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
-	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
-	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
-	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
-	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
-{#	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">#}
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="favicon.ico">
+    <link rel="Shortcut Icon" href="favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+    {#	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">#}
     <!--[if IE 6]>
-{#	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>#}
-	<script>DD_belatedPNG.fix('*');</script><![endif]-->
-	<!--/meta 作为公共模版分离出去-->
-	<title>铁路隐私计算平台</title>
-	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
-	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+    {#	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>#}
+    <script>DD_belatedPNG.fix('*');</script><![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+    <title>铁路隐私计算平台</title>
+    <meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+    <meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
     <style>
-  .loader {
-    border: 6px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 6px solid #3498db;
-    width: 40px;
-    height: 40px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-  }
+       .loader {
+            border: 6px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 6px solid #3498db;
+            width: 40px;
+            height: 40px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
 
-  /* Safari */
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-  }
+       .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
 
-  .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 40%;
-    right: 0;
-  }
+       .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            right: 0;
+        }
 
-</style>
+        /* 搜索功能样式 */
+       .search-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+       .search-container label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+       .search-container input[type="text"],
+       .search-container select {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+       .search-container button {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+       .search-container button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
-	<!--_menu 作为公共模版分离出去-->
-	<aside class="Hui-admin-aside-wrapper">
-		<div class="Hui-admin-logo-wrapper">
-			<a class="logo navbar-logo" href="/aboutHui.shtml">
-				<i class="va-m iconpic global-logo"></i>
-				<span class="va-m">铁路隐私计算平台</span>
-			</a>
-		</div>
+    <!--_menu 作为公共模版分离出去-->
+    <aside class="Hui-admin-aside-wrapper">
+        <div class="Hui-admin-logo-wrapper">
+            <a class="logo navbar-logo" href="/aboutHui.shtml">
+                <i class="va-m iconpic global-logo"></i>
+                <span class="va-m">铁路隐私计算平台</span>
+            </a>
+        </div>
         <!-- Modal -->
         <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -103,250 +135,184 @@
                 </div>
             </div>
         </div>
-		<div class="Hui-admin-menu-dropdown bk_2">
-{#		      <dl id="menu-home" class="Hui-menu">#}
-{#        <dd class="Hui-menu-item-frist">#}
-{#          <ul>#}
-{#            <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 单方</a></li>#}
-{#          </ul>#}
-{#        </dd>#}
-{#      </dl>#}
+        <div class="Hui-admin-menu-dropdown bk_2">
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
-					</ul>
-				</dd>
-			</dl>
-			<dl id="menu-model" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-model" class="Hui-menu">
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
-					</ul>
+                    <ul>
+                        <li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+                    </ul>
+                    <ul>
+                        <li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                    </ul>
+                    <ul>
+                        <li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                    </ul>
                 </dd>
-			</dl>
+            </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
-					</ul>
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/model-application/" title="数据申请情况查看">数据申请情况查看</a></li>#}
-{#					</ul>#}
-					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
-					</ul>
-				</dd>
-			</dl>
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+                    </ul>
+                </dd>
+            </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
-					</ul>
-					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
-					</ul>
-				</dd>
-			</dl>
-		</div>
-{#         <div class="Hui-admin-menu-dropdown bk_2">#}
-{#      <dl id="menu-home" class="Hui-menu">#}
-{#        <dd class="Hui-menu-item-frist">#}
-{#          <ul>#}
-{#            <li><a href="_blank.html" title="多方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 多方</a></li>#}
-{#          </ul>#}
-{#        </dd>#}
-{#      </dl>#}
-{#             <dl id="menu-guest" class="Hui-menu">#}
-{#                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 外部合作者管理<i#}
-{#                        class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#                <dd class="Hui-menu-item" style="display:block">#}
-{#                    <ul>#}
-{#                        <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>#}
-{#                    </ul>#}
-{#                </dd>#}
-{#            </dl>#}
-{#            <dl id="menu-model" class="Hui-menu">#}
-{#            <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i#}
-{#                    class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#            <dd class="Hui-menu-item" style="display:block">#}
-{#                <ul>#}
-{#                    <li ><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>#}
-{#                </ul>#}
-{#                <ul>#}
-{#                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>#}
-{#                </ul>#}
-{#                <ul>#}
-{#                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>#}
-{#                </ul>#}
-{#            </dd>#}
-{#            </dl>#}
-{#            <dl id="menu-guest" class="Hui-menu">#}
-{#				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#				<dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/multapplication_model-main/" title="模型使用">模型使用</a></li>#}
-{#					</ul>#}
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>#}
-{#					</ul>#}
-{#				</dd>#}
-{#			</dl>#}
-{#		</div>#}
-	</aside>
-	<div class="Hui-admin-aside-mask"></div>
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li class="current"><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+    </aside>
+    <div class="Hui-admin-aside-mask"></div>
 
-	<div class="Hui-admin-dislpayArrow">
-		<a href="javascript:void(0);" onClick="displaynavbar(this)">
-			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
-			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
-		</a>
-	</div>
-	<section class="Hui-admin-article-wrapper">
-		<!--_header 作为公共模版分离出去-->
-		<header class="Hui-navbar">
-			<div class="navbar">
-				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-{#              <li><a href="">顶部菜单</a></li>#}
-              <li class="dropDown dropDown_hover">
-{#                <a class="dropDown_A" href="javascript:;">顶部菜单</a>#}
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
-					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
-						<ul class="clearfix">
-{#							<li>超级管理员</li>#}
-							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
-								<ul class="dropDown-menu menu radius box-shadow">
-									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-									<li><a href="#">切换账户</a></li>
-									<li><a href="#">退出</a></li>
-								</ul>
-							</li>
-{#							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>#}
-{#							<li id="Hui-skin" class="dropDown dropDown_hover right">#}
-{#								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>#}
-{#								<ul class="dropDown-menu menu radius box-shadow">#}
-{#									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>#}
-{#									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>#}
-{#									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>#}
-{#									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>#}
-{#									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>#}
-{#									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>#}
-{#								</ul>#}
-{#							</li>#}
-						</ul>
-					</nav>
-				</div>
-			</div>
-		</header>
-		<!--/_header 作为公共模版分离出去-->
-		<div class="Hui-admin-article">
-			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
-				首页
-				<span class="c-gray en">/</span>
-				项目信息管理
-				<span class="c-gray en">/</span>
-				项目申请
-			</nav>
+    <div class="Hui-admin-dislpayArrow">
+        <a href="javascript:void(0);" onClick="displaynavbar(this)">
+            <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+            <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+        </a>
+    </div>
+    <section class="Hui-admin-article-wrapper">
+        <!--_header 作为公共模版分离出去-->
+        <header class="Hui-navbar">
+            <div class="navbar">
+                <div class="container-fluid clearfix">
+                    <nav id="Hui-topNav" class="nav navbar-nav">
+                        <ul class="clearfix">
+                            <li class="dropDown dropDown_hover">
+                                <ul class="dropDown-menu menu radius box-shadow">
+                                    <li class="">
+                                        <a href="#">二级导航</a>
+                                    </li>
+                                    <li class="">
+                                        <a href="#">二级导航</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                    <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+                        <ul class="clearfix">
+                            <li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+                                <ul class="dropDown-menu menu radius box-shadow">
+                                    <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+                                    <li><a href="#">切换账户</a></li>
+                                    <li><a href="#">退出</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+        <!--/_header 作为公共模版分离出去-->
+        <div class="Hui-admin-article">
+            <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+                首页
+                <span class="c-gray en">/</span>
+                项目信息管理
+                <span class="c-gray en">/</span>
+                项目申请
+            </nav>
 
-			<article class="Hui-admin-content clearfix">
-				<div class="panel mt-20">
-					<div class="panel-body"发布>
-						<div class="clearfix">
-							<span class="f-l">
-                                <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 上传数据</a>
-{#								<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>#}
-							</span>
-{#							<span class="f-r">共有数据：<strong>3</strong> 条</span>#}
-						</div>
-						<div class="clearfix mt-20">
-							<table class="table table-border table-bordered table-hover table-bg table-sort">
-								<thead>
-									<tr class="text-c">
-{#                                        <th width="100">Learning-Rate(学习率)</th>#}
-{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
-{#                                        <th width="100">Batch-Size(批次大小)</th>#}
-										<th width="80">项目名称</th>
-										<th width="100">数据需求方</th>
-										<th width="90">数据所有方</th>
-										<th width="100">提供数据资产</th>
+            <article class="Hui-admin-content clearfix">
+                <div class="panel mt-20">
+                    <div class="panel-body"发布>
+                        <div class="clearfix">
+                        <!-- 添加搜索功能 -->
+            <div class="search-container">
+                <label for="projectName">项目名称:</label>
+                <input type="text" id="projectName" placeholder="输入项目名称">
+                <label for="dataDemand">数据需求方:</label>
+                <select id="dataDemand">
+                    <option value="">全部</option>
+                    <option value="铁路">铁路</option>
+                    <option value="海关">海关</option>
+                    <option value="港口">港口</option>
+                    <option value="哈方">哈方</option>
+                </select>
+                <label for="status">申请状态:</label>
+                <select id="status">
+                    <option value="">全部</option>
+                    <option value="0">发起</option>
+                    <option value="1">待审核</option>
+                    <option value="2">审核通过</option>
+                    <option value="3">审核不通过</option>
+                    <option value="4">正在进行</option>
+                    <option value="5">已完成</option>
+                </select>
+                <button type="button" onclick="searchProjects()">搜索</button>
+            </div>
+                        <div class="clearfix mt-20">
+                            <table class="table table-border table-bordered table-hover table-bg table-sort">
+                                <thead>
+                                    <tr class="text-c">
+                                        <th width="80">项目名称</th>
+                                        <th width="100">数据需求方</th>
+                                        <th width="90">数据所有方</th>
                                         <th width="100">所需数据资产</th>
                                         <th width="120">安全等级</th>
-{#                                        <th width="100">Learning-Rate(学习率)</th>#}
-{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
-{#                                        <th width="100">Batch-Size(批次大小)</th>#}
-                                         <th width="100">共享方式</th>
-                                        <th width="120">审核状态</th>
-{#                                        <th width="100">精确度</th>#}
-{#                                        <th width="100">召回率</th>#}
-{#                                        <th width="80">错误率</th>#}
-{#										<th width="100">损失值</th>#}
-{#                                        <th width="100">模型位置</th>#}
-{#                                        <th width="100">模型结果</th>#}
-									</tr>
-								</thead>
-								<tbody id="info">
-								</tbody>
-							</table>
-						</div>
+                                        <th width="100">共享方式</th>
+                                        <th width="120">申请状态</th>
+                                        <th width="150">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="info">
+                                </tbody>
+                            </table>
+                        </div>
 
-                         <div id="myModal" class="modal">
-
-                          <!-- 模态框内容 -->
-                          <div class="modal-content">
-                            <p>模型预测中，请稍候...</p>
-                            <div class="loader"></div>
-                          </div>
-
+                        <div id="myModal" class="modal">
+                            <!-- 模态框内容 -->
+                            <div class="modal-content">
+                                <p>模型预测中，请稍候...</p>
+                                <div class="loader"></div>
+                            </div>
                         </div>
                         <div id="myModal1" class="modal">
-
-                          <!-- 模态框内容 -->
-                          <div class="modal-content">
-                            <p>结果处理中，请稍候...</p>
-                            <div class="loader"></div>
-                          </div>
+                            <!-- 模态框内容 -->
+                            <div class="modal-content">
+                                <p>结果处理中，请稍候...</p>
+                                <div class="loader"></div>
+                            </div>
                         </div>
-					</div>
-				</div>
-			</article>
-		</div>
-	</section>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
 
-	<!--_footer 作为公共模版分离出去-->
-	<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
-	<script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
-	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
-	<!--/_footer /作为公共模版分离出去-->
+    <!--_footer 作为公共模版分离出去-->
+    <script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+    <!--/_footer /作为公共模版分离出去-->
 
-	<!--请在下方写此页面业务相关的脚本-->
-	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
-	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
-	<script type="text/javascript">
-		// 显示模态框
+    <!--请在下方写此页面业务相关的脚本-->
+    <script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="/static/static/business/js/main.js"></script>
+    <script type="text/javascript">
+        // 显示模态框
         function showModal() {
             document.getElementById('myModal').style.display = "block";
         }
@@ -365,206 +331,303 @@
             document.getElementById('myModal1').style.display = "none";
         }
 
-        // 模拟 statusMethod 方法
-        function statusMethod(modelId) {
-            return '未审核';
-        }
-        $(function () {
-    // 注释掉AJAX请求
-    /*
+         // 搜索功能的JavaScript代码
+function searchProjects() {
+    var projectName = document.getElementById('projectName').value;
+    // 修正这一行，将 dataOwner 改为 dataDemand
+    var dataDemand = document.getElementById('dataDemand').value;
+    var status = document.getElementById('status').value;
+
     $.ajax({
         type: "post",
-        url: "http://127.0.0.1:8000/searchmodel/",
+        url: "http://127.0.0.1:8000/search_pending_project_data/", // 假设的搜索接口，需根据实际情况修改
         dataType: 'json',
+        data: {
+            projectName: projectName,
+            dataDemand: dataDemand,
+            status: status
+        },
         success: function (res) {
             console.log("res", res);
-            let str = '';
-            if (res.status === "0" && res.data && res.data.length > 0) {
-                const Result = res.data;
-                console.log("Result", Result);
-                for (let j = 0; j < Result.length; j++) {
-                    const link = "http://127.0.0.1:8000/application_result_shappng/" + Result[j][0];
-                    const status = statusMethod(Result[j][0]);
-                    let statusHtml = `<button onclick="approve(this)" id="status_${Result[j][0]}">${status}</button>`;
-
-                    const sharingMethods = ['沙箱传输', 'IP追踪', '隐私计算'];
-                    const randomIndex = Math.floor(Math.random() * sharingMethods.length);
-                    const sharingMethod = sharingMethods[randomIndex];
-
-                    str += `<tr class="text-c">
-                        <td><a onclick="modeldel_list(this,'${Result[j][0]}')"><i class="Hui-iconfont"></i>${Result[j][0]}</a></td>
-                        <td>铁路</td>
-                        <td>海关</td>
-                        <td>货物类型</td>
-                        <td>货物类型字段</td>
-                        <td>敏感</td>
-                        <td>${sharingMethod}</td>
-                        <td>${statusHtml}</td>
-                    </tr>`;
-                }
-                $("#info").html(str);
+            if (res.status === "0") {
+                var dataList = res.data;
+                var tableBody = $('#info');
+                tableBody.empty(); // 清空表格内容
+                dataList.forEach(function (item) {
+                    var statusText = "";
+                    switch (item.currentStatus) {
+                        case '0':
+                            statusText = "发起";
+                            break;
+                        case '1':
+                            statusText = "待审核";
+                            break;
+                        case '2':
+                            statusText = "审核通过";
+                            break;
+                        case '3':
+                            statusText = "审核不通过";
+                            break;
+                        case '4':
+                            statusText = "正在进行";
+                            break;
+                        case '5':
+                            statusText = "已完成";
+                            break;
+                        default:
+                            statusText = "未知状态";
+                    }
+                    var row = $('<tr class="text-c"></tr>');
+                    console.log("获取的id:", item.ID);
+                    row.append('<td>' + item.projectName + '</td>');
+                    row.append('<td>' + item.dataDemand + '</td>');
+                    row.append('<td>' + item.dataOwner + '</td>');
+                    row.append('<td>' + item.dataAsset + '</td>');
+                    row.append('<td>' + item.dataSecurity + '</td>');
+                    row.append('<td>' + item.shareWay + '</td>');
+                    row.append('<td>' + statusText + '</td>');
+                    // 使用 data-* 属性传递数据，包括项目 id
+                    var auditActions = '<td>' +
+                        '<button title="通过" class="btn btn-success' + (item.currentStatus!== '1'? ' disabled' : '') + '" onclick="audit_project(this, \'' + item.ID + '\', \'2\')"><i class="Hui-iconfont">&#xe600;</i> 通过</button> ' +
+                        '<button title="不通过" class="btn btn-danger' + (item.currentStatus!== '1'? ' disabled' : '') + '" onclick="audit_project(this, \'' + item.ID + '\', \'3\')"><i class="Hui-iconfont">&#xe6e2;</i> 不通过</button>' +
+                        '</td>';
+                    row.append(auditActions);
+                    tableBody.append(row);
+                });
             } else {
-                console.log("No data found or status is not 0");
-                $("#info").html("<tr><td colspan='8'>No data available</td></tr>");
+                alert(res.message);
             }
         },
-        error: function (xhr, status, error) {
-            console.log("AJAX 请求出错:", status, error);
-            $("#info").html("<tr><td colspan='8'>Error loading data</td></tr>");
+        error: function (error) {
+            console.error("请求失败:", error.status, error.statusText, error.responseText);
+            alert("请求数据失败，请稍后重试");
         }
     });
-    */
-});
-        $(function () {
-    // 模拟从后端获取数据
-    const mockData = [
-        {
-            id: "project1",
-            name: "项目1",
-            requester: "铁路",
-            owner: "海关",
-            providedData: "货物类型",
-            requiredData: "货物类型字段",
-            securityLevel: "敏感",
-            sharingMethod: "沙箱传输",
-            status: "未审核"
-        },
-        {
-            id: "project2",
-            name: "项目2",
-            requester: "铁路",
-            owner: "海关",
-            providedData: "货物类型",
-            requiredData: "货物类型字段",
-            securityLevel: "敏感",
-            sharingMethod: "隐私计算",
-            status: "未审核"
-        }
-    ];
-
-    let str = '';
-    mockData.forEach(item => {
-        str += `<tr class="text-c">
-            <td><a onclick="modeldel_list(this,'${item.id}')"><i class="Hui-iconfont"></i>${item.name}</a></td>
-            <td>${item.requester}</td>
-            <td>${item.owner}</td>
-            <td>${item.providedData}</td>
-            <td>${item.requiredData}</td>
-            <td>${item.securityLevel}</td>
-            <td>${item.sharingMethod}</td>
-            <td><button onclick="approve(this)" id="status_${item.id}">${item.status}</button></td>
-        </tr>`;
-    });
-
-    $("#info").html(str); // 将生成的行插入到表格中
-});
-
-
-        function approve(btn) {
-            btn.disabled = true;
-            btn.textContent = '已审核';
-            btn.style.backgroundColor = 'green';
-            btn.style.color = 'white';
-        }
-
-        function model_test(obj, modelid) {
-            console.log("id是", modelid);
-            $("myButton").show();
-            showModal();
-            var modeldelinfo=[];
-            var modeldic={
-                modelid:modelid,
-            };
-            console.log("modeldic",modeldic);
-            modeldelinfo.push(modeldic);
-            console.log("modeldelinfo",modeldelinfo);
-            var modeldata = JSON.stringify(modeldelinfo);
-
+}
+//0:发起，1:待审核，2:审核通过，3:审核不通过，4.正在进行，5.已完成
+  $(function () {
             $.ajax({
-                type: 'POST',
-                url: "http://127.0.0.1:8000/modeltest/",
-                dataType:'json',
-                data: modeldata,
+                type: "post",
+                url: "http://127.0.0.1:8000/get_pending_project_data/",
+                dataType: 'json',
                 success: function (res) {
-                    console.log(res);
-                    if (res.status == "0") {
-                    hideModal();
-                    setTimeout(function (){
-                        showModal1();
-                        alert("样本对齐");
-                        setTimeout(function (){
-                            alert("模型训练结束");
-                            alert("模型保存成功！");
-                            hideModal1();
-                            location.href = "http://127.0.0.1:8000/model-list/"
-                        },3000)
-                    },1000)
-
-                    } else if (res.status == "1") {
-                        alert("测试未成功！");
+                    console.log("res", res);
+                    if (res.status === "0") {
+                        var dataList = res.data;
+                        var tableBody = $('#info');
+                        dataList.forEach(function (item) {
+                            var statusText = "";
+                            switch (item.currentStatus) {
+                                case '0':
+                                    statusText = "发起";
+                                    break;
+                                case '1':
+                                    statusText = "待审核";
+                                    break;
+                                case '2':
+                                    statusText = "审核通过";
+                                    break;
+                                case '3':
+                                    statusText = "审核不通过";
+                                    break;
+                                case '4':
+                                    statusText = "正在进行";
+                                    break;
+                                case '5':
+                                    statusText = "已完成";
+                                    break;
+                                default:
+                                    statusText = "未知状态";
+                            }
+                            var row = $('<tr class="text-c"></tr>');
+                            console.log("获取的id:", item.ID);
+                            row.append('<td>' + item.projectName + '</td>');
+                            row.append('<td>' + item.dataDemand + '</td>');
+                            row.append('<td>' + item.dataOwner + '</td>');
+                            row.append('<td>' + item.dataAsset + '</td>');
+                            row.append('<td>' + item.dataSecurity + '</td>');
+                            row.append('<td>' + item.shareWay + '</td>');
+                            row.append('<td>' + statusText + '</td>');
+                            // 使用 data-* 属性传递数据，包括项目 id
+                            var auditActions = '<td>' +
+                                '<button title="通过" class="btn btn-success' + (item.currentStatus!== '1'? ' disabled' : '') + '" onclick="audit_project(this, \'' + item.ID + '\', \'2\')"><i class="Hui-iconfont">&#xe600;</i> 通过</button> ' +
+                                '<button title="不通过" class="btn btn-danger' + (item.currentStatus!== '1'? ' disabled' : '') + '" onclick="audit_project(this, \'' + item.ID + '\', \'3\')"><i class="Hui-iconfont">&#xe6e2;</i> 不通过</button>' +
+                                '</td>';
+                            row.append(auditActions);
+                            tableBody.append(row);
+                        });
                     } else {
-                        alert("连接失败！");
+                        alert(res.message);
                     }
                 },
+                error: function (error) {
+                    console.error("请求失败:", error.status, error.statusText, error.responseText);
+                    alert("请求数据失败，请稍后重试");
+                }
             });
-            {#location.href = "http://127.0.0.1:8000/model-list/";#}
+        });
+
+        //修改项目
+        function project_edit(elem) {
+            var item = JSON.parse(elem.getAttribute('data-item'));
+            var id = elem.getAttribute('data-id');
+            console.log("id:", id);
+            try {
+                // 构建携带数据的 URL，包括项目 id
+                var queryString = `id=${encodeURIComponent(id)}&project_name=${encodeURIComponent(item.projectName)}&data_demander=${encodeURIComponent(item.dataDemand)}&data_owner=${encodeURIComponent(item.dataOwner)}&data_asset=${encodeURIComponent(item.dataAsset)}&security_level=${encodeURIComponent(item.dataSecurity)}&trans_mode=${encodeURIComponent(item.shareWay)}`;
+                var targetUrl = "http://127.0.0.1:8000/project_add/?" + queryString;
+                console.log("跳转URL:", targetUrl);
+                location.href = targetUrl;
+            } catch (error) {
+                console.error("JSON解析错误:", error);
+                alert("解析数据时出现错误，请检查数据格式。");
+            }
         }
-        function open_file(obj) {
-            location.href = "http://127.0.0.1:8000/open_file_manager1/";
-            location.href = "http://127.0.0.1:8000/model-list/";
-		}
-
-        function model_view(obj,pngpath,link) {
-            window.location.href = link + '?pngpath=' + encodeURIComponent(pngpath);
+          // 审核操作函数
+        function audit_project(btn, id, status) {
+            // 获取当前行的两个按钮
+            var buttons = btn.parentNode.querySelectorAll('button');
+            // 禁用两个按钮
+            buttons.forEach(function(button) {
+                button.disabled = true;
+            });
+            layer.confirm('确认要进行此审核操作吗？', function (index) {
+                // 这里需要根据实际情况发送审核请求
+                $.ajax({
+                    type: 'POST',
+                    url: 'http://127.0.0.1:8000/audit_project/', // 替换为实际的审核接口
+                    data: { id: id, currentStatus: status },
+                    success: function (res) {
+                        if (res.status === '0') {
+                            layer.msg('审核成功', { icon: 1 });
+                            // 刷新页面或重新加载数据
+                            location.reload();
+                        } else {
+                            layer.msg('审核失败：' + res.message, { icon: 2 });
+                            // 若审核失败，恢复按钮可用状态
+                            buttons.forEach(function(button) {
+                                button.disabled = false;
+                            });
+                        }
+                    },
+                    error: function (error) {
+                        console.error("审核请求失败:", error.status, error.statusText, error.responseText);
+                        layer.msg('审核请求失败，请稍后重试', { icon: 2 });
+                        // 若请求出错，恢复按钮可用状态
+                        buttons.forEach(function(button) {
+                            button.disabled = false;
+                        });
+                    }
+                });
+                layer.close(index);
+            });
         }
 
-       function modeldel_list(obj,modelid) {
-			location.href = "http://127.0.0.1:8000/modeldel-list/"+modelid+"/";
-		}
 
-		function member_edit(obj,userid) {
-			var id=JSON.stringify(userid);
-			sessionStorage.setItem("userid",id);
-
-			location.href = "http://127.0.0.1:8000/member-edit/";
-		}
-
-		function project_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/project_add/";
-		}
-
-		function model_dele(obj,id) {
-			console.log("id:",id);
-			var userinfo={
-			    id:id
-            };
-			var userdata = JSON.stringify(userinfo)
-            console.log(userinfo)
-            console.log(userdata)
-			layer.confirm('确认要删除吗？', function (index) {
-				$.ajax({
-					type: 'post',
-					url: 'http://127.0.0.1:8000/deletemodel/',
-					dataType: 'json',
-					data: userdata,
-					success: function (data) {
-						$(obj).parents("tr").remove();
-						layer.msg('已删除!', {icon: 1, time: 1000});
-					},
-					error: function (data) {
-						console.log("1");
-					},
-				});
-			});
-		}
-
-        function trainModelresultshow() {
-
-            location.href = "http://192.168.1.121:6006/";
-
-
+        function project_add() {
+            location.href = "http://127.0.0.1:8000/project_add/";
         }
-	</script>
-	<!--/请在上方写此页面业务相关的脚本-->
+        // 删除操作函数
+        function project_delete(projectName, dataDemand, dataOwner, dataAsset) {
+    layer.confirm('确认要删除吗？', function (index) {
+        // 这里需要根据实际情况发送删除请求
+        $.ajax({
+            type: 'POST',
+            url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
+            data: {
+                projectName: projectName,
+                dataDemand: dataDemand,
+                dataOwner: dataOwner,
+                dataAsset: dataAsset
+            },
+            success: function (res) {
+                if (res.status === '0') {
+                    layer.msg('删除成功', { icon: 1 });
+                    // 刷新页面或重新加载数据
+                    location.reload();
+                } else {
+                    layer.msg('删除失败：' + res.message, { icon: 2 });
+                }
+            },
+            error: function (error) {
+                console.error("删除请求失败:", error.status, error.statusText, error.responseText);
+                layer.msg('删除请求失败，请稍后重试', { icon: 2 });
+            }
+        });
+        layer.close(index);
+    });
+}
+
+
+
+
+// 提交操作函数
+function project_submit(id) {
+    layer.confirm('确认要提交吗？', function (index) {
+        // 这里需要根据实际情况发送提交请求
+        $.ajax({
+            type: 'POST',
+            url: 'http://127.0.0.1:8000/submit_project/', // 替换为实际的提交接口
+            data: { id: id },
+            success: function (res) {
+                if (res.status === '0') {
+                    layer.msg('提交成功', { icon: 1 });
+                    // 刷新页面或重新加载数据
+                    location.reload();
+                } else {
+                    layer.msg('提交失败：' + res.message, { icon: 2 });
+                }
+            },
+            error: function (error) {
+                console.error("提交请求失败:", error.status, error.statusText, error.responseText);
+                layer.msg('提交请求失败，请稍后重试', { icon: 2 });
+            }
+        });
+        layer.close(index);
+    });
+}
+// 新增共享方式跳转函数
+function sharingTypeResultShow(shareType) {
+    // 定义合法的共享方式列表
+    const validShareTypes = {
+        '接口交换': 'http://127.0.0.1:8000/wb-interface/',
+        '安全沙箱': 'http://192.168.1.133/url2',// 替换为实际的URL2
+        '隐私计算': 'http://127.0.0.1:8000/index/',// 替换为实际的URL2
+        '密文计算': 'http://127.0.0.1:8000/mutiindex/'
+    };
+    // 参数校验
+    if (!shareType) {
+        layer.msg('共享方式参数不能为空', {icon: 2});
+        return;
+    }
+    // 严格类型校验
+    if (typeof shareType !== 'string') {
+        console.error('非法参数类型:', typeof shareType);
+        layer.msg('参数类型错误', {icon: 2});
+        return;
+    }
+    // 有效性校验
+    if (!(shareType in validShareTypes)) {
+        console.warn('非法的共享方式:', shareType);
+        layer.msg(`不支持的共享方式：${shareType}`, {icon: 2});
+        return;
+    }
+    // 获取对应的URL
+    const url = validShareTypes[shareType];
+    try {
+        // 打开新窗口
+        const newWindow = window.open(url, '_blank');
+        // 处理弹窗拦截
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            layer.msg('请允许弹窗以继续操作', {icon: 2});
+        }
+    } catch (e) {
+        console.error('打开链接失败:', e);
+        layer.msg('链接打开失败，请联系管理员', {icon: 2});
+    }
+}
+
+    </script>
+    <!--/请在上方写此页面业务相关的脚本-->
 </body>
 </html>

@@ -247,9 +247,15 @@ urlpatterns = [
     path('pengding_project/', views.pending_project),
     path('project_add/', views.project_add),
     path('create_project/', views.create_project),
+    path('audit_project/', views.audit_project),
+    path('submit_project/', views.submit_project),
+
 
     path('submit_project/', views.submit_project),
     path('get_project_data/', views.get_project_data),
+    path('search_project_data/', views.search_project_data),
+    path('search_pending_project_data/', views.search_pending_project_data),
+    path('get_pending_project_data/', views.get_pending_project_data),
     path('delete_project/', views.delete_project),
     path('update_project/', views.update_project),
 ]
