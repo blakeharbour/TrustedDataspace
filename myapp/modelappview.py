@@ -117,50 +117,55 @@ def application_result_shappng(request,i):
     with open(shappng_dic,'rb') as f:
         return HttpResponse(f.read(),content_type="image/png")
 
+
+
+
+# 使用 Agg 后端，防止 GUI 操作
+plt.switch_backend('Agg')
+
+
 def application_result_analysis(request):
     # 加载CSV文件
-    df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
+    df = pd.read_csv('myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
 
     # 创建数据透视表
-    pivot_table = df.pivot_table(index=['FZHZM', 'imPUSB_predictions', 'DZHZM'],
-                                 aggfunc='size')
-
-    # 重命名索引以更易于理解
+    pivot_table = df.pivot_table(index=['FZHZM', 'imPUSB_predictions', 'DZHZM'], aggfunc='size')
     pivot_table.index.names = ['发站站名', '预测结果', '到站站名']
 
     # 将数据透视表转换为DataFrame并重置索引
     pivot_table_df = pivot_table.reset_index(name='计数')
 
-    # 筛选出imbalancednnPUSB_predictions为1的数据
+    # 筛选出 imbalancednnPUSB_predictions 为 1 的数据
     filtered_data = df[df["imPUSB_predictions"] == 1]
 
-    # 获取不同的FZHZM值
+    # 获取不同的 FZHZM 值
     unique_fzhzm_values = filtered_data["FZHZM"].unique()
 
-    # 设置合适的字体，例如SimHei，用于显示汉字
-    font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
+    # 设置合适的字体（macOS字体路径可能不同）
+    font_path = '/System/Library/Fonts/Supplemental/Songti.ttc'  # macOS系统字体路径
+    font = FontProperties(fname=font_path, size=12)
+
     pie_charts = []
 
-    # 遍历不同的FZHZM值，为每个值生成饼图
     for fzhzm_value in unique_fzhzm_values:
-        # 筛选出特定FZHZM值的数据
+        # 筛选出特定 FZHZM 值的数据
         fzhzm_data = filtered_data[filtered_data["FZHZM"] == fzhzm_value]
 
-        # 计算DZHZM的计数
+        # 计算 DZHZM 的计数
         dzhzm_counts = fzhzm_data["DZHZM"].value_counts()
 
-        # 绘制饼图
+        # 绘制饼图（在 Agg 后端中执行）
         fig, ax = plt.subplots(figsize=(12, 6))
         wedges, texts, autotexts = ax.pie(dzhzm_counts, autopct='%1.1f%%', startangle=90)
         ax.axis('equal')  # 使饼图为圆形
 
-        # 手动添加标签
+        # 添加标签
         labels = [f"{label}\n({count})" for label, count in zip(dzhzm_counts.index, dzhzm_counts)]
-        ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1),prop = font)
+        ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), prop=font)
 
-        plt.title(f"发站为{fzhzm_value}时各到站潜在箱源预测数量", fontproperties=font)
+        plt.title(f"发站为 {fzhzm_value} 时各到站潜在箱源预测数量", fontproperties=font)
 
-        # 将图像数据转换为base64编码
+        # 将图像保存为 base64
         buf = BytesIO()
         plt.savefig(buf, format="png")
         buf.seek(0)
@@ -168,77 +173,265 @@ def application_result_analysis(request):
         pie_charts.append(data_uri)
         plt.close()
 
+    # 调用绘图函数（使用 Agg 后端，防止 GUI 异常）
     zzt_TCOST = draw_sta_png('TCOST')
-    # print('zzt_TCOST',zzt_TCOST)
     zzt_TCOST_total = draw_sta_png_total('TCOST')
     zzt_TJFLC = draw_sta_png('TJFLC')
-    # print('zzt_TCOST',zzt_TCOST)
     zzt_TJFLC_total = draw_sta_png_total('TJFLC')
 
-    # 将数据透视表DataFrame传递给模板
-    return render(request, 'modelapphtmls/pivot_table.html',
-                  {'pivot_table_df': pivot_table_df, 'pie_charts': pie_charts,
-                   'zzt_TCOST': zzt_TCOST, 'zzt_TCOST_total': zzt_TCOST_total,
-                   'zzt_TJFLC': zzt_TJFLC, 'zzt_TJFLC_total': zzt_TJFLC_total})
+    # 将数据透视表 DataFrame 传递给模板
+    return render(request, 'modelapphtmls/pivot_table.html', {
+        'pivot_table_df': pivot_table_df,
+        'pie_charts': pie_charts,
+        'zzt_TCOST': zzt_TCOST,
+        'zzt_TCOST_total': zzt_TCOST_total,
+        'zzt_TJFLC': zzt_TJFLC,
+        'zzt_TJFLC_total': zzt_TJFLC_total
+    })
+# def application_result_analysis(request):
+#     # 加载CSV文件
+#     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
+#
+#     # 创建数据透视表
+#     pivot_table = df.pivot_table(index=['FZHZM', 'imPUSB_predictions', 'DZHZM'],
+#                                  aggfunc='size')
+#
+#     # 重命名索引以更易于理解
+#     pivot_table.index.names = ['发站站名', '预测结果', '到站站名']
+#
+#     # 将数据透视表转换为DataFrame并重置索引
+#     pivot_table_df = pivot_table.reset_index(name='计数')
+#
+#     # 筛选出imbalancednnPUSB_predictions为1的数据
+#     filtered_data = df[df["imPUSB_predictions"] == 1]
+#
+#     # 获取不同的FZHZM值
+#     unique_fzhzm_values = filtered_data["FZHZM"].unique()
+#
+#     # 设置合适的字体，例如SimHei，用于显示汉字
+#     font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
+#     pie_charts = []
+#
+#     # 遍历不同的FZHZM值，为每个值生成饼图
+#     for fzhzm_value in unique_fzhzm_values:
+#         # 筛选出特定FZHZM值的数据
+#         fzhzm_data = filtered_data[filtered_data["FZHZM"] == fzhzm_value]
+#
+#         # 计算DZHZM的计数
+#         dzhzm_counts = fzhzm_data["DZHZM"].value_counts()
+#
+#         # 绘制饼图
+#         fig, ax = plt.subplots(figsize=(12, 6))
+#         wedges, texts, autotexts = ax.pie(dzhzm_counts, autopct='%1.1f%%', startangle=90)
+#         ax.axis('equal')  # 使饼图为圆形
+#
+#         # 手动添加标签
+#         labels = [f"{label}\n({count})" for label, count in zip(dzhzm_counts.index, dzhzm_counts)]
+#         ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1),prop = font)
+#
+#         plt.title(f"发站为{fzhzm_value}时各到站潜在箱源预测数量", fontproperties=font)
+#
+#         # 将图像数据转换为base64编码
+#         buf = BytesIO()
+#         plt.savefig(buf, format="png")
+#         buf.seek(0)
+#         data_uri = base64.b64encode(buf.read()).decode('utf-8')
+#         pie_charts.append(data_uri)
+#         plt.close()
+#
+#     zzt_TCOST = draw_sta_png('TCOST')
+#     # print('zzt_TCOST',zzt_TCOST)
+#     zzt_TCOST_total = draw_sta_png_total('TCOST')
+#     zzt_TJFLC = draw_sta_png('TJFLC')
+#     # print('zzt_TCOST',zzt_TCOST)
+#     zzt_TJFLC_total = draw_sta_png_total('TJFLC')
+#
+#     # 将数据透视表DataFrame传递给模板
+#     return render(request, 'modelapphtmls/pivot_table.html',
+#                   {'pivot_table_df': pivot_table_df, 'pie_charts': pie_charts,
+#                    'zzt_TCOST': zzt_TCOST, 'zzt_TCOST_total': zzt_TCOST_total,
+#                    'zzt_TJFLC': zzt_TJFLC, 'zzt_TJFLC_total': zzt_TJFLC_total})
+
+
+
+import seaborn as sns
+
+import io
+
+
+
+def set_font():
+    try:
+        # 自动搜索可用字体
+        font = findfont(FontProperties(
+            family=['SimHei', 'Microsoft YaHei', 'Heiti SC', 'PingFang SC', 'Noto Sans CJK SC', 'Arial']))
+        rcParams['font.sans-serif'] = font
+        rcParams['axes.unicode_minus'] = False
+        print(f"✅ 当前使用字体: {font}")
+    except Exception as e:
+        print(f"❌ 字体设置失败: {e}")
+
 
 def draw_sta_png(label):
+    set_font()
+
     zzt = []
-    # 加载CSV文件
-    df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
-    # 设置合适的字体，例如SimHei，用于显示汉字
-    font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
+    try:
+        # 读取数据
+        df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
 
-    # 根据条件筛选记录
-    filtered_df = df[(df['imPUSB_predictions'] == 1)]
+        # 过滤数据，确保不为空
+        filtered_df = df[df['imPUSB_predictions'] == 1]
+        if filtered_df.empty:
+            print(f"⚠️ 无法绘制图像，数据为空: {label}")
+            return []
 
-    sns.histplot(filtered_df[label])
-    plt.ylabel("潜在箱源箱数", fontproperties=font)  # 修改纵轴标签
-    plt.xlabel(label, fontproperties=font)  # 修改纵轴标签
+        # 绘制直方图
+        plt.figure(figsize=(10, 6))
+        sns.histplot(filtered_df[label], kde=True)
+        plt.ylabel("潜在箱源箱数")
+        plt.xlabel(label)
 
-    # matplotlib.rcParams['font.family'] = 'SimHei'  # 例如，使用中文字体：SimHei
-    # 将图像数据转换为base64编码
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    data_uri = base64.b64encode(buf.read()).decode('utf-8')
-    zzt.append(data_uri)
-    plt.close()
+        # 将图像转换为 base64
+        buf = io.BytesIO()
+        plt.savefig(buf, format="png", bbox_inches='tight')
+        buf.seek(0)
+        data_uri = base64.b64encode(buf.read()).decode('utf-8')
+        zzt.append(data_uri)
+
+    except FileNotFoundError as e:
+        print(f"❌ 文件未找到: {e}")
+    except Exception as e:
+        print(f"❌ 绘图失败: {e}")
+    finally:
+        plt.close()
+
     return zzt
+# def draw_sta_png(label):
+#     zzt = []
+#     # 加载CSV文件
+#     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
+#     # 设置合适的字体，例如SimHei，用于显示汉字
+#     font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
+#
+#     # 根据条件筛选记录
+#     filtered_df = df[(df['imPUSB_predictions'] == 1)]
+#
+#     sns.histplot(filtered_df[label])
+#     plt.ylabel("潜在箱源箱数", fontproperties=font)  # 修改纵轴标签
+#     plt.xlabel(label, fontproperties=font)  # 修改纵轴标签
+#
+#     # matplotlib.rcParams['font.family'] = 'SimHei'  # 例如，使用中文字体：SimHei
+#     # 将图像数据转换为base64编码
+#     buf = BytesIO()
+#     plt.savefig(buf, format="png")
+#     buf.seek(0)
+#     data_uri = base64.b64encode(buf.read()).decode('utf-8')
+#     zzt.append(data_uri)
+#     plt.close()
+#     return zzt
+import pandas as pd
+import matplotlib.pyplot as plt
+from matplotlib import rcParams
+from matplotlib.font_manager import FontProperties, findfont
+from io import BytesIO
+import base64
+
+
+def set_font():
+    try:
+        # 自动匹配系统可用字体
+        font_path = findfont(FontProperties(
+            family=['SimHei', 'Microsoft YaHei', 'Heiti SC', 'PingFang SC', 'Noto Sans CJK SC', 'Arial']))
+        font = FontProperties(fname=font_path, size=12)
+        rcParams['font.sans-serif'] = font.get_name()
+        rcParams['axes.unicode_minus'] = False
+        print(f"✅ 使用字体: {font.get_name()}")
+        return font
+    except Exception as e:
+        print(f"❌ 字体设置失败: {e}")
+        return None
+
 
 def draw_sta_png_total(label):
     zzt_total = []
-    # 加载CSV文件
-    df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
-    # 设置合适的字体，例如SimHei，用于显示汉字
-    font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
-    # 根据条件筛选记录
-    filtered_df = df[(df['imPUSB_predictions'] == 1)]
-    filtered_df1 = df[(df['ISPOTIENTIAL'] == 1)]
+    try:
+        # 加载CSV文件
+        df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
 
-    # 生成一些示例数据
-    data1 = df[label]  # 第一个直方图的数据
-    data2 = filtered_df[label]  # 第二个直方图的数据
-    data3 = filtered_df1[label]  # 第二个直方图的数据
-    # 画直方图
-    plt.hist(data1, bins=30, alpha=0.5, label='整体样本')  # alpha参数控制透明度
-    plt.hist(data2, bins=30, alpha=0.5, label='潜在箱源')
-    plt.hist(data3, bins=30, alpha=0.5, label='原铁路箱源')
+        # 自动设置字体
+        font = set_font()
 
-    # 添加标签和标题
-    plt.ylabel("箱数", fontproperties=font)  # 修改纵轴标签
-    plt.xlabel(label, fontproperties=font)  # 修改纵轴标签
-    # plt.title('两个直方图')
+        # 根据条件筛选记录
+        filtered_df = df[(df['imPUSB_predictions'] == 1)]
+        filtered_df1 = df[(df['ISPOTIENTIAL'] == 1)]
 
-    # 添加图例
-    plt.legend(prop = font)
-    # 将图像数据转换为base64编码
-    buf = BytesIO()
-    plt.savefig(buf, format="png")
-    buf.seek(0)
-    data_uri = base64.b64encode(buf.read()).decode('utf-8')
-    zzt_total.append(data_uri)
-    plt.close()
+        # 获取绘图数据
+        data1 = df[label]  # 整体样本
+        data2 = filtered_df[label]  # 潜在箱源
+        data3 = filtered_df1[label]  # 原铁路箱源
+
+        # 绘制直方图
+        plt.figure(figsize=(10, 6))
+        plt.hist(data1, bins=30, alpha=0.5, label='整体样本')  # alpha 控制透明度
+        plt.hist(data2, bins=30, alpha=0.5, label='潜在箱源')
+        plt.hist(data3, bins=30, alpha=0.5, label='原铁路箱源')
+
+        # 添加标签和标题
+        if font:
+            plt.ylabel("箱数", fontproperties=font)
+            plt.xlabel(label, fontproperties=font)
+            plt.legend(prop=font)
+
+        # 将图像数据转换为 base64 编码
+        buf = BytesIO()
+        plt.savefig(buf, format="png", bbox_inches='tight')  # 防止标签被裁剪
+        buf.seek(0)
+        data_uri = base64.b64encode(buf.read()).decode('utf-8')
+        zzt_total.append(data_uri)
+
+    except FileNotFoundError as e:
+        print(f"❌ 文件未找到: {e}")
+    except Exception as e:
+        print(f"❌ 绘图失败: {e}")
+    finally:
+        plt.close()
+
     return zzt_total
+# def draw_sta_png_total(label):
+#     zzt_total = []
+#     # 加载CSV文件
+#     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
+#     # 设置合适的字体，例如SimHei，用于显示汉字
+#     font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Black.ttc', size=12)  # 替换为你的汉字字体文件路径
+#     # 根据条件筛选记录
+#     filtered_df = df[(df['imPUSB_predictions'] == 1)]
+#     filtered_df1 = df[(df['ISPOTIENTIAL'] == 1)]
+#
+#     # 生成一些示例数据
+#     data1 = df[label]  # 第一个直方图的数据
+#     data2 = filtered_df[label]  # 第二个直方图的数据
+#     data3 = filtered_df1[label]  # 第二个直方图的数据
+#     # 画直方图
+#     plt.hist(data1, bins=30, alpha=0.5, label='整体样本')  # alpha参数控制透明度
+#     plt.hist(data2, bins=30, alpha=0.5, label='潜在箱源')
+#     plt.hist(data3, bins=30, alpha=0.5, label='原铁路箱源')
+#
+#     # 添加标签和标题
+#     plt.ylabel("箱数", fontproperties=font)  # 修改纵轴标签
+#     plt.xlabel(label, fontproperties=font)  # 修改纵轴标签
+#     # plt.title('两个直方图')
+#
+#     # 添加图例
+#     plt.legend(prop = font)
+#     # 将图像数据转换为base64编码
+#     buf = BytesIO()
+#     plt.savefig(buf, format="png")
+#     buf.seek(0)
+#     data_uri = base64.b64encode(buf.read()).decode('utf-8')
+#     zzt_total.append(data_uri)
+#     plt.close()
+#     return zzt_total
 
 def open_file_manager(request):
     try:
