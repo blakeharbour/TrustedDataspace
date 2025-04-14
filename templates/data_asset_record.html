@@ -266,6 +266,11 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 <script type="text/javascript">
+    var currentUser = {
+            id: "{{ current_user.id }}",
+            account: "{{ current_user.account }}",
+        };
+
 document.addEventListener('DOMContentLoaded', function() {
   // 获取搜索按钮和输入框
   const searchButton = document.getElementById('searchButton');
@@ -296,6 +301,9 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }
+  // 打印当前用户信息到控制台（用于调试）
+        console.log("当前用户ID:", currentUser.id);
+        console.log("当前用户名:", currentUser.account);
 });
 </script>
 </body>

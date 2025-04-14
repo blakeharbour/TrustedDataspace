@@ -12,6 +12,8 @@ from django.conf import settings
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
+from sqlalchemy.sql.functions import current_user
+
 from .models import LoginUser, AssetRecord
 from django.views.decorators.csrf import csrf_exempt
 
@@ -1218,12 +1220,17 @@ def fetch_and_save_asset_data(request):
         return JsonResponse({"status": "success", "message": "数据已成功获取并保存"})
     else:
         return JsonResponse({"status": "error", "message": "无法从接口获取数据"}, status=400)
-
+@login_required(login_url='/login/')
 def asset_record_list(request):
     # 从数据库中获取所有资产记录
-    records = AssetRecord.objects.all()
+    current_user=request.user
+    records = AssetRecord.objects.filter(assetOwner=current_user)
     # 渲染模板并传递数据
-    return render(request, 'data_asset_record.html', {'records': records})
+    # return render(request, 'data_asset_record.html', {'records': records})
+    return render(request, 'data_asset_record.html', {
+        'records': records,
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
 #查找存证信息
 def search_notarization(request):
