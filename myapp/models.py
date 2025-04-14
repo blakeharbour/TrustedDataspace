@@ -89,13 +89,15 @@ class DataAsset(models.Model):
         verbose_name_plural = "数据资产"
 class AssetRecord(models.Model):
     assetName = models.CharField(max_length=255, verbose_name="资产名称")
-    assetOwner = models.CharField(max_length=255, verbose_name="资产所有者")
+    assetOwner  = models.ForeignKey(LoginUser,to_field="account",
+        on_delete=models.CASCADE,)
     assetField = models.CharField(max_length=255, verbose_name="资产字段")
     assetFormat = models.CharField(max_length=100, verbose_name="资产格式")
     assetLevel = models.CharField(max_length=100, verbose_name="资产级别")
     assetPath = models.CharField(max_length=255, verbose_name="资产路径")
     star_status = models.CharField(max_length=50, verbose_name="开始状态",default='默认值')
     end_status = models.CharField(max_length=50, verbose_name="结束状态",default='默认值')
+    operation = models.CharField(max_length=50, verbose_name="操作", default='默认值')
     txTime = models.DateTimeField(verbose_name="交易时间")
     txID = models.CharField(max_length=255, verbose_name="交易ID")
     txHash = models.CharField(max_length=255, verbose_name="交易哈希")

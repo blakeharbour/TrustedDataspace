@@ -408,57 +408,15 @@
                                  '<td>'+Result[j][4]+'</td>'+
                                  '<td>'+Result[j][5]+'</td>'+
                                  '<td>'+Result[j][6]+'</td>'+
-                                 '<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + Result[j][7] + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + Result[j][7] + '</a></td>' +
-                                 {#'<td>'+Result[j][8]+'</td>'+#}
+                                 '<td>'+Result[j][7]+'</td>'+
                                  '<td>'+Result[j][8]+'</td>'+
                                  '<td>'+Result[j][9]+'</td>'+
                                  '<td>'+Result[j][10]+'</td>'+
                                  '<td>'+Result[j][11]+'</td>'+
                                   '</tr>'
-                            {#var link="http://127.0.0.1:8000/application_result_shappng/"+Result[j][0];#}
-                            {#const status = statusMethod(Result[j][0]);#}
-                            {#let buttonHtml = '';#}
-                            {#if (status === '审核中') {#}
-                            {#    buttonHtml = `<span style="color: orange;">${status}</span>`;#}
-                            {# else if (status === '已开始') {#}
-                            {#   buttonHtml = `<span style="color: orange;">${status}</span>`;#}
-                            {#else if (status === '完成') {#}
-                            {#    buttonHtml = `<span style="color: green">${status}</span>`;#}
-                            {#else if(status === '发起'){#}
-                            {#    buttonHtml = `<span style="color: green;">${status}</span>`;#}
-                            {##}
-                            {#str+='<tr class="text-c">'+#}
-                            {# '<td><a onclick="modeldel_list(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont"></i>'+Result[j][0]+'</a></td>'+#}
-                            {#    '<td>列车里程计算</td>'+#}
-                            {#    '<td>海关</td>'+#}
-                            {#'<td>铁路</td>'+#}
-                            {#'<td>铁路作业信息</td>'+#}
-                            {#'<td>已完成</td>'+#}
-                            {#    '<td>敏感</td>'+#}
-                            {#{% comment %}'<td>'+Result[j][5]+'</td>'+#}
-                            {#'<td>'+Result[j][6]+'</td>'+#}
-                            {#'<td>'+Result[j][7]+'</td>'+{% endcomment %}#}
-                            {#{% comment %}'<td><br><a title="联邦训练" onclick="model_test(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont"></i>联邦训练</a>' +#}
-                            {#'<br><a title="删除" onclick="model_dele(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+{% endcomment %}#}
-                            {#{% comment %}'<td><a onclick="model_view(this,\''+Result[j][12]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][8]+'</a></td>'+#}
-                            {#'<td><a onclick="model_view(this,\''+Result[j][13]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][9]+'</a></td>'+#}
-                            {#'<td><a onclick="model_view(this,\''+Result[j][14]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][10]+'</a></td>'+#}
-                            {#'<td><a onclick="model_view(this,\''+Result[j][15]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][11]+'</a></td>'+{% endcomment %}#}
-                            {#    {% comment %}'<td> <a onclick="open_file(this,\''+Result[j][12]+'\')"><i class="Hui-iconfont"></i>'+Result[j][12]+'</a></td>'+{% endcomment %}#}
-                            {#    // 修改“共享方式”列的内容，添加四个按钮#}
-                            {#'<td>' +#}
-                            {#    '<a href="javascript:;" onclick="trainModelresultshow()" class="btn btn btn-info radius"><i class="Hui-iconfont"></i> 接口传输</a>'+#}
-                            {#'<a href="javascript:;" onclick="trainModelresultshow() " class="btn btn-warning radius"><i class="Hui-iconfont"></i> 沙箱传输</a>' +#}
-                            {#'<a href="javascript:;" onclick="trainModelresultshow()" class="btn btn-success radius"><i class="Hui-iconfont"></i> IP传输</a>' +#}
-                            {#    '<a href="javascript:;" onclick="trainModelresultshow()" class="btn btn btn-info radius"><i class="Hui-iconfont"></i> 隐私计算</a>' +#}
-                            {#'</td>' +#}
-                            {#`<td>${buttonHtml}</td>` +#}
-                            {#    '<td>TX123456789</td>'+#}
-                            {#    '<td>2025-02-25 13;00;00 </td>'+#}
-                            {#    '<td>5D41402ABC</td>'+#}
-                            {#    '</tr>';#}
+
 						}
-						$("#info").append(str)
+						$("#info").html(str)  // 清空原有内容再添加新数据
 					}
 				}
 			})
@@ -497,7 +455,8 @@ function searchNotarization(project_name) {
                         '<td>' + Result[j][4] + '</td>' +
                         '<td>' + Result[j][5] + '</td>' +
                         '<td>' + Result[j][6] + '</td>' +
-                        '<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + Result[j][7] + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + Result[j][7] + '</a></td>' +
+                        '<td>' + Result[j][7] + '</td>' +
+                      //  '<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + Result[j][7] + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + Result[j][7] + '</a></td>' +
                         '<td>' + Result[j][8] + '</td>' +
                         '<td>' + Result[j][9] + '</td>' +
                         '<td>' + Result[j][10] + '</td>' +
@@ -613,28 +572,7 @@ function searchNotarization(project_name) {
         {#    location.href = "http://192.168.1.121:6006/";#}
         {##}
         {##}
-        function trainModelresultshow(value) {
-        let url = '';
-    switch (value) {
-        case '接口交换':
-            url = 'http://192.168.1.133/url1'; // 替换为实际的 URL1
-            break;
-        case '安全沙箱':
-            url = 'http://192.168.1.133/url2'; // 替换为实际的 URL2
-            break;
-        case '隐私计算':
-            url = 'http://192.168.1.133/url3'; // 替换为实际的 URL3
-            break;
-        case '密文计算':
-            url = 'http://192.168.1.133/url4'; // 替换为实际的 URL4
-            break;
-        {#default:#}
-        {#    url = 'https://example.com/default'; // 默认跳转链接#}
-        {#    break;#}
-    }
-    // 跳转到生成的链接
-    window.location.href = url;
-}
+
 
 	</script>
 	<!--/请在上方写此页面业务相关的脚本-->

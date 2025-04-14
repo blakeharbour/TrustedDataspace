@@ -312,7 +312,8 @@
                             row.append('<td>' + item.dataOwner + '</td>');
                             row.append('<td>' + item.dataAsset + '</td>');
                             row.append('<td>' + item.dataSecurity + '</td>');
-                            row.append('<td>' + item.shareWay + '</td>');
+                            row.append('<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + item.shareWay + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
+                            // row.append('<td>' + item.shareWay + '</td>');
                             row.append('<td>' + statusText + '</td>');
                             // 使用 data-* 属性传递数据，包括项目 id
                             var actions = '<td>' +
@@ -419,7 +420,46 @@ function project_submit(id) {
         layer.close(index);
     });
 }
-
+// 新增共享方式跳转函数
+function sharingTypeResultShow(shareType) {
+    // 定义合法的共享方式列表
+    const validShareTypes = {
+        '接口交换': 'http://127.0.0.1:8000/wb-interface/',
+        '安全沙箱': 'http://127.0.0.1:8000/sjsx-interface/',// 替换为实际的URL2
+        '隐私计算': 'http://127.0.0.1:8000/index/',// 替换为实际的URL2
+        '密文计算': 'http://127.0.0.1:8000/mutiindex/'
+    };
+    // 参数校验
+    if (!shareType) {
+        layer.msg('共享方式参数不能为空', {icon: 2});
+        return;
+    }
+    // 严格类型校验
+    if (typeof shareType !== 'string') {
+        console.error('非法参数类型:', typeof shareType);
+        layer.msg('参数类型错误', {icon: 2});
+        return;
+    }
+    // 有效性校验
+    if (!(shareType in validShareTypes)) {
+        console.warn('非法的共享方式:', shareType);
+        layer.msg(`不支持的共享方式：${shareType}`, {icon: 2});
+        return;
+    }
+    // 获取对应的URL
+    const url = validShareTypes[shareType];
+    try {
+        // 打开新窗口
+        const newWindow = window.open(url, '_blank');
+        // 处理弹窗拦截
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+            layer.msg('请允许弹窗以继续操作', {icon: 2});
+        }
+    } catch (e) {
+        console.error('打开链接失败:', e);
+        layer.msg('链接打开失败，请联系管理员', {icon: 2});
+    }
+}
     </script>
     <!--/请在上方写此页面业务相关的脚本-->
 </body>

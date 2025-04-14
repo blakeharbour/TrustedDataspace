@@ -164,13 +164,10 @@ def pending_project(request):
 @login_required(login_url='/login/')
 def project_add(request):
     return render(request, 'project_add.html')
-
+@login_required(login_url='/login/')
 def project_notarization(request):
     return render(request, 'project_notarization.html')
-def pengding_project(request):
-    return render(request, 'pending_project.html')
-def project_notarization_add(request):
-    return render(request, 'project_notarization_add.html')
+
 def jxclogin(request):
     if request.method == 'POST':
         try:
