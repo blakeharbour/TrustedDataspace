@@ -129,8 +129,8 @@ urlpatterns = [
 
     #项目管理
     path('project_notarization/', views.project_notarization),
-    path('pengding_project/', views.pengding_project),
-    path('project_notarization_add/', views.project_notarization_add),
+    path('pengding_project/', views.pending_project),
+
     # path('datasharing_add/', views.datasharing_add),
     # 返回所有存证信息
     path('search_notarization/', views.search_notarization),
@@ -149,7 +149,7 @@ urlpatterns = [
     path('application_result_analysis/', modelappview.application_result_analysis),
     path('application_result_open_file_manager/', modelappview.open_file_manager),
     path('model-predict/', modelappview.model_predict),
-    # path('model_predict_port/', modelapp_portview.model_predict_port),
+    path('model_predict_port/', modelapp_portview.model_predict_port),
     # path('model-application-port/', modelapp_portview.model_application),
     # path('model-application_search-port/', modelapp_portview.searchModelApplication),
     # path('application_status_modify-port/', modelapp_portview.editModelApplicationStatus),
