@@ -18,8 +18,10 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, account, password=None, **extra_fields):
         if not account:
             raise ValueError('必须提供账号(account)')
+        print(f"[DEBUG] 原始密码: {password}")
         user = self.model(account=account,**extra_fields)
         user.set_password(password)  # 加密密码
+        print(f"[DEBUG] 加密后密码: {user.password}")
         user.save()
         return user
 

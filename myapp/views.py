@@ -228,8 +228,7 @@ def register(request):
             return JsonResponse({'status': 'error', 'message': '账号已存在'})
 
         # 创建新用户并保存到数据库
-        user = LoginUser(account=account, password=password, com=com)
-        user.save()
+        user = LoginUser.objects.create_user(account=account, password=password, com=com)
 
         return JsonResponse({'status': 'success', 'message': '注册成功'})
     else:
