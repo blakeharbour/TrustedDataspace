@@ -15,6 +15,7 @@ from django.http import JsonResponse
 from sqlalchemy.sql.functions import current_user
 
 from .models import LoginUser, AssetRecord
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from torch.utils.tensorboard import SummaryWriter
@@ -165,11 +166,16 @@ def pending_project(request):
     return render(request, 'pending_project.html')
 @login_required(login_url='/login/')
 def project_add(request):
-    return render(request, 'project_add.html')
-@login_required(login_url='/login/')
+    return render(request, 'project_add.html',{
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
 def project_notarization(request):
     return render(request, 'project_notarization.html')
-
+def pengding_project(request):
+    return render(request, 'pending_project.html')
+def project_notarization_add(request):
+    return render(request, 'project_notarization_add.html')
 def jxclogin(request):
     if request.method == 'POST':
         try:
@@ -1358,9 +1364,39 @@ def submit_project(request):
 
 def get_project_data(request):
     try:
-
+        currentUser = request.user
+        dataDemand = currentUser.com
         # 构建查询条件
-        constr = f"isDeleted != 'Y'"
+        constr = f"isDeleted != 'Y' AND dataDemand = '{dataDemand}'"
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                   'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+def get_pending_project_data(request):
+    try:
+        currentUser = request.user
+        dataOwner = currentUser.com
+        # 构建查询条件
+        constr = f"isDeleted != 'Y' AND currentStatus != '0' AND dataOwner = '{dataOwner}'"
         fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
 
@@ -1447,3 +1483,159 @@ def update_project(request):
 
     except Exception as e:
         return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+def audit_project(request):
+    try:
+        if request.method == 'POST':
+            # 从 POST 请求中获取项目 ID 和要更新的状态
+            id = request.POST.get('id')
+            currentStatus = request.POST.get('currentStatus')
+
+            # 检查是否提供了必要的参数
+            if id is None or currentStatus is None:
+                return JsonResponse({'status': '1', 'message': '缺少必要参数'})
+
+            # 构建更新字符串
+            update_str = f"currentStatus = '{currentStatus}'"
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '审核状态更新成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '审核状态更新失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+def submit_project(request):
+    try:
+        if request.method == 'POST':
+            # 从 POST 请求中获取项目 ID
+            id = request.POST.get('id')
+            # 设定提交后的状态为 1
+            currentStatus = '1'
+
+            # 检查是否提供了必要的参数
+            if id is None:
+                return JsonResponse({'status': '1', 'message': '缺少必要参数: id'})
+
+            # 构建更新字符串
+            update_str = f"currentStatus = '{currentStatus}'"
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '项目提交成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '项目提交失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+from django.http import JsonResponse
+
+def search_project_data(request):
+    try:
+        currentUser = request.user
+        dataDemand = currentUser.com
+
+        # 从请求中获取查询参数
+        projectName = request.POST.get('projectName', '')
+        dataOwner = request.POST.get('dataOwner', '')
+        dataAsset = request.POST.get('dataAsset', '')
+        securityLevel = request.POST.get('securityLevel', '')
+        status = request.POST.get('status', '')
+
+        # 构建查询条件列表
+        conditions = [f"isDeleted != 'Y'", f"dataDemand = '{dataDemand}'"]
+
+        if projectName:
+            conditions.append(f"projectName LIKE '%{projectName}%'")
+        if dataOwner:
+            conditions.append(f"dataOwner = '{dataOwner}'")
+        if dataAsset:
+            conditions.append(f"dataAsset LIKE '%{dataAsset}%'")
+        if securityLevel:
+            conditions.append(f"dataSecurity = '{securityLevel}'")
+        if status:
+            conditions.append(f"currentStatus = '{status}'")
+
+        # 组合查询条件
+        constr = " AND ".join(conditions)
+
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                    'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+from django.http import JsonResponse
+
+def search_pending_project_data(request):
+    try:
+        # 假设这里获取当前用户相关信息，后续用于筛选条件
+        currentUser = request.user
+        dataOwner = currentUser.com
+
+        # 从请求中获取查询参数
+        projectName = request.POST.get('projectName', '')
+        dataDemandFilter = request.POST.get('dataDemand', '')
+        status = request.POST.get('status', '')
+
+        # 构建查询条件列表，默认筛选未删除且当前状态为待处理（这里假设待处理状态为 '1'）
+        conditions = [f"isDeleted != 'Y'", f"currentStatus != '0'",f"dataOwner = '{dataOwner}'"]
+        if projectName:
+            conditions.append(f"projectName LIKE '%{projectName}%'")
+        if dataDemandFilter:
+            conditions.append(f"dataDemand = '{dataDemandFilter}'")
+        if status:
+            conditions.append(f"currentStatus = '{status}'")
+
+        # 组合查询条件
+        constr = " AND ".join(conditions)
+
+        # 定义要查询的字段
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        # 调用自定义的 selecttable 函数进行数据查询
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                    'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的待处理项目数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询待处理项目数据时出现错误: {str(e)}'})

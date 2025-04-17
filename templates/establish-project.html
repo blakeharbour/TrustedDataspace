@@ -69,6 +69,40 @@
             width: 40%;
             right: 0;
         }
+
+        /* 搜索功能样式 */
+       .search-container {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+       .search-container label {
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+       .search-container input[type="text"],
+       .search-container select {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+       .search-container button {
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+       .search-container button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -198,53 +232,86 @@
                 <span class="c-gray en">/</span>
                 项目申请
             </nav>
+      <article class="Hui-admin-content clearfix">
+        <div class="panel mt-20">
+          <div class="panel-body"发布>
+            <div class="clearfix">
+                <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目申请</a>
+                   <!-- 新增搜索区域 start -->
+            <div class="search-container">
+                    <label for="projectNameSearch">项目名称:</label>
+                    <input type="text" id="projectNameSearch" placeholder="模糊搜索项目名称">
+                    <label for="dataOwnerSearch">数据所有方:</label>
+                    <select id="dataOwnerSearch">
+                        <option value="">全部</option>
+                        <option value="铁路">铁路</option>
+                        <option value="海关">海关</option>
+                        <option value="港口">港口</option>
+                        <option value="哈方">哈方</option>
+                    </select>
+                    <label for="dataAssetSearch">所需数据资产:</label>
+                    <input type="text" id="dataAssetSearch" placeholder="模糊搜索所需数据资产">
+                    <label for="securityLevelSearch">数据安全等级:</label>
+                    <select id="securityLevelSearch">
+                        <option value="">全部</option>
+                        <option value="低敏">低敏</option>
+                        <option value="敏感">敏感</option>
+                        <option value="高敏">高敏</option>
+                        <option value="高敏密文">高敏密文</option>
+                    </select>
+                    <label for="statusSearch">申请状态:</label>
+                    <select id="statusSearch">
+                        <option value="">全部</option>
+                        <option value="0">发起</option>
+                        <option value="1">待审核</option>
+                        <option value="2">审核通过</option>
+                        <option value="3">审核不通过</option>
+                        <option value="4">正在进行</option>
+                        <option value="5">已完成</option>
+                    </select>
+                    <button type="button" onclick="searchProjects()">搜索</button>
+                </span>
+            </div>
+            <!-- 新增搜索区域 end -->
+            <div class="clearfix mt-20">
+              <table class="table table-border table-bordered table-hover table-bg table-sort">
+                <thead>
+                  <tr class="text-c">
+                    <th width="80">项目名称</th>
+                    <th width="100">数据需求方</th>
+                    <th width="90">数据所有方</th>
+                    <th width="100">所需数据资产</th>
+                    <th width="120">安全等级</th>
+                    <th width="100">共享方式</th>
+                    <th width="120">申请状态</th>
+                    <th width="150">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="info">
+                </tbody>
+              </table>
+            </div>
 
-            <article class="Hui-admin-content clearfix">
-                <div class="panel mt-20">
-                    <div class="panel-body"发布>
-                        <div class="clearfix">
-                            <span class="f-l">
-                                <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目申请</a>
-                            </span>
-                        </div>
-                        <div class="clearfix mt-20">
-                            <table class="table table-border table-bordered table-hover table-bg table-sort">
-                                <thead>
-                                    <tr class="text-c">
-                                        <th width="80">项目名称</th>
-                                        <th width="100">数据需求方</th>
-                                        <th width="90">数据所有方</th>
-                                        <th width="100">所需数据资产</th>
-                                        <th width="120">安全等级</th>
-                                        <th width="100">共享方式</th>
-                                        <th width="120">申请状态</th>
-                                        <th width="150">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="info">
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div id="myModal" class="modal">
-                            <!-- 模态框内容 -->
-                            <div class="modal-content">
-                                <p>模型预测中，请稍候...</p>
-                                <div class="loader"></div>
-                            </div>
-                        </div>
-                        <div id="myModal1" class="modal">
-                            <!-- 模态框内容 -->
-                            <div class="modal-content">
-                                <p>结果处理中，请稍候...</p>
-                                <div class="loader"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </article>
+            <div id="myModal" class="modal">
+              <!-- 模态框内容 -->
+              <div class="modal-content">
+                <p>模型预测中，请稍候...</p>
+                <div class="loader"></div>
+              </div>
+            </div>
+            <div id="myModal1" class="modal">
+              <!-- 模态框内容 -->
+              <div class="modal-content">
+                <p>结果处理中，请稍候...</p>
+                <div class="loader"></div>
+              </div>
+            </div>
+          </div>
+          </div>
         </div>
-    </section>
+      </article>
+    </div>
+  </section>
 
     <!--_footer 作为公共模版分离出去-->
     <script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
@@ -259,98 +326,195 @@
     <script type="text/javascript" src="/static/static/business/js/main.js"></script>
     <script type="text/javascript">
         // 显示模态框
-        function showModal() {
-            document.getElementById('myModal').style.display = "block";
-        }
+    function showModal() {
+      document.getElementById('myModal').style.display = "block";
+    }
 
-        // 隐藏模态框
-        function hideModal() {
-            document.getElementById('myModal').style.display = "none";
-        }
+    // 隐藏模态框
+    function hideModal() {
+      document.getElementById('myModal').style.display = "none";
+    }
 
-        function showModal1() {
-            document.getElementById('myModal1').style.display = "block";
-        }
+    function showModal1() {
+      document.getElementById('myModal1').style.display = "block";
+    }
 
-        // 隐藏模态框
-        function hideModal1() {
-            document.getElementById('myModal1').style.display = "none";
+    // 隐藏模态框
+    function hideModal1() {
+      document.getElementById('myModal1').style.display = "none";
+    }
+
+    // 新增搜索功能的函数
+    function searchProjects() {
+      var projectName = document.getElementById('projectNameSearch').value;
+      var dataOwner = document.getElementById('dataOwnerSearch').value;
+      var dataAsset = document.getElementById('dataAssetSearch').value;
+      var securityLevel = document.getElementById('securityLevelSearch').value;
+      var status = document.getElementById('statusSearch').value;
+
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/search_project_data/",
+        dataType: 'json',
+        data: {
+          projectName: projectName,
+          dataOwner: dataOwner,
+          dataAsset: dataAsset,
+          securityLevel: securityLevel,
+          status: status
+        },
+        success: function (res) {
+          console.log("res", res);
+          if (res.status === "0") {
+            var dataList = res.data;
+            var tableBody = $('#info');
+            tableBody.empty(); // 清空表格内容
+            dataList.forEach(function (item) {
+              var statusText = "";
+              switch (item.currentStatus) {
+                case '0':
+                  statusText = "发起";
+                  break;
+                case '1':
+                  statusText = "待审核";
+                  break;
+                case '2':
+                  statusText = "审核通过";
+                  break;
+                case '3':
+                  statusText = "审核不通过";
+                  break;
+                case '4':
+                  statusText = "正在进行";
+                  break;
+                case '5':
+                  statusText = "已完成";
+                  break;
+                default:
+                  statusText = "未知状态";
+              }
+              var row = $('<tr class="text-c"></tr>');
+              console.log("获取的id:", item.ID);
+              row.append('<td>' + item.projectName + '</td>');
+              row.append('<td>' + item.dataDemand + '</td>');
+              row.append('<td>' + item.dataOwner + '</td>');
+              row.append('<td>' + item.dataAsset + '</td>');
+              row.append('<td>' + item.dataSecurity + '</td>');
+              row.append('<td><a href="javascript:;" ' + 'onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + encodeURIComponent(item.projectName) + '\', ' +  (item.isDataOwner? 0 : 1) + ')" ' +  'class="btn btn-primary radius">' +  '<i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
+              row.append('<td>' + statusText + '</td>');
+              // 使用 data-* 属性传递数据，包括项目 id
+              var disabledClass = "";
+              if (item.currentStatus!== '0' && item.currentStatus!== '1') {
+                disabledClass = " disabled";
+              }
+              var actions = '<td>' +
+                '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
+                '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
+                '<a title="提交" onclick="project_submit(\'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe600;</i></a>' +
+                '</td>';
+              row.append(actions);
+              tableBody.append(row);
+            });
+          } else {
+            alert(res.message);
+          }
+        },
+        error: function (error) {
+          console.error("请求失败:", error.status, error.statusText, error.responseText);
+          alert("请求数据失败，请稍后重试");
         }
+      });
+    }
 
  $(function () {
-            $.ajax({
-                type: "post",
-                url: "http://127.0.0.1:8000/get_project_data/",
-                dataType: 'json',
-                success: function (res) {
-                    console.log("res", res);
-                    if (res.status === "0") {
-                        var dataList = res.data;
-                        var tableBody = $('#info');
-                        dataList.forEach(function (item) {
-                            var statusText = "";
-                            switch (item.currentStatus) {
-                                case '0':
-                                    statusText = "发起";
-                                    break;
-                                case '1':
-                                    statusText = "审核";
-                                    break;
-                                case '2':
-                                    statusText = "正在进行";
-                                    break;
-                                case '3':
-                                    statusText = "完成";
-                                    break;
-                                default:
-                                    statusText = "未知状态";
-                            }
-                            var row = $('<tr class="text-c"></tr>');
-                            console.log("获取的id:", item.ID);
-                            row.append('<td>' + item.projectName + '</td>');
-                            row.append('<td>' + item.dataDemand + '</td>');
-                            row.append('<td>' + item.dataOwner + '</td>');
-                            row.append('<td>' + item.dataAsset + '</td>');
-                            row.append('<td>' + item.dataSecurity + '</td>');
-                            row.append('<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + item.shareWay + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
-                            // row.append('<td>' + item.shareWay + '</td>');
-                            row.append('<td>' + statusText + '</td>');
-                            // 使用 data-* 属性传递数据，包括项目 id
-                            var actions = '<td>' +
-                                '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
-                                '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\')"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
-                                '<a title="提交" onclick="project_submit(\'' + item.id + '\')"><i class="Hui-iconfont">&#xe600;</i></a>' +
-                                '</td>';
-                            row.append(actions);
-                            tableBody.append(row);
-                        });
-                    } else {
-                        alert(res.message);
-                    }
-                },
-                error: function (error) {
-                    console.error("请求失败:", error.status, error.statusText, error.responseText);
-                    alert("请求数据失败，请稍后重试");
-                }
+      // 初始加载数据
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/get_project_data/",
+        dataType: 'json',
+        success: function (res) {
+          console.log("res", res);
+          if (res.status === "0") {
+            var dataList = res.data;
+            var tableBody = $('#info');
+            dataList.forEach(function (item) {
+              var statusText = "";
+              switch (item.currentStatus) {
+                case '0':
+                  statusText = "发起";
+                  break;
+                case '1':
+                  statusText = "待审核";
+                  break;
+                case '2':
+                  statusText = "审核通过";
+                  break;
+                case '3':
+                  statusText = "审核不通过";
+                  break;
+                case '4':
+                  statusText = "正在进行";
+                  break;
+                case '5':
+                  statusText = "已完成";
+                  break;
+                default:
+                  statusText = "未知状态";
+              }
+              var row = $('<tr class="text-c"></tr>');
+              console.log("获取的id:", item.ID);
+              row.append('<td>' + item.projectName + '</td>');
+              row.append('<td>' + item.dataDemand + '</td>');
+              row.append('<td>' + item.dataOwner + '</td>');
+              row.append('<td>' + item.dataAsset + '</td>');
+              row.append('<td>' + item.dataSecurity + '</td>');
+              row.append('<td><a href="javascript:;" ' + 'onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + encodeURIComponent(item.projectName) + '\', ' +  (item.isDataOwner? 0 : 1) + ')" ' +  'class="btn btn-primary radius">' +  '<i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
+              row.append('<td>' + statusText + '</td>');
+              // 使用 data-* 属性传递数据，包括项目 id
+              var disabledClass = "";
+              if (item.currentStatus!== '0' && item.currentStatus!== '1') {
+                disabledClass = " disabled";
+              }
+              var actions = '<td>' +
+                '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
+                '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
+                '<a title="提交" onclick="project_submit(\'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe600;</i></a>' +
+                '</td>';
+              row.append(actions);
+              tableBody.append(row);
             });
-        });
-
-        //修改项目
-        function project_edit(elem) {
-            var item = JSON.parse(elem.getAttribute('data-item'));
-            var id = elem.getAttribute('data-id');
-            console.log("id:", id);
-            try {
-                // 构建携带数据的 URL，包括项目 id
-                var queryString = `id=${encodeURIComponent(id)}&project_name=${encodeURIComponent(item.projectName)}&data_demander=${encodeURIComponent(item.dataDemand)}&data_owner=${encodeURIComponent(item.dataOwner)}&data_asset=${encodeURIComponent(item.dataAsset)}&security_level=${encodeURIComponent(item.dataSecurity)}&trans_mode=${encodeURIComponent(item.shareWay)}`;
-                var targetUrl = "http://127.0.0.1:8000/project_add/?" + queryString;
-                console.log("跳转URL:", targetUrl);
-                location.href = targetUrl;
-            } catch (error) {
-                console.error("JSON解析错误:", error);
-                alert("解析数据时出现错误，请检查数据格式。");
-            }
+          } else {
+            alert(res.message);
+          }
+        },
+        error: function (error) {
+          console.error("请求失败:", error.status, error.statusText, error.responseText);
+          alert("请求数据失败，请稍后重试");
         }
+      });
+    });
+
+// 修改项目
+    function project_edit(elem) {
+      var disabled = $(elem).hasClass('disabled');
+      if (disabled) {
+        layer.msg('当前状态不允许修改', { icon: 2 });
+        return;
+      }
+      var item = JSON.parse(elem.getAttribute('data-item'));
+      var id = elem.getAttribute('data-id');
+      console.log("id:", id);
+      try {
+        // 构建携带数据的 URL，包括项目 id
+        var queryString = `id=${encodeURIComponent(id)}&project_name=${encodeURIComponent(item.projectName)}&data_demander=${encodeURIComponent(item.dataDemand)}&data_owner=${encodeURIComponent(item.dataOwner)}&data_asset=${encodeURIComponent(item.dataAsset)}&security_level=${encodeURIComponent(item.dataSecurity)}&trans_mode=${encodeURIComponent(item.shareWay)}`;
+        var targetUrl = "http://127.0.0.1:8000/project_add/?" + queryString;
+        console.log("跳转URL:", targetUrl);
+        location.href = targetUrl;
+      } catch (error) {
+        console.error("JSON解析错误:", error);
+        alert("解析数据时出现错误，请检查数据格式。");
+      }
+    }
 
 
 
@@ -361,61 +525,70 @@
         function project_add() {
             location.href = "http://127.0.0.1:8000/project_add/";
         }
-        // 删除操作函数
-        function project_delete(projectName, dataDemand, dataOwner, dataAsset) {
-    layer.confirm('确认要删除吗？', function (index) {
+       // 删除操作函数
+    function project_delete(projectName, dataDemand, dataOwner, dataAsset) {
+      var btn = document.querySelector('a[onclick="project_delete(\'' + projectName + '\', \'' + dataDemand + '\', \'' + dataOwner + '\', \'' + dataAsset + '\')"]');
+      var disabled = btn.classList.contains('disabled');
+      if (disabled) {
+        layer.msg('当前状态不允许删除', { icon: 2 });
+        return;
+      }
+      layer.confirm('确认要删除吗？', function (index) {
         // 这里需要根据实际情况发送删除请求
         $.ajax({
-            type: 'POST',
-            url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
-            data: {
-                projectName: projectName,
-                dataDemand: dataDemand,
-                dataOwner: dataOwner,
-                dataAsset: dataAsset
-            },
-            success: function (res) {
-                if (res.status === '0') {
-                    layer.msg('删除成功', { icon: 1 });
-                    // 刷新页面或重新加载数据
-                    location.reload();
-                } else {
-                    layer.msg('删除失败：' + res.message, { icon: 2 });
-                }
-            },
-            error: function (error) {
-                console.error("删除请求失败:", error.status, error.statusText, error.responseText);
-                layer.msg('删除请求失败，请稍后重试', { icon: 2 });
+          type: 'POST',
+          url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
+          data: {
+            projectName: projectName,
+            dataDemand: dataDemand,
+            dataOwner: dataOwner,
+            dataAsset: dataAsset
+          },
+          success: function (res) {
+            if (res.status === '0') {
+              layer.msg('删除成功', { icon: 1 });
+              // 刷新页面或重新加载数据
+              location.reload();
+            } else {
+              layer.msg('删除失败：' + res.message, { icon: 2 });
             }
+          },
+          error: function (error) {
+            console.error("删除请求失败:", error.status, error.statusText, error.responseText);
+            layer.msg('删除请求失败，请稍后重试', { icon: 2 });
+          }
         });
         layer.close(index);
-    });
-}
-
-
-
+      });
+    }
 
 // 提交操作函数
-function project_submit(id) {
-    layer.confirm('确认要提交吗？', function (index) {
+    function project_submit(id) {
+      var btn = document.querySelector('a[onclick="project_submit(\'' + id + '\')"]');
+      var disabled = btn.classList.contains('disabled');
+      if (disabled) {
+        layer.msg('当前状态不允许提交', { icon: 2 });
+        return;
+      }
+      layer.confirm('确认要提交吗？', function (index) {
         // 这里需要根据实际情况发送提交请求
         $.ajax({
-            type: 'POST',
-            url: 'http://127.0.0.1:8000/submit_project/', // 替换为实际的提交接口
-            data: { id: id },
-            success: function (res) {
-                if (res.status === '0') {
-                    layer.msg('提交成功', { icon: 1 });
-                    // 刷新页面或重新加载数据
-                    location.reload();
-                } else {
-                    layer.msg('提交失败：' + res.message, { icon: 2 });
-                }
-            },
-            error: function (error) {
-                console.error("提交请求失败:", error.status, error.statusText, error.responseText);
-                layer.msg('提交请求失败，请稍后重试', { icon: 2 });
+          type: 'POST',
+          url: 'http://127.0.0.1:8000/submit_project/', // 替换为实际的提交接口
+          data: { id: id, currentStatus: 1 }, // 添加 currentStatus 参数并设置为 1
+          success: function (res) {
+            if (res.status === '0') {
+              layer.msg('提交成功', { icon: 1 });
+              // 刷新页面或重新加载数据
+              location.reload();
+            } else {
+              layer.msg('提交失败：' + res.message, { icon: 2 });
             }
+          },
+          error: function (error) {
+            console.error("提交请求失败:", error.status, error.statusText, error.responseText);
+            layer.msg('提交请求失败，请稍后重试', { icon: 2 });
+          }
         });
         layer.close(index);
     });
@@ -425,7 +598,7 @@ function sharingTypeResultShow(shareType) {
     // 定义合法的共享方式列表
     const validShareTypes = {
         '接口交换': 'http://127.0.0.1:8000/wb-interface/',
-        '安全沙箱': 'http://127.0.0.1:8000/sjsx-interface/',// 替换为实际的URL2
+        '安全沙箱': 'http://192.168.1.133/url2',// 替换为实际的URL2
         '隐私计算': 'http://127.0.0.1:8000/index/',// 替换为实际的URL2
         '密文计算': 'http://127.0.0.1:8000/mutiindex/'
     };
@@ -460,6 +633,7 @@ function sharingTypeResultShow(shareType) {
         layer.msg('链接打开失败，请联系管理员', {icon: 2});
     }
 }
+
     </script>
     <!--/请在上方写此页面业务相关的脚本-->
 </body>

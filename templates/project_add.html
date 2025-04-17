@@ -164,13 +164,7 @@
                 <div class="row clearfix">
                     <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据需求方：</label>
                     <div class="form-controls col-xs-8 col-sm-9">
-                        <select class="input-text" id="data_demander" name="data_demander">
-                            <option value="">请选择</option>
-                            <option value="海关">海关</option>
-                            <option value="港口">港口</option>
-                            <option value="铁路">铁路</option>
-                            <option value="哈方">哈方</option>
-                        </select>
+                        <input type="text" class="input-text" id="data_demander" name="data_demander" value="{{ current_user.com }}" disabled>
                     </div>
                 </div>
                 <div class="row clearfix">
@@ -208,9 +202,10 @@
                     <div class="form-controls col-xs-8 col-sm-9">
                         <select class="input-text" id="trans_mode" name="trans_mode">
                             <option value="">请选择</option>
-                            <option value="数据沙箱">数据沙箱</option>
-                            <option value="IP追踪">IP追踪</option>
+                            <option value="安全沙箱">安全沙箱</option>
+                            <option value="接口交换">接口交换</option>
                             <option value="隐私计算">隐私计算</option>
+                            <option value="密文计算">密文计算</option>
                         </select>
                     </div>
                 </div>
