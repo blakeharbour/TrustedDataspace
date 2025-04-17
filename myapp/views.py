@@ -170,12 +170,18 @@ def project_add(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+@login_required(login_url='/login/')
 def project_notarization(request):
     return render(request, 'project_notarization.html')
+
+@login_required(login_url='/login/')
 def pengding_project(request):
     return render(request, 'pending_project.html')
+
+@login_required(login_url='/login/')
 def project_notarization_add(request):
     return render(request, 'project_notarization_add.html')
+
 def jxclogin(request):
     if request.method == 'POST':
         try:
