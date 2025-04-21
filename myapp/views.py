@@ -1092,7 +1092,7 @@ def add_data_asset(request):
             )
 
             # 上传到区块链
-            blockchain_url = "http://202.112.151.253:8080/datasharing/asset/add"
+            blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
             payload = {
                 "assetID": str(asset.assetID),
                 "assetName": asset.assetName,
@@ -1340,7 +1340,7 @@ def submit_project(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://192.168.1.135:8080/datasharing/add', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     return JsonResponse({'status': 'ok','message': '区块链接口调用成功'})
