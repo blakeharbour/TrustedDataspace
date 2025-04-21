@@ -406,14 +406,13 @@ def createinterface(request):
         print(tx_hash)
 
     select_js="assetName = '"+webname+"'"
-    selectlist=selecttable("myapp_dataasset","assetName,assetOwner,assetField,assetFormat,assetLevel,assetPath",select_js,'', '', '')
+    selectlist=selecttable("myapp_dataasset","assetName,assetOwner,assetFormat,assetLevel,assetPath",select_js,'', '', '')
     print(selectlist)
     assetName = selectlist[0][0]
     assetOwner = selectlist[0][1]
-    # assetField = selectlist[0][2]
-    assetFormat = selectlist[0][3]
-    assetLevel = selectlist[0][4]
-    assetPath = selectlist[0][5]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
     print(assetName)
 
     if(assetLevel=="L1"):
@@ -426,8 +425,8 @@ def createinterface(request):
         assetLevel="低敏感"
 
     # 在asset_record这个表里新建一条记录
-    pro_js = "'" + assetName + "','" + assetOwner + "','XXX','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传','已上传','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
-    inserttable(pro_js, tablename="asset_record", con1="assetName,assetOwner,assetField,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传','已上传','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
     # 在webinterface这个表里新建一条记录
     pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
     inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
