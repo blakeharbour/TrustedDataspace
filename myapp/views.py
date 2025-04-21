@@ -373,14 +373,41 @@ def createinterface(request):
     comallowed = projs[0]["comallowed"]
     projectName = projs[0]["projectName"]
 
-    blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
+    select_js = "assetName = '" + webname + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
+                             '', '')
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+    print(assetName)
 
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
 
-    headers = {'Content-Type': 'application/json'}
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
 
     payload = {
-        "data": "anydata",
+        "assetID": str(assetID),
+        "assetName": assetName,
+        "assetOwner": assetOwner,
+        # "assetField": asset.description,
+        "assetFormat": assetFormat,
+        "assetLevel": assetLevel,
+        "assetPath": assetPath,
+        "assetRole": "test"
     }
+
+    headers = {'Content-Type': 'application/json'}
 
     response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
 
@@ -406,24 +433,7 @@ def createinterface(request):
         print(tx_id)
         print(tx_hash)
 
-    select_js="assetName = '"+webname+"'"
-    selectlist=selecttable("myapp_dataasset","assetName,assetOwner,assetFormat,assetLevel,assetPath",select_js,'', '', '')
-    print(selectlist)
-    assetName = selectlist[0][0]
-    assetOwner = selectlist[0][1]
-    assetFormat = selectlist[0][2]
-    assetLevel = selectlist[0][3]
-    assetPath = selectlist[0][4]
-    print(assetName)
 
-    if(assetLevel=="L1"):
-        assetLevel="高敏感密文"
-    elif(assetLevel=="L2"):
-        assetLevel="高敏感"
-    elif(assetLevel=="L3"):
-        assetLevel="敏感"
-    elif(assetLevel=="L4"):
-        assetLevel="低敏感"
 
     # 在asset_record这个表里新建一条记录
     asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传','已上传','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
