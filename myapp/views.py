@@ -365,7 +365,7 @@ def useBlockchain(request):
     # 从请求体中获取数据
     # data = json.loads(request.body)
     # print(data)
-    webName = request.body
+    webName = request.body.decode('utf-8')  # 转换为字符串
     # projs = json.loads(proobj)
     # webName = projs[0]["webName"]
     select_js = "assetName = '" + webName + "'"

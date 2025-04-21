@@ -261,24 +261,12 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
-        // 在全局作用域定义变量
-        let selectedInterface = {
-            url: null,
-            filename: null
-        };
 
         // 全局变量存储用户信息
         var currentUser = {
             id: "{{ current_user.id }}",
             account: "{{ current_user.account }}",
         };
-
-        // 监听单选按钮变化（事件委托）
-        $(document).on('change', 'input[name="selected_interface"]', function() {
-            selectedInterface.url = $(this).data('url');
-            selectedInterface.webName = $(this).data('webName');
-            console.log(selectedInterface.url);
-        });
 
         // 页面加载时检查 sessionStorage
         document.addEventListener('DOMContentLoaded', function() {
@@ -318,7 +306,7 @@
                             str+='<tr class="text-c">'+
                                  '<td>' +
                                     '<input type="radio" name="selected_interface" ' +
-                                            'data-webName="' + Result[j][1] + '" '+
+                                            'data-webname="' + Result[j][1] + '" '+
                                            'data-url="' + Result[j][2] + '" />' +
                                 '</td>' +
                                  '<td>'+Result[j][0]+'</td>'+
@@ -346,7 +334,7 @@
                 return;
             }
             const apiUrl = selectedRadio.dataset.url;
-            const webName = selectedRadio.dataset.webName;
+            const webName = selectedRadio.dataset.webname;
             console.log(webName)
             console.log(apiUrl)
             window.location.href = apiUrl;  // 直接跳转触发下载
