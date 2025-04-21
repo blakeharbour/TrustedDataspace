@@ -171,16 +171,14 @@
     <div class="panel mt-20">
         <div class="panel-body">
 
-                        <!-- 显示消息 -->
-                        {% if messages %}
-                            <div class="alert">
-                                {% for message in messages %}
-                                    <div class="alert-{{ message.tags }}">
-                                        {{ message }}
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
+                     <!-- 在<form>标签前添加 -->
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
             <form method="post" action="/data_asset_add/" onsubmit="submitToBlockchain(event)">
                 {% csrf_token %}
                 <table class="table table-border table-bordered table-hover table-bg table-sort" style="width: 100%;">
