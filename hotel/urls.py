@@ -209,7 +209,8 @@ urlpatterns = [
     path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),
     path('batch-delete-data-asset/', views.batch_delete_data_asset, name='batch_delete_data_asset'),
 
-    path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
+
+    # path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
     path('records/', views.asset_record_list, name='asset_record_list'),
 
     # 外部调用
