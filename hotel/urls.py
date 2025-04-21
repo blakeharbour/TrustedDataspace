@@ -66,6 +66,7 @@ urlpatterns = [
     path('deleteinterface/', views.deleteinterface),
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
+    path('useBlockchain/', views.useBlockchain),
 
     # 数据沙箱界面
     path('sjsx-interface/', views.sjsx_interface),

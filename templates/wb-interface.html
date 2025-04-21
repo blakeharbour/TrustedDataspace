@@ -276,6 +276,7 @@
         // 监听单选按钮变化（事件委托）
         $(document).on('change', 'input[name="selected_interface"]', function() {
             selectedInterface.url = $(this).data('url');
+            selectedInterface.webName = $(this).data('webName');
             console.log(selectedInterface.url);
         });
 
@@ -318,6 +319,7 @@
                                  '<td>' +
                                     '<input type="radio" name="selected_interface" ' +
                                            'data-url="' + Result[j][2] + '" />' +
+                                            'data-webName="' + Result[j][1] + '" />' +
                                 '</td>' +
                                  '<td>'+Result[j][0]+'</td>'+
                                 '<td>'+Result[j][1]+'</td>'+
@@ -344,8 +346,19 @@
                 return;
             }
             const apiUrl = selectedRadio.dataset.url;
+            const webName = selectedRadio.dataset.webName;
+            console.log(webName)
             console.log(apiUrl)
             window.location.href = apiUrl;  // 直接跳转触发下载
+            $.ajax({
+				type:"post",
+				url:"http://127.0.0.1:8000/useBlockchain/",
+                data:webName,
+				dataType:'string',
+				success:function (res) {
+					console.log("res",res);
+				}
+			})
             alert("调用成功，已通过区块链存证");
         }
 
