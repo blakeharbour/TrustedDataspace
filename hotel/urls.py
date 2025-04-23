@@ -19,6 +19,10 @@ from myapp import views, api_multviews, mult_open_views, modelapp_portview
 from myapp import  viewsmult
 from myapp import  api_views
 from myapp import  open_views
+from django.contrib import admin
+from django.urls import path, include
+from myapp import views, modelappview
+from myapp.views import show_latest_ip, get_data
 
 from myapp import views, modelappview
 
@@ -66,6 +70,7 @@ urlpatterns = [
     path('deleteinterface/', views.deleteinterface),
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
+    path('useBlockchain/', views.useBlockchain),
 
     # 数据沙箱界面
     path('sjsx-interface/', views.sjsx_interface),
@@ -74,6 +79,17 @@ urlpatterns = [
 
     path('sjtzadd/', views.sjtzadd),
     path('create-sandbox/', views.createsandbox),
+path('sjsxinterface-edit/', views.sjsxinterface_edit),
+    path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
+path('sysxdeleteinterface/', views.sysxdeleteinterface),
+path('upload_to_sandbox/', views.upload_to_sandbox),
+
+# 沙箱接口
+# path('api/listSandboxes', views.list_sandboxes),
+# path('api/createSandbox', views.create_sandbox),
+# path('api/destroySandbox/<str:sandbox_name>', views.destroy_sandbox),
+
+
 
 
 
@@ -129,8 +145,8 @@ urlpatterns = [
 
     #项目管理
     path('project_notarization/', views.project_notarization),
-    path('pengding_project/', views.pengding_project),
-    path('project_notarization_add/', views.project_notarization_add),
+    path('pengding_project/', views.pending_project),
+
     # path('datasharing_add/', views.datasharing_add),
     # 返回所有存证信息
     path('search_notarization/', views.search_notarization),
@@ -149,7 +165,7 @@ urlpatterns = [
     path('application_result_analysis/', modelappview.application_result_analysis),
     path('application_result_open_file_manager/', modelappview.open_file_manager),
     path('model-predict/', modelappview.model_predict),
-    # path('model_predict_port/', modelapp_portview.model_predict_port),
+    path('model_predict_port/', modelapp_portview.model_predict_port),
     # path('model-application-port/', modelapp_portview.model_application),
     # path('model-application_search-port/', modelapp_portview.searchModelApplication),
     # path('application_status_modify-port/', modelapp_portview.editModelApplicationStatus),
@@ -209,7 +225,8 @@ urlpatterns = [
     path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),
     path('batch-delete-data-asset/', views.batch_delete_data_asset, name='batch_delete_data_asset'),
 
-    path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
+
+    # path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
     path('records/', views.asset_record_list, name='asset_record_list'),
 
     # 外部调用
@@ -250,12 +267,19 @@ urlpatterns = [
     path('audit_project/', views.audit_project),
     path('submit_project/', views.submit_project),
 
-
-    path('submit_project/', views.submit_project),
+    path('submit_project_toblockchain/', views.submit_project_toblockchain),
     path('get_project_data/', views.get_project_data),
     path('search_project_data/', views.search_project_data),
     path('search_pending_project_data/', views.search_pending_project_data),
     path('get_pending_project_data/', views.get_pending_project_data),
     path('delete_project/', views.delete_project),
     path('update_project/', views.update_project),
+
+    # ip追踪
+    path('data-model/', views.data_model),
+    # path('show_latest_ip/', show_latest_ip, name='show_latest_ip'),
+    # path('admin/', admin.site.urls),
+   # path('myapp/', include('myapp.urls')),  # 包含 myapp 的 URL 配置
+    path('get_data/', get_data, name='get_data'),  # 让主界面直接访问 /get_data/
+
 ]
