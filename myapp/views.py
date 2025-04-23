@@ -12,9 +12,20 @@ from django.conf import settings
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from .models import LoginUser, AssetRecord
-from django.views.decorators.csrf import csrf_exempt
+from huggingface_hub.utils import parse_datetime
+from sqlalchemy.sql.functions import current_user
 
+from .models import LoginUser, AssetRecord
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+import os
+import time
+import uuid
+import shutil
 from torch.utils.tensorboard import SummaryWriter
 import os
 import json
@@ -88,12 +99,37 @@ def wb_interface(request):
     })
 
 @login_required(login_url='/login/')
+#数据沙箱界面
+def sjsx_interface(request):
+    return render(request, 'sjsx-interface.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+def sjtzadd(request):
+    return render(request, 'sjtzadd.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+def upload_to_sandbox(request):
+    return render(request, 'upload_to_sandbox.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+
+
+
+@login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
 
 @login_required(login_url='/login/')
 def interface_edit(request):
     return render(request, 'interface-edit.html')
+
+
+@login_required(login_url='/login/')
+def sjsxinterface_edit(request):
+    return render(request, 'sjsxinterface-edit.html')
 
 @login_required(login_url='/login/')
 # 发起训练
@@ -143,15 +179,30 @@ def sample_alignment(request):
 @login_required(login_url='/login/')
 def train_model(request):
     return render(request, 'model_training.html')
+@login_required(login_url='/login/')
+def established_project(request):
+    return render(request, 'establish-project.html')
+@login_required(login_url='/login/')
+def pending_project(request):
+    return render(request, 'pending_project.html')
+@login_required(login_url='/login/')
+def project_add(request):
+    return render(request, 'project_add.html',{
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
-
-
+@login_required(login_url='/login/')
 def project_notarization(request):
     return render(request, 'project_notarization.html')
+
+@login_required(login_url='/login/')
 def pengding_project(request):
     return render(request, 'pending_project.html')
+
+@login_required(login_url='/login/')
 def project_notarization_add(request):
     return render(request, 'project_notarization_add.html')
+
 def jxclogin(request):
     if request.method == 'POST':
         try:
@@ -198,8 +249,7 @@ def register(request):
             return JsonResponse({'status': 'error', 'message': '账号已存在'})
 
         # 创建新用户并保存到数据库
-        user = LoginUser(account=account, password=password, com=com)
-        user.save()
+        user = LoginUser.objects.create_user(account=account, password=password, com=com)
 
         return JsonResponse({'status': 'success', 'message': '注册成功'})
     else:
@@ -313,6 +363,92 @@ def searchinterface(request):
     print(interfacelist)
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
+
+def searchinsbsxterface(request):
+    # 如果后续需要根据请求体过滤，可以恢复下面的注释代码
+    # proobj = request.body
+    # projs = json.loads(proobj)
+    # projectName = projs["projectName"]
+    # fiterstr = "projectName = '" + projectName + "'"
+
+    # 使用 webinsjsxterface 表，并提取所有字段
+    interfacelist = selecttable(
+        "webinsjsxterface",
+        "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+        '', '', '', ''
+    )
+    print('查找成功')
+    print(interfacelist)
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+def useBlockchain(request):
+    # 从请求体中获取数据
+    # data = json.loads(request.body)
+    # print(data)
+    webName = request.body.decode('utf-8')  # 转换为字符串
+    # projs = json.loads(proobj)
+    # webName = projs[0]["webName"]
+    select_js = "assetName = '" + webName + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
+                             select_js, '',
+                             '', '')
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        # 将json字符串转换为字典
+        data = json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+    # 在asset_record这个表里新建一条记录
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据传输','调用数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record",
+                con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+    return JsonResponse({'status': 0})
+
+
 def createinterface(request):
     proobj = request.body
     projs = json.loads(proobj)
@@ -323,13 +459,114 @@ def createinterface(request):
     datatype = projs[0]["datatype"]
     comallowed = projs[0]["comallowed"]
     projectName = projs[0]["projectName"]
-    # 在userlist这个表里新建一条记录
+
+    select_js = "assetName = '" + webname + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
+                             '', '')
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        #将json字符串转换为字典
+        data=json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+
+
+    # 在asset_record这个表里新建一条记录
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+    # 在webinterface这个表里新建一条记录
     pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
     inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
-    print('xinzengchenggong')
     return JsonResponse({'status': 0})
 
+def createsandbox(request):
+    projs = json.loads(request.body)  # 是 dict，不是 list
+
+    confirmman = projs["confirmman"]
+    confirmtime = projs["confirmtime"]
+    saveurl = projs["saveurl"]
+    zichanname = projs["zichanname"]
+    staytime = projs["staytime"]
+    jiamipro = projs["jiamipro"]
+    autoscope = projs["autoscope"]
+    delchannle = projs["delchannle"]
+
+    pro_js = (
+        "'" + confirmman + "','" + confirmtime + "','" + saveurl + "','" +
+        zichanname + "','" + staytime + "','" + jiamipro + "','" +
+        autoscope + "','" + delchannle + "'"
+    )
+
+    inserttable(
+        pro_js,
+        tablename="webinsjsxterface",
+        con1="confirmman,confirmtime,saveurl,zichanname,staytime,jiamipro,autoscope,delchannle"
+    )
+
+    print("xinzengchenggong")
+    return JsonResponse({'status': 0})
+
+
+
 def deleteinterface(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(id)
+    fiterstr="id = "+id
+    deletetable("webinterface", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
+def sysxdeleteinterface(request):
     proobj = request.body
     print(proobj)
     projs = json.loads(proobj)
@@ -354,6 +591,33 @@ def searchoneinterface(request):
     interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed,projectName", fiterstr, '', '', '')
     print('查找成功')
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+def sysxsearchoneinterface(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    confirmman = projs["confirmman"]
+    print(confirmman)
+    fiterstr = "confirmman = " + confirmman
+
+
+
+
+
+    interfacelist = selecttable(
+            "webinsjsxterface",
+            "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+            fiterstr,
+            '', '', ''
+        )
+
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+
 
 #测试参与者
 import pytz
@@ -985,28 +1249,27 @@ async def train_model_boardnew(request):
 
     return JsonResponse({'status': 'success'})
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+@ensure_csrf_cookie
 def data_asset_list(request):
     data_assets = DataAsset.objects.all().order_by('assetID')  # 获取所有数据资产并按ID排序
     paginator = Paginator(data_assets, 10)  # 每页显示10条数据
     page_number = request.GET.get('page')  # 获取当前页码
     page_obj = paginator.get_page(page_number)  # 获取当前页的数据
     return render(request, 'data_asset_list.html', {'page_obj': page_obj})
-from django.contrib import messages
 
-
-
-
-
-
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import DataAsset
-import requests
+from datetime import datetime
+from django.utils import timezone
+from django.http import JsonResponse
 import json
+from django.shortcuts import get_object_or_404, redirect, render
+from .models import DataAsset, AssetRecord
+import requests
 import logging
-
+from django.contrib import messages
+from dateutil import parser
 logger = logging.getLogger(__name__)
-
 def add_data_asset(request):
     if request.method == 'POST':
         try:
@@ -1021,142 +1284,232 @@ def add_data_asset(request):
                 assetPath=request.POST['assetPath'],
             )
 
+            # 创建初始存证记录（状态：无 → 未上传）
+            record = AssetRecord.objects.create(
+                assetName=asset.assetName,
+                assetOwner=asset.assetOwner,
+                assetFormat=asset.assetFormat,
+                assetLevel=asset.assetLevel,
+                assetPath=asset.assetPath,
+                star_status='已上传数据资产项',
+                end_status='未上传数据',
+                operation='新增数据资产项',
+                txTime=None,
+                txID='',
+                txHash=''
+            )
+
             # 上传到区块链
-            blockchain_url = "http://202.112.151.253:8080/datasharing/asset/add"
+            blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
             payload = {
                 "assetID": str(asset.assetID),
                 "assetName": asset.assetName,
                 "assetOwner": asset.assetOwner,
-                "assetField": asset.description,
+                # "assetField": asset.description,
                 "assetFormat": asset.assetFormat,
                 "assetLevel": asset.assetLevel,
                 "assetPath": asset.assetPath,
-                "assetRole": "test"  # 根据需求调整
+                "assetRole": "test"
             }
             headers = {'Content-Type': 'application/json'}
 
             response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
             if response.status_code == 200:
-                # 区块链上传成功
-                messages.success(request, '数据资产已成功添加并上传到区块链！')
-                return redirect('data_asset_list')  # 修正：使用 URL 名称
+                try:
+                    response_data = response.json()
+                    payload_str = response_data.get('payload', '{}')
+                    payload_data = json.loads(payload_str)
+
+                    # 解析时间（兼容任意格式）
+                    tx_time_str = payload_data.get('txTime', '')
+                    try:
+                        tx_time = parser.parse(tx_time_str)  # 自动解析
+                        if not timezone.is_aware(tx_time):
+                            tx_time = timezone.make_aware(tx_time)  # 默认时区
+                    except:
+                        tx_time = timezone.now()  # 失败时用当前时间
+
+                    # 更新存证记录
+                    record.end_status = '未上传'
+                    record.txTime = tx_time
+                    record.txID = payload_data.get('txID', '')
+                    record.txHash = payload_data.get('txHash', '')
+                    record.save()
+
+
+                    messages.success(request, '数据资产和存证记录已成功创建！')
+                    return redirect('data_asset_list')
+
+                except Exception as e:
+                    logger.error(f"解析区块链响应失败: {str(e)}")
+                    record.end_status = '上传失败'
+                    record.save()
+                    asset.delete()
+                    messages.error(request, '区块链响应解析失败，数据已回滚。')
+                    return render(request, 'data_asset_add.html')
+
             else:
-                # 区块链上传失败，删除已创建的数据资产
+                logger.error(f"区块链上传失败，状态码: {response.status_code}")
+                record.end_status = '上传失败'
+                record.save()
                 asset.delete()
-                logger.error(f"区块链上传失败，状态码: {response.status_code}, 响应内容: {response.text}")
-                messages.error(request, f'区块链上传失败，状态码: {response.status_code}, 响应内容: {response.text}')
+                messages.error(request, '区块链上传失败，数据已回滚。')
                 return render(request, 'data_asset_add.html')
+
         except Exception as e:
-            # 区块链请求异常，删除已创建的数据资产
             if 'asset' in locals():
                 asset.delete()
-            logger.error(f"区块链请求失败: {str(e)}")
-            messages.error(request, f'区块链请求失败: {str(e)}')
+            if 'record' in locals():
+                record.delete()
+            logger.error(f"操作失败: {str(e)}")
+            messages.error(request, f'操作失败: {str(e)}')
             return render(request, 'data_asset_add.html')
 
     return render(request, 'data_asset_add.html')
 
+# def edit_data_asset(request, asset_id):
+#     asset = get_object_or_404(DataAsset, assetID=asset_id)
+#     if request.method == 'POST':
+#         # 更新数据资产字段
+#         asset.assetName = request.POST.get('assetName')
+#         asset.assetOwner = request.POST.get('assetOwner')
+#         asset.description = request.POST.get('description')
+#         asset.assetFormat = request.POST.get('assetFormat')
+#         asset.assetLevel = request.POST.get('assetLevel')
+#         asset.status = request.POST.get('status')
+#         asset.assetPath = request.POST.get('assetPath')
+#         asset.save()
+#
+#
+#         return redirect('/data_asset_list/')
+#     return render(request, 'data_asset_edit.html', {'asset': asset})
+#
+# from django.http import JsonResponse
+# from django.views.decorators.http import require_http_methods
+# from django.views.decorators.csrf import csrf_protect
+#
+# @require_http_methods(["POST"])
+# @csrf_protect
+# def batch_delete_data_asset(request):
+#     try:
+#         selected_ids = list(map(int, request.POST.getlist('selected_assets')))
+#         DataAsset.objects.filter(assetID__in=selected_ids).delete()
+#         return JsonResponse({'status': 'success'})
+#     except ValueError:
+#         return JsonResponse({'status': 'error', 'message': '无效的ID格式'}, status=400)
+#     except Exception as e:
+#         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
 def edit_data_asset(request, asset_id):
     asset = get_object_or_404(DataAsset, assetID=asset_id)
     if request.method == 'POST':
-        # 更新数据资产字段
-        asset.assetName = request.POST.get('assetName')
-        asset.assetOwner = request.POST.get('assetOwner')
-        asset.description = request.POST.get('description')
-        asset.assetFormat = request.POST.get('assetFormat')
-        asset.assetLevel = request.POST.get('assetLevel')
-        asset.status = request.POST.get('status')
-        asset.assetPath = request.POST.get('assetPath')
-        asset.save()
-        # 构建上传到区块链的数据
-        asset_data = {
-            "assetID": asset.assetID,
-            "assetName": asset.assetName,
-            "assetOwner": asset.assetOwner,
-            "description": asset.description,
-            "assetFormat": asset.assetFormat,
-            "assetLevel": asset.assetLevel,
-            "status": asset.status,
-            "assetPath": asset.assetPath if asset.status == 'started' else "未开始",
-        }
-        # 上传到区块链
-        # 更新区块链中的数据
+        try:
+            # 保存旧状态
+            old_status = asset.status
+            old_asset_name = asset.assetName  # 可选：记录其他旧值
 
-        return redirect('/data_asset_list/')
+            # 更新数据资产字段
+            asset.assetName = request.POST.get('assetName')
+            asset.assetOwner = request.POST.get('assetOwner')
+            asset.description = request.POST.get('description')
+            asset.assetFormat = request.POST.get('assetFormat')
+            asset.assetLevel = request.POST.get('assetLevel')
+            asset.status = request.POST.get('status')
+            asset.assetPath = request.POST.get('assetPath')
+            asset.save()
+
+            # 创建存证记录（不调用区块链）
+            AssetRecord.objects.create(
+                assetName=asset.assetName,
+                assetOwner=asset.assetOwner,
+                assetFormat=asset.assetFormat,
+                assetLevel=asset.get_assetLevel_display(),
+                assetPath=asset.assetPath,
+                star_status='已上传数据资产项',  # 旧状态
+                end_status='未上传数据',  # 新状态
+                operation='编辑数据资产项',
+                txTime=timezone.now(),  # 本地时间
+                txID='N/A',  # 无区块链操作
+                txHash='N/A'
+            )
+
+            return redirect('/data_asset_list/')
+
+        except Exception as e:
+            # 可以添加日志记录或错误提示
+            print(f"编辑操作失败: {str(e)}")
+            return render(request, 'data_asset_edit.html', {'asset': asset, 'error': str(e)})
+
     return render(request, 'data_asset_edit.html', {'asset': asset})
 
 
+#批量删除
+from django.db import transaction
+
+from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
-
-
 @require_http_methods(["POST"])
 @csrf_protect
 def batch_delete_data_asset(request):
     try:
-        # 验证CSRF token
-        if not request.META.get('HTTP_X_CSRFTOKEN', '') == request.COOKIES.get('csrftoken', ''):
-            return JsonResponse({'status': 'error', 'message': 'CSRF验证失败'}, status=403)
-
         selected_ids = list(map(int, request.POST.getlist('selected_assets')))
-        DataAsset.objects.filter(assetID__in=selected_ids).delete()
-        return JsonResponse({'status': 'success'})
+        assets = DataAsset.objects.filter(assetID__in=selected_ids)
+
+        with transaction.atomic():  # 事务保证操作原子性
+            for asset in assets:
+                # 为每个资产创建存证记录
+                AssetRecord.objects.create(
+                    assetName=asset.assetName,
+                    assetOwner=asset.assetOwner,
+                    assetFormat=asset.assetFormat,
+                    assetLevel=asset.get_assetLevel_display(),
+                    assetPath=asset.assetPath,
+                    star_status='已上传数据资产项',
+                    end_status='未上传数据',
+                    operation='删除数据资产项',
+                    txTime=timezone.now(),  # 本地时间
+                    txID='N/A',
+                    txHash='N/A'
+                )
+                asset.delete()  # 逐个删除
+
+            return JsonResponse({'status': 'success'})
+
     except ValueError:
         return JsonResponse({'status': 'error', 'message': '无效的ID格式'}, status=400)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-# @transaction.atomic
-# def renumber_assets():
-#     assets = DataAsset.objects.all().order_by('id')
-#     for index, asset in enumerate(assets, start=1):
-#         if asset.assetID != index:  # 仅当 ID 不同时更新
-#             asset.assetID = index
-#             asset.save()
-def fetch_and_save_asset_data(request):
 
-    # 接口地址
-    url = "http://202.112.151.253:8080/datasharing/addRaw"
-    # headers = {
-    #     "Authorization": "your_auth_token",  # 替换为实际的授权令牌
-    #     "Content-Type": "application/json"
-    # }
-    headers = {'Content-Type': 'application/json'}
-
-    # 发送请求到接口
-    response = requests.put(url, headers=headers)
-    logger.info("Sending PUT request to URL: %s", url)
-    logger.info("Response status code: %s", response.status_code)
-    logger.info("Response data: %s", response.json())
-    if response.status_code == 200:
-        response_data = response.json()
-
-        # 假设接口返回的数据是一个列表
-        for item in response_data:
-            # 解析每条数据
-            tx_time = datetime.strptime(item.get("txTime"), "%Y-%m-%d %H:%M:%S")  # 解析时间
-            asset_record = AssetRecord(
-                assetName=item.get("assetName"),
-                assetOwner=item.get("assetOwner"),
-                assetField=item.get("assetField"),
-                assetFormat=item.get("assetFormat"),
-                assetLevel=item.get("assetLevel"),
-                assetPath=item.get("assetPath"),
-                txTime=tx_time,
-                txID=item.get("txID"),
-                txHash=item.get("txHash"),
-                status=item.get("status")
-            )
-            asset_record.save()  # 保存到数据库
-
-        return JsonResponse({"status": "success", "message": "数据已成功获取并保存"})
-    else:
-        return JsonResponse({"status": "error", "message": "无法从接口获取数据"}, status=400)
-
+@login_required(login_url='/login/')
 def asset_record_list(request):
-    # 从数据库中获取所有资产记录
-    records = AssetRecord.objects.all()
-    # 渲染模板并传递数据
-    return render(request, 'data_asset_record.html', {'records': records})
+    current_user = request.user
+
+    try:
+        # 检查用户是否有 com 字段
+        if not hasattr(current_user, 'com'):
+            return render(request, 'data_asset_record.html', {
+                'error': '用户信息异常，缺少所属公司字段',
+                'records': [],
+                'current_user': current_user
+            })
+
+        # 按用户所属公司 (com) 过滤资产记录的 assetOwner
+        records = AssetRecord.objects.filter(assetOwner=current_user.com)
+
+    except Exception as e:
+        # 处理数据库查询异常
+        return render(request, 'data_asset_record.html', {
+            'error': f'数据库查询失败: {str(e)}',
+            'records': [],
+            'current_user': current_user
+        })
+
+    return render(request, 'data_asset_record.html', {
+        'records': records,
+        'current_user': current_user  # 传递完整的用户对象到模板
+    })
 
 #查找存证信息
 def search_notarization(request):
@@ -1196,6 +1549,373 @@ def search_notarization_by_projectname(request):
     print('查找成功')
     print(notarizationlist)
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
+
+@csrf_exempt
+def create_project(request):
+        try:
+            proobj = request.body
+            projs = json.loads(proobj)
+            projectName = projs['projectName']
+            dataDemand = projs['dataDemand']
+            dataOwner = projs['dataOwner']
+            dataAsset = projs['dataAsset']
+            dataSecurity = projs['dataSecurity']
+            shareWay = projs['shareWay']
+            isDeleted = 'N'
+            currentStatus = '0'
+
+            print(projectName)
+
+            # 调用 inserttable 函数插入数据到 pb8_ProjectAdd 表
+            pro_js = "'" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','" + dataSecurity + "','" + shareWay + "','" + isDeleted + "','" + currentStatus +"'"
+            inserttable(pro_js, tablename="pb8_ProjectAdd",
+                        con1="projectName,dataDemand,dataOwner,dataAsset,dataSecurity,shareWay,isDeleted,currentStatus")
+
+            print('项目新增成功,状态更新成功')
+            return JsonResponse({'status': '0', 'message': '新增成功'})
+        except Exception as e:
+            return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+def submit_project(request):
+    if request.method == 'POST':
+        project_name = request.POST.get('project_name')
+        data_demander = request.POST.get('data_demander')
+        data_owner = request.POST.get('data_owner')
+        data_asset = request.POST.get('data_asset')
+        security_level = request.POST.get('security_level')
+        trans_mode = request.POST.get('trans_mode')
+
+        constr = ""
+        conditions = []
+        if project_name:
+            conditions.append(f"projectName = '{project_name}'")
+        if data_demander:
+            conditions.append(f"dataDemand = '{data_demander}'")
+        if data_owner:
+            conditions.append(f"dataOwner = '{data_owner}'")
+        if data_asset:
+            conditions.append(f"dataAsset = '{data_asset}'")
+        if security_level:
+            conditions.append(f"dataSecurity = '{security_level}'")
+        if trans_mode:
+            conditions.append(f"shareWay = '{trans_mode}'")
+
+        if conditions:
+            constr = " AND ".join(conditions)
+
+        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay'
+        order = 'ID DESC'
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
+
+        if result:
+            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode = result[0]
+
+            blockchainData = {
+                'transactionID': ID,
+                'projectName': project_name,
+                'assetName': data_asset,
+                'assetOwner': data_owner,
+                'assetDemander': data_demander,
+                'assetLevel': security_level,
+                'assetSharingType': trans_mode,
+                'ipfs': ''
+            }
+            blockchainDataStr = json.dumps(blockchainData)
+
+            try:
+                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                if response.status_code == 200:
+                    print("区块链接口响应:", response.json())
+                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功'})
+                else:
+                    print("区块链接口调用失败:", response.text)
+                    return JsonResponse({'status': 'error','message': '区块链接口调用失败，请稍后重试'})
+            except requests.RequestException as e:
+                print("请求异常:", e)
+                return JsonResponse({'status': 'error','message': '请求区块链接口时发生异常，请稍后重试'})
+        else:
+            print("数据库查询无结果")
+            return JsonResponse({'status': 'error','message': '数据库查询无结果'})
+    return JsonResponse({'status': 'error','message': '无效的请求方法'})
+
+def get_project_data(request):
+    try:
+        currentUser = request.user
+        dataDemand = currentUser.com
+        dataOwner = currentUser.com
+        # 构建查询条件
+        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR dataOwner = '{dataOwner}' )"
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                   'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+def get_pending_project_data(request):
+    try:
+        currentUser = request.user
+        dataOwner = currentUser.com
+        # 构建查询条件
+        constr = f"isDeleted != 'Y' AND currentStatus != '0' AND dataOwner = '{dataOwner}'"
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                   'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+def delete_project(request):
+    if request.method == 'POST':
+        projectName = request.POST.get('projectName')
+        dataDemand = request.POST.get('dataDemand')
+        dataOwner = request.POST.get('dataOwner')
+        dataAsset = request.POST.get('dataAsset')
+
+        if projectName and dataDemand and dataOwner and dataAsset:
+            updatstr = "isDeleted = 'Y'"
+            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
+            result = updatetable('pb8_ProjectAdd', updatstr, constr)
+            if result == 1:
+                return JsonResponse({'status': '0','message': '删除成功'})
+            else:
+                return JsonResponse({'status': '1','message': '删除失败'})
+        else:
+            return JsonResponse({'status': '1','message': '缺少必要的参数'})
+    else:
+        return JsonResponse({'status': '1','message': '请求方法错误，仅支持POST请求'})
+
+
+def update_project(request):
+    try:
+        if request.method == 'POST':
+            id = request.POST.get('id')
+            projectName = request.POST.get('projectName')
+            dataDemand = request.POST.get('dataDemand')
+            dataOwner = request.POST.get('dataOwner')
+            dataAsset = request.POST.get('dataAsset')
+            dataSecurity = request.POST.get('dataSecurity')
+            shareWay = request.POST.get('shareWay')
+
+            # 构建更新字符串
+            update_str_list = []
+            if projectName is not None:
+                update_str_list.append(f"projectName = '{projectName}'")
+            if dataDemand is not None:
+                update_str_list.append(f"dataDemand = '{dataDemand}'")
+            if dataOwner is not None:
+                update_str_list.append(f"dataOwner = '{dataOwner}'")
+            if dataAsset is not None:
+                update_str_list.append(f"dataAsset = '{dataAsset}'")
+            if dataSecurity is not None:
+                update_str_list.append(f"dataSecurity = '{dataSecurity}'")
+            if shareWay is not None:
+                update_str_list.append(f"shareWay = '{shareWay}'")
+
+            if not update_str_list:
+                return JsonResponse({'status': '1', 'message': '没有提供需要更新的字段'})
+
+            update_str = ", ".join(update_str_list)
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '修改成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '修改失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+def audit_project(request):
+    try:
+        if request.method == 'POST':
+            # 从 POST 请求中获取项目 ID 和要更新的状态
+            id = request.POST.get('id')
+            currentStatus = request.POST.get('currentStatus')
+
+            # 检查是否提供了必要的参数
+            if id is None or currentStatus is None:
+                return JsonResponse({'status': '1', 'message': '缺少必要参数'})
+
+            # 构建更新字符串
+            update_str = f"currentStatus = '{currentStatus}'"
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '审核状态更新成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '审核状态更新失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+def submit_project(request):
+    try:
+        if request.method == 'POST':
+            # 从 POST 请求中获取项目 ID
+            id = request.POST.get('id')
+            # 设定提交后的状态为 1
+            currentStatus = '1'
+
+            # 检查是否提供了必要的参数
+            if id is None:
+                return JsonResponse({'status': '1', 'message': '缺少必要参数: id'})
+
+            # 构建更新字符串
+            update_str = f"currentStatus = '{currentStatus}'"
+            condition_str = f"id = {id}"
+
+            # 调用 updatetable 方法
+            result = updatetable("pb8_ProjectAdd", update_str, condition_str)
+
+            if result == 1:
+                return JsonResponse({'status': '0', 'message': '项目提交成功'})
+            else:
+                return JsonResponse({'status': '1', 'message': '项目提交失败'})
+
+    except Exception as e:
+        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+
+from django.http import JsonResponse
+
+def search_project_data(request):
+    try:
+        currentUser = request.user
+        dataDemand = currentUser.com
+
+        # 从请求中获取查询参数
+        projectName = request.POST.get('projectName', '')
+        dataOwner = request.POST.get('dataOwner', '')
+        dataAsset = request.POST.get('dataAsset', '')
+        securityLevel = request.POST.get('securityLevel', '')
+        status = request.POST.get('status', '')
+
+        # 构建查询条件列表
+        conditions = [f"isDeleted != 'Y'", f"dataDemand = '{dataDemand}'"]
+
+        if projectName:
+            conditions.append(f"projectName LIKE '%{projectName}%'")
+        if dataOwner:
+            conditions.append(f"dataOwner = '{dataOwner}'")
+        if dataAsset:
+            conditions.append(f"dataAsset LIKE '%{dataAsset}%'")
+        if securityLevel:
+            conditions.append(f"dataSecurity = '{securityLevel}'")
+        if status:
+            conditions.append(f"currentStatus = '{status}'")
+
+        # 组合查询条件
+        constr = " AND ".join(conditions)
+
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                    'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询数据时出现错误: {str(e)}'})
+
+from django.http import JsonResponse
+
+def search_pending_project_data(request):
+    try:
+        # 假设这里获取当前用户相关信息，后续用于筛选条件
+        currentUser = request.user
+        dataOwner = currentUser.com
+
+        # 从请求中获取查询参数
+        projectName = request.POST.get('projectName', '')
+        dataDemandFilter = request.POST.get('dataDemand', '')
+        status = request.POST.get('status', '')
+
+        # 构建查询条件列表，默认筛选未删除且当前状态为待处理（这里假设待处理状态为 '1'）
+        conditions = [f"isDeleted != 'Y'", f"currentStatus != '0'",f"dataOwner = '{dataOwner}'"]
+        if projectName:
+            conditions.append(f"projectName LIKE '%{projectName}%'")
+        if dataDemandFilter:
+            conditions.append(f"dataDemand = '{dataDemandFilter}'")
+        if status:
+            conditions.append(f"currentStatus = '{status}'")
+
+        # 组合查询条件
+        constr = " AND ".join(conditions)
+
+        # 定义要查询的字段
+        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
+        # 调用自定义的 selecttable 函数进行数据查询
+        result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
+
+        if result:
+            data_list = []
+            for row in result:
+                row_data = {
+                    'ID': row[0],
+                    'projectName': row[1],
+                    'dataDemand': row[2],
+                    'dataOwner': row[3],
+                    'dataAsset': row[4],
+                    'dataSecurity': row[5],
+                    'shareWay': row[6],
+                    'currentStatus': row[7]
+                }
+                data_list.append(row_data)
+            return JsonResponse({'status': '0', 'data': data_list})
+        else:
+            return JsonResponse({'status': '1','message': '未查询到符合条件的待处理项目数据'})
+    except Exception as e:
+        return JsonResponse({'status': '1','message': f'查询待处理项目数据时出现错误: {str(e)}'})
 
 
 

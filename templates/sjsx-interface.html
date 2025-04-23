@@ -1,0 +1,471 @@
+<!-- _meta 作为公共模版分离出去 -->
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+  <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+  <title>可信数据空间</title>
+</head>
+<body>
+<!-- _menu -->
+<aside class="Hui-admin-aside-wrapper">
+  <div class="Hui-admin-logo-wrapper">
+    <a class="logo navbar-logo" href="/aboutHui.shtml">
+      <i class="va-m iconpic global-logo"></i>
+      <span class="va-m">可信数据空间</span>
+    </a>
+  </div>
+  <div class="Hui-admin-menu-dropdown bk_2">
+    <dl class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+          <li><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+          <li><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+          <li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+          <li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+          <li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+          <li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+        </ul>
+      </dd>
+    </dl>
+  </div>
+</aside>
+
+<!-- 主体内容 -->
+<div class="Hui-admin-dislpayArrow">
+  <a href="javascript:void(0);" onClick="displaynavbar(this)">
+    <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+    <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+  </a>
+</div>
+
+<section class="Hui-admin-article-wrapper">
+  <header class="Hui-navbar">
+    <div class="navbar">
+      <div class="container-fluid clearfix">
+        <nav class="nav navbar-nav"></nav>
+        <nav class="nav navbar-nav navbar-userbar">
+          <ul class="clearfix">
+            <li class="dropDown dropDown_hover">
+              <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+              <ul class="dropDown-menu menu radius box-shadow">
+                <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+                <li><a href="#">切换账户</a></li>
+                <li><a href="#">退出</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <div class="Hui-admin-article">
+    <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+      首页 <span class="c-gray en">/</span> 数据共享方法 <span class="c-gray en">/</span> 数据沙箱交互
+    </nav>
+
+    <article class="Hui-admin-content clearfix">
+      <div class="alert alert-info mt-10 radius">
+        当前操作基于可信数据空间技术，支持多因子认证、安全传输协议（TLS）、模型封装（Docker）、哈希校验（SHA-256）、自动销毁等标准机制，确保数据在使用全过程中的隐私与合规。
+      </div>
+
+      <div class="panel mt-20">
+        <div class="panel-body">
+          <div class="clearfix">
+            <span class="f-l">
+              <a href="javascript:;" onclick="uploadDataFeature()" class="btn btn-success radius" style="margin-right: 20px;">
+                <i class="Hui-iconfont">&#xe645;</i> 上传新增沙箱
+              </a>
+              <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
+                <i class="Hui-iconfont">&#xe600;</i> 添加数据到沙箱
+              </a>
+              <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
+                创建所需规格数据沙箱
+              </a>
+              <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
+            </span>
+          </div>
+<div class="panel mt-20">
+  <div class="panel-header">沙箱状态总览</div>
+  <div class="panel-body">
+    <table class="table table-border table-bordered table-hover table-bg">
+      <thead>
+        <tr class="text-c">
+          <th>容器名称</th>
+          <th>状态</th>
+          <th>数据访问路径</th>
+          <th>有效期</th>
+          <th>授权范围</th>
+          <th>销毁策略</th>
+          <th>操作</th>
+        </tr>
+      </thead>
+      <tbody id="sandbox-status-table">
+        <!-- JS 动态填充 -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+          <div class="clearfix mt-20">
+            <table class="table table-border table-bordered table-hover table-bg table-sort">
+              <thead>
+                <tr class="text-c">
+                  <th width="30">选择</th>
+                  <th>沙箱创建人</th>
+                  <th>创建时间</th>
+                  <th>数据访问路径</th>
+                  <th>所存资产项名称</th>
+                  <th>沙箱有效期</th>
+                  <th>加密算法说明</th>
+                  <th>访问授权范围</th>
+                  <th>沙箱销毁策略</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="info">
+                <!-- JS 渲染填充数据 -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- JS 脚本 -->
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+<script type="text/javascript">
+    
+    
+     // 在全局作用域定义变量
+        let selectedInterface = {
+            url: null,
+            filename: null
+        };
+
+        // 全局变量存储用户信息
+        var currentUser = {
+            id: "{{ current_user.id }}",
+            account: "{{ current_user.account }}",
+        };
+
+    
+   $(function() {
+    console.log("当前用户ID:", currentUser.id);
+    console.log("当前用户名:", currentUser.account);
+
+    $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/searchinsbsxterface/",
+        dataType: 'json',
+        success: function(res) {
+            console.log("收到后端返回：", res);
+            console.log("info 标签数量：", $("#info").length);
+
+            if (res.status === 0) {
+                const Result = res.data;
+                console.log("解析数据：", Result);
+
+                let str = '';
+                for (let j = 0; j < Result.length; j++) {
+                    const item = Result[j];  // 提升可读性
+                    str += `
+                        <tr class="text-c">
+                          <td><input type="radio" name="selected_interface" data-path="${item[2]}"></td>
+                          <td>${item[0]}</td>
+                          <td>${item[1]}</td>
+                          <td>${item[2]}</td>
+                          <td>${item[3]}</td>
+                          <td>${item[4]}</td>
+                          <td>${item[5]}</td>
+                          <td>${item[6]}</td>
+                          <td>${item[7]}</td>
+                          <td>
+                            <a title="编辑" onclick="interface_edit(this,'${item[0]}')">
+                              <i class="Hui-iconfont">&#xe6df;</i>编辑
+                            </a>
+                            <a title="删除" onclick="interface_dele(this,'${item[0]}')">
+                              <i class="Hui-iconfont">&#xe6e2;</i>删除
+                            </a>
+                          </td>
+                        </tr>`;
+                }
+
+                // 替换表格内容，确保不会叠加重复
+                $("#info").html(str);
+            } else {
+                console.warn("后端返回非成功状态，status =", res.status);
+                layer.msg("数据加载失败：" + res.msg, {icon: 2});
+            }
+        },
+        error: function(err) {
+            console.error("Ajax 请求失败：", err);
+            layer.msg("请求失败，请检查接口是否可访问", {icon: 2});
+        }
+    });
+});
+   
+   let activeSandboxPaths = new Set(); // ← 全局变量
+   function loadSandboxStatus() {
+  fetch('http://127.0.0.1:5001/api/listSandboxes') 
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const tableBody = document.getElementById("sandbox-status-table");
+                let html = "";
+                activeSandboxPaths.clear();  // 每次刷新清空
+                data.data.forEach(item => {
+                     activeSandboxPaths.add(item.save_url); // 记录访问路径
+                    html += `
+                        <tr class="text-c">
+                          <td>${item.name}</td>
+                          <td>${item.status}</td>
+                          <td>${item.save_url}</td>
+                          <td>${item.expire_time}</td>
+                          <td>${item.auth_scope}</td>
+                          <td>${item.destroy_strategy}</td>
+                          <td>
+                            <a href="javascript:;" onclick="destroySandbox('${item.name}')" class="btn btn-danger size-S radius">销毁</a>
+                          </td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = html;
+            } else {
+                layer.msg("沙箱状态获取失败：" + data.message, { icon: 2 });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            layer.msg("沙箱状态获取失败，请检查网络或后端服务", { icon: 2 });
+        });
+}
+
+function destroySandbox(containerName) {
+    layer.confirm(`是否销毁沙箱容器：${containerName}？`, function(index){
+        fetch(`http://127.0.0.1:5001/api/destroySandbox/${containerName}`, {
+            method: 'DELETE'
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                layer.msg("沙箱已销毁", { icon: 1 });
+                loadSandboxStatus();  // 重新加载
+            } else {
+                layer.msg("销毁失败：" + data.message, { icon: 2 });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            layer.msg("销毁请求失败", { icon: 2 });
+        });
+    });
+}
+
+
+  function downloadSelected() {
+    const selectedRow = document.querySelector('input[name="selected_interface"]:checked');
+    if (!selectedRow) {
+        layer.msg('请先选择一条数据', { icon: 2 });
+        return;
+    }
+
+    const row = selectedRow.closest('tr');
+    const saveUrl = selectedRow.dataset.path;
+
+    // 提取字段（你表格中这些字段的列顺序一定要确认好）
+    const sandboxExpire = row.children[5]?.innerText.trim();  // 沙箱有效期
+    const authScope = row.children[7]?.innerText.trim();       // 访问授权范围
+    const destroyStrategy = row.children[8]?.innerText.trim(); // 沙箱销毁策略
+      console.log('sandboxExpire', sandboxExpire);
+console.log('authScope', authScope);
+console.log('destroyStrategy', destroyStrategy);
+
+
+    if (!saveUrl || !sandboxExpire || !destroyStrategy) {
+        layer.msg('缺少必要参数，请检查沙箱信息填写是否完整', { icon: 2 });
+        return;
+    }
+
+    layer.msg('正在创建数据沙箱，请稍候...', { icon: 16, shade: 0.3, time: 0 });
+
+    fetch('http://127.0.0.1:5001/api/createSandbox', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            saveUrl: saveUrl,
+            sandbox_expire: sandboxExpire,
+            auth_scope: authScope,
+            destroy_strategy: destroyStrategy
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        layer.closeAll();
+        if (data.success) {
+            layer.msg('数据沙箱创建成功！', { icon: 1 });
+            loadSandboxStatus(); 
+        } else {
+            layer.msg('创建失败：' + data.message, { icon: 2 });
+        }
+    })
+    .catch(err => {
+        layer.closeAll();
+        console.error(err);
+        layer.msg('请求失败，请检查后端服务是否运行', { icon: 2 });
+    });
+}
+
+function interface_add() {
+    const selectedRow = document.querySelector('input[name="selected_interface"]:checked');
+    if (!selectedRow) {
+        layer.msg("请先选择一条沙箱", { icon: 2 });
+        return;
+    }
+
+    const row = selectedRow.closest('tr');
+    const sandboxPath = row.children[3]?.innerText.trim(); // 数据访问路径
+
+    // 检查是否在已创建沙箱中
+    if (!activeSandboxPaths.has(sandboxPath)) {
+        layer.msg("该沙箱尚未创建，无法添加数据", { icon: 2 });
+        return;
+    }
+
+    // 存入 sessionStorage
+    sessionStorage.setItem("currentSandboxPath", sandboxPath);
+
+    
+  location.href = "http://127.0.0.1:8000/upload_to_sandbox/";
+
+}
+
+
+
+
+ // 监听单选按钮变化（事件委托）
+        $(document).on('change', 'input[name="selected_interface"]', function() {
+            selectedInterface.url = $(this).data('url');
+            console.log(selectedInterface.url);
+        });
+
+        // 页面加载时检查 sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+          // 从 sessionStorage 读取值
+          const targetId = sessionStorage.getItem('target_id');
+          console.log(targetId)
+          // 根据值是否存在控制按钮显示
+          const btn = document.getElementById('interfaceAdd');
+          //数据所有方
+          if (parseInt(targetId) === 1) {
+            btn.style.display = 'inline-block';  // 显示按钮
+          }
+          //数据需求方
+          else {
+            {#btn.style.display = 'none';  // 隐藏按钮#}
+          }
+
+          // 如果只需使用一次，可清除 sessionStorage
+          sessionStorage.removeItem('target_id');
+        });
+        
+        
+function uploadDataFeature() {
+  location.href = "http://127.0.0.1:8000/sjtzadd/";
+}
+
+
+
+
+
+function destroyData(id) {
+  layer.confirm('是否销毁该数据沙箱？此操作不可恢复', function(index){
+    layer.msg("已销毁", {icon: 1});
+  });
+}
+
+function interface_edit(obj,confirmman) {
+        var confirmman=JSON.stringify(confirmman);
+        sessionStorage.setItem("confirmman",confirmman);
+
+        location.href = "http://127.0.0.1:8000/sjsxinterface-edit/";
+		}
+/*
+$(function() {
+  const data = [{
+    creator: "李四",
+    created_at: "2025-03-27 16:00",
+    path: "/sandbox/data/asset202503",
+    asset_name: "车务调度信息",
+    expire: "2025-07-01",
+    encryption: "国密 SM4 + 签名 SM2",
+    scope: "铁路运输调度平台",
+    destroy_policy: "使用后立即销毁"
+  }];
+
+  let html = data.map(item => `
+    <tr class="text-c">
+      <td><input type="checkbox" name="select"></td>
+      <td>${item.creator}</td>
+      <td>${item.created_at}</td>
+      <td>${item.path}</td>
+      <td>${item.asset_name}</td>
+      <td>${item.expire}</td>
+      <td>${item.encryption}</td>
+      <td>${item.scope}</td>
+      <td>${item.destroy_policy}</td>
+      <td><a href="javascript:;" onclick="destroyData(1)">销毁</a></td>
+    </tr>
+  `).join("");
+
+  $("#info").html(html);
+});
+
+*/
+  document.addEventListener('DOMContentLoaded', function () {
+    loadSandboxStatus();
+});
+   
+</script>
+</body>
+</html>

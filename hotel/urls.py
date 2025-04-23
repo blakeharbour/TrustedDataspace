@@ -70,8 +70,30 @@ urlpatterns = [
     path('deleteinterface/', views.deleteinterface),
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
+    path('useBlockchain/', views.useBlockchain),
 
-    #以下为旧平台方法---------------------------------------------------------------------------------------------------
+    # 数据沙箱界面
+    path('sjsx-interface/', views.sjsx_interface),
+
+    path('searchinsbsxterface/', views.searchinsbsxterface),
+
+    path('sjtzadd/', views.sjtzadd),
+    path('create-sandbox/', views.createsandbox),
+path('sjsxinterface-edit/', views.sjsxinterface_edit),
+    path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
+path('sysxdeleteinterface/', views.sysxdeleteinterface),
+path('upload_to_sandbox/', views.upload_to_sandbox),
+
+# 沙箱接口
+# path('api/listSandboxes', views.list_sandboxes),
+# path('api/createSandbox', views.create_sandbox),
+# path('api/destroySandbox/<str:sandbox_name>', views.destroy_sandbox),
+
+
+
+
+
+    #以下为旧平台方法
     path('index/', views.index),
     path('mutiindex/', views.mutiindex),
     path('member-list/', views.member_list),
@@ -123,8 +145,8 @@ urlpatterns = [
 
     #项目管理
     path('project_notarization/', views.project_notarization),
-    path('pengding_project/', views.pengding_project),
-    path('project_notarization_add/', views.project_notarization_add),
+    path('pengding_project/', views.pending_project),
+
     # path('datasharing_add/', views.datasharing_add),
     # 返回所有存证信息
     path('search_notarization/', views.search_notarization),
@@ -143,7 +165,7 @@ urlpatterns = [
     path('application_result_analysis/', modelappview.application_result_analysis),
     path('application_result_open_file_manager/', modelappview.open_file_manager),
     path('model-predict/', modelappview.model_predict),
-    # path('model_predict_port/', modelapp_portview.model_predict_port),
+    path('model_predict_port/', modelapp_portview.model_predict_port),
     # path('model-application-port/', modelapp_portview.model_application),
     # path('model-application_search-port/', modelapp_portview.searchModelApplication),
     # path('application_status_modify-port/', modelapp_portview.editModelApplicationStatus),
@@ -203,7 +225,8 @@ urlpatterns = [
     path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),
     path('batch-delete-data-asset/', views.batch_delete_data_asset, name='batch_delete_data_asset'),
 
-    path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
+
+    # path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
     path('records/', views.asset_record_list, name='asset_record_list'),
 
     # 外部调用
@@ -234,6 +257,24 @@ urlpatterns = [
 
     path('multmodel_application_result_analysis/', viewsmult.multmodel_application_result_analysis),
     path('multmodel_application_status_modify/', viewsmult.editMultModelApplicationStatus),
+
+    # 项目管理
+    # 项目管理
+    path('established_project/', views.established_project),
+    path('pengding_project/', views.pending_project),
+    path('project_add/', views.project_add),
+    path('create_project/', views.create_project),
+    path('audit_project/', views.audit_project),
+    path('submit_project/', views.submit_project),
+
+
+    path('submit_project/', views.submit_project),
+    path('get_project_data/', views.get_project_data),
+    path('search_project_data/', views.search_project_data),
+    path('search_pending_project_data/', views.search_pending_project_data),
+    path('get_pending_project_data/', views.get_pending_project_data),
+    path('delete_project/', views.delete_project),
+    path('update_project/', views.update_project),
 
     # ip追踪
     path('data-model/', views.data_model),

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+  <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+  <title>新增数据沙箱</title>
+</head>
+<body>
+<aside class="Hui-admin-aside-wrapper">
+  <div class="Hui-admin-logo-wrapper">
+    <a class="logo navbar-logo" href="/aboutHui.shtml">
+      <i class="va-m iconpic global-logo"></i>
+      <span class="va-m">可信数据空间</span>
+    </a>
+  </div>
+  <div class="Hui-admin-menu-dropdown bk_2">
+    <dl id="menu-guest" class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl id="menu-model" class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+          <li><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+          <li><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl id="menu-guest" class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+          <li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+        </ul>
+      </dd>
+    </dl>
+    <dl id="menu-guest" class="Hui-menu">
+      <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+      <dd class="Hui-menu-item" style="display:block">
+        <ul>
+          <li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+          <li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+          <li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+          <li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+        </ul>
+      </dd>
+    </dl>
+  </div>
+</aside>
+<div class="Hui-admin-dislpayArrow">
+  <a href="javascript:void(0);" onClick="displaynavbar(this)">
+    <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+    <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+  </a>
+</div>
+<section class="Hui-admin-article-wrapper">
+  <header class="Hui-navbar">
+    <div class="navbar">
+      <div class="container-fluid clearfix">
+        <nav class="nav navbar-nav"></nav>
+        <nav class="nav navbar-nav navbar-userbar">
+          <ul class="clearfix">
+            <li class="dropDown dropDown_hover">
+              <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+              <ul class="dropDown-menu menu radius box-shadow">
+                <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+                <li><a href="#">切换账户</a></li>
+                <li><a href="#">退出</a></li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <article class="clearfix pd-20">
+    <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+      首页 <span class="c-gray en">/</span> 数据共享方法 <span class="c-gray en">/</span> 新增数据沙箱
+    </nav>
+    <form action="" method="post" class="form form-horizontal" id="form-sandbox-add">
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>沙箱创建人：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="creator" name="creator" placeholder="请输入沙箱创建人">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>创建时间：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="datetime-local" class="input-text" id="createTime" name="createTime">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据访问路径：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="dataPath" name="dataPath" placeholder="请输入数据访问URL或文件路径">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所存资产项名称：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="assetName" name="assetName" placeholder="例如：车辆总量、时刻表等">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>沙箱有效期：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="date" class="input-text" id="validUntil" name="validUntil">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">加密算法说明：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="encryption" name="encryption" placeholder="如 AES256, RSA, 哈希算法等">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">访问授权范围：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="accessRange" name="accessRange" placeholder="如 铁路局、调度所 等授权方">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">沙箱销毁策略：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <textarea class="textarea" id="destroyPolicy" name="destroyPolicy" placeholder="如 超时自动销毁 / 使用后立即销毁 / 管理员审核销毁"></textarea>
+        </div>
+      </div>
+      <div class="row clearfix">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+          <input class="btn btn-primary radius" type="button" onclick="submitSandbox()" value="&nbsp;&nbsp;新增数据沙箱&nbsp;&nbsp;">
+        </div>
+      </div>
+    </form>
+  </article>
+</section>
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+<script>
+    
+   
+
+   $(function () {
+                var getData = sessionStorage.getItem("confirmman");
+                console.log(getData)
+                {#将json字符串转化为json对象#}
+                var confirmman = $.parseJSON(getData);
+                console.log(confirmman)
+                var wbdic={
+                        confirmman:confirmman
+                    };
+                var wbdata = JSON.stringify(wbdic)
+                $.ajax({
+                    type: "post",
+                    url: "http://127.0.0.1:8000/sysxsearchoneinterface/" ,//接口地址
+                    dataType:'json',
+                    data: wbdata,
+                    success: function (res) {
+                        console.log("res385:");
+                        console.log(res);
+                        result = res.data;
+                        console.log(result)
+                        $("#confirmman").val(result[0][1]);
+                        $("#confirmtime").val(result[0][2]);
+                        $("#saveurl").val(result[0][3]);
+                        $("#zichanname").val(result[0][4]);
+                        $("#staytime").val(result[0][5]);
+                        $("#jiamipro").val(result[0][6]);
+                        $("#autoscope").val(result[0][7]);
+                        $("#delchannle").val(result[0][8]);
+                    },
+                })
+            }); 
+    
+  function submitSandbox() {
+  const confirmman = $("#creator").val();         // 沙箱创建人
+  const confirmtime = $("#createTime").val();     // 创建时间
+  const saveurl = $("#dataPath").val();           // 数据访问路径
+  const zichanname = $("#assetName").val();       // 所存资产项名称
+  const staytime = $("#validUntil").val();        // 沙箱有效期
+  const jiamipro = $("#encryption").val();        // 加密算法说明
+  const autoscope = $("#accessRange").val();      // 访问授权范围
+  const delchannle = $("#destroyPolicy").val();   // 沙箱销毁策略
+
+  if (confirmman === "") {
+    alert("沙箱创建人不能为空");
+    $("#creator").focus();
+    return false;
+  }
+
+  // 👉 第一步：获取旧的 id（即 saveurl），执行删除
+  const getData = sessionStorage.getItem("confirmman");
+  console.log("获取 session 中的 confirmman:", getData);
+  const confirmman1 = $.parseJSON(getData);
+  sessionStorage.removeItem("confirmman1");
+
+  const deleteBody = JSON.stringify({ confirmman1: confirmman1 });
+
+  $.ajax({
+    type: 'post',
+    url: 'http://127.0.0.1:8000/sysxdeleteinterface/',
+    dataType: 'json',
+    data: deleteBody,
+    contentType: 'application/json',
+    success: function (data) {
+      console.log("删除结果:", data.status);
+
+      // 👉 第二步：删除成功后执行新增
+      const dataObj = {
+        confirmman: confirmman,
+        confirmtime: confirmtime,
+        saveurl: saveurl,
+        zichanname: zichanname,
+        staytime: staytime,
+        jiamipro: jiamipro,
+        autoscope: autoscope,
+        delchannle: delchannle
+      };
+
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/create-sandbox/",
+        data: JSON.stringify(dataObj),
+        contentType: "application/json",
+        dataType: "json",
+        success: function (res) {
+          console.log("提交成功：", res);
+          if (res.status === 0) {
+            layer.msg("编辑成功，数据已更新", { icon: 1 });
+            setTimeout(() => {
+              window.location.href = "/sjsx-interface/";
+            }, 1000);
+          } else {
+            layer.alert("提交失败，请检查数据");
+          }
+        },
+        error: function (err) {
+          console.error("提交错误：", err);
+        }
+      });
+
+    },
+    error: function (err) {
+      console.error("删除失败：", err);
+    }
+  });
+}
+
+
+</script>
+</body>
+</html>

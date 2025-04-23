@@ -1,0 +1,457 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script><![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+
+	<title>铁路隐私计算平台</title>
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
+
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li class="current"><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+	<div class="Hui-admin-aside-mask"></div>
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+<section class="Hui-admin-article-wrapper">
+		<!--_header 作为公共模版分离出去-->
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+{#              <li><a href="">模型训练管理</a></li>#}
+              <li class="dropDown dropDown_hover">
+{#                <a class="dropDown_A" href="./model-list.html">模型列表</a>#}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+{#                    <a href="..//model-add.html">添加模型</a>#}
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+{#							<li>超级管理员</li>#}
+							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+								<ul class="dropDown-menu menu radius box-shadow">
+									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+									<li><a href="#">切换账户</a></li>
+									<li><a href="#">退出</a></li>
+								</ul>
+							</li>
+{#							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>#}
+{#							<li id="Hui-skin" class="dropDown dropDown_hover right">#}
+{#								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>#}
+{#								<ul class="dropDown-menu menu radius box-shadow">#}
+{#									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>#}
+{#									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>#}
+{#									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>#}
+{#									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>#}
+{#									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>#}
+{#									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>#}
+{#								</ul>#}
+{#							</li>#}
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+    <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+                <span class="c-gray en">/</span>
+				项目信息管理
+				<span class="c-gray en">/</span>
+				项目申请
+        <span class="c-gray en">/</span>
+				申请项目
+			</nav>
+	<article class="clearfix pd-20">
+            <form action="" method="post" class="form form-horizontal" id="form-member-add">
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>项目名称：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="" placeholder="" id="project_name" name="project_name">
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据需求方：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" id="data_demander" name="data_demander" value="{{ current_user.com }}" disabled>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据所有方：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <select class="input-text" id="data_owner" name="data_owner">
+                            <option value="">请选择</option>
+                            <option value="海关">海关</option>
+                            <option value="港口">港口</option>
+                            <option value="铁路">铁路</option>
+                            <option value="哈方">哈方</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所需数据资产：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <input type="text" class="input-text" value="" placeholder="" id="data_asset" name="data_asset">
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>安全等级：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <select class="input-text" id="security_level" name="security_level">
+                            <option value="">请选择</option>
+                            <option value="低敏">低敏</option>
+                            <option value="敏感">敏感</option>
+                            <option value="高敏">高敏</option>
+                            <option value="高敏密文">高敏密文</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>传输方式：</label>
+                    <div class="form-controls col-xs-8 col-sm-9">
+                        <select class="input-text" id="trans_mode" name="trans_mode">
+                            <option value="">请选择</option>
+                            <option value="安全沙箱">安全沙箱</option>
+                            <option value="接口交换">接口交换</option>
+                            <option value="隐私计算">隐私计算</option>
+                            <option value="密文计算">密文计算</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row clearfix">
+                    <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                        <input class="btn btn-primary radius" type="button" onclick="submit_order()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+                    </div>
+                </div>
+            </form>
+        </article>
+</section>
+
+	<!--_footer 作为公共模版分离出去-->
+	<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+	<!--/_footer /作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
+	<script type="text/javascript">
+
+        $(document).ready(function () {
+    // 获取 URL 参数
+    var urlParams = new URLSearchParams(window.location.search);
+    var project_name = urlParams.get('project_name');
+    var data_demander = urlParams.get('data_demander');
+    var data_owner = urlParams.get('data_owner');
+    var data_asset = urlParams.get('data_asset');
+    var security_level = urlParams.get('security_level');
+    var trans_mode = urlParams.get('trans_mode');
+
+    // 填充表单字段
+    if (project_name) {
+        $('#project_name').val(project_name);
+    }
+    if (data_demander) {
+        $('#data_demander').val(data_demander);
+    }
+    if (data_owner) {
+        $('#data_owner').val(data_owner);
+    }
+    if (data_asset) {
+        $('#data_asset').val(data_asset);
+    }
+    if (security_level) {
+        $('#security_level').val(security_level);
+    }
+    if (trans_mode) {
+        $('#trans_mode').val(trans_mode);
+    }
+});
+
+  function submit_order() {
+    var project_name = $("#project_name").val();
+    var data_demander = $("#data_demander").val();
+    var data_owner = $("#data_owner").val();
+    var data_asset = $("#data_asset").val();
+    var security_level = $("#security_level").val();
+    var trans_mode = $("#trans_mode").val();
+
+    if (data_owner == "") {
+        alert("数据所有方不能为空");
+        $("#data_owner").focus();
+        return false;
+    }
+    if (data_asset == "") {
+        alert("所需数据资产不能为空");
+        $("#data_asset").focus();
+        return false;
+    }
+    if (security_level == "") {
+        alert("安全等级不能为空");
+        $("#security_level").focus();
+        return false;
+    }
+    if (project_name == "") {
+        alert("项目名称不能为空");
+        $("#project_name").focus();
+        return false;
+    }
+    if (data_demander == "") {
+        alert("数据需求方不能为空");
+        $("#data_demander").focus();
+        return false;
+    }
+    if (trans_mode == "") {
+        alert("传输方式不能为空");
+        $("#trans_mode").focus();
+        return false;
+    }
+
+    var modelinfo = {
+        projectName: project_name,
+        dataDemand: data_demander,
+        dataOwner: data_owner,
+        dataAsset: data_asset,
+        dataSecurity: security_level,
+        shareWay: trans_mode
+    };
+
+    // 检查 URL 参数中是否包含 id
+    var urlParams = new URLSearchParams(window.location.search);
+    var id = urlParams.get('id');
+
+    if (id) {
+        // 修改操作
+        $.ajax({
+            type: "post",
+            url: "http://127.0.0.1:8000/update_project/",
+            data: {
+                id: id,
+               ...modelinfo
+            },
+            success: function (res) {
+                console.log("res", res);
+                if (res.status == "0") {
+                    alert("修改成功");
+                    // 项目修改成功后，发起查询数据的请求（区块链接口）
+                    $.ajax({
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/submit_project/",
+                        data: {
+                            project_name: project_name,
+                            data_demander: data_demander,
+                            data_owner: data_owner,
+                            data_asset: data_asset,
+                            security_level: security_level,
+                            trans_mode: trans_mode
+                        },
+                        success: function (res) {
+                            console.log("响应:", res);
+                            if (res.status === "ok") {
+                                alert("区块链接口调用成功");
+                                // 刷新项目列表页面
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } else {
+                                alert("区块链接口调用失败，请稍后重试");
+                                // 刷新项目列表页面
+                            }
+                            setTimeout(() => {
+                            try {
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } catch (error) {
+                                console.error("跳转失败:", error);
+                            }
+                        }, 100);
+                        },
+                        error: function (error) {
+                            console.error("请求失败:", error);
+                            alert("请求失败，请稍后重试");
+                        }
+                    });
+                } else {
+                    alert("出现错误");
+                }
+            },
+            error: function (error) {
+                console.error("修改项目接口调用失败:", error);
+                alert("修改项目接口调用失败，请稍后重试");
+            }
+        });
+    } else {
+        // 新增操作
+        var modeldata = JSON.stringify(modelinfo);
+        $.ajax({
+            type: "post",
+            url: "http://127.0.0.1:8000/create_project/",
+            data: modeldata,
+            dataType: "json",
+            contentType: "application/json",
+            success: function (res) {
+                console.log("res", res);
+                if (res.status == "0") {
+                    alert("新增成功");
+                    // 项目创建成功后，发起查询数据的请求
+                    $.ajax({
+                        type: "POST",
+                        url: "http://127.0.0.1:8000/submit_project/",
+                        data: {
+                            project_name: project_name,
+                            data_demander: data_demander,
+                            data_owner: data_owner,
+                            data_asset: data_asset,
+                            security_level: security_level,
+                            trans_mode: trans_mode
+                        },
+                        success: function (res) {
+                            console.log("响应:", res);
+                            if (res.status === "ok") {
+                                alert("区块链接口调用成功");
+                                // 刷新项目列表页面
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } else {
+                                alert("区块链接口调用失败，请稍后重试");
+                            }
+                            setTimeout(() => {
+                            try {
+                                window.location.href = "http://127.0.0.1:8000/established_project/";
+                            } catch (error) {
+                                console.error("跳转失败:", error);
+                            }
+                        }, 100);
+                        },
+                        error: function (error) {
+                            console.error("请求失败:", error);
+                            alert("请求失败，请稍后重试");
+                        }
+                    });
+                } else {
+                    alert("出现错误");
+                }
+            },
+            error: function (error) {
+                console.error("创建项目接口调用失败:", error);
+                alert("创建项目接口调用失败，请稍后重试");
+            }
+        });
+    }
+}
+
+
+
+	</script>
+	<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>
