@@ -523,6 +523,74 @@ def createinterface(request):
     inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
     return JsonResponse({'status': 0})
 
+
+
+def createinterfacesx(request):
+
+    zcname = request.POST.get("zcname")  # 从前端拿 zcname
+
+    select_js = "assetName = '" + zcname + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
+                             '', '')
+
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = "zcname"
+    assetID = selectlist[0][5]
+
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        #将json字符串转换为字典
+        data=json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+
+
+    # 在asset_record这个表里新建一条记录
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
 

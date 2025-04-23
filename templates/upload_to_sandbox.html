@@ -155,54 +155,105 @@
 </head>
 <body>
   <!-- 左侧菜单栏 -->
-  <aside class="Hui-admin-aside-wrapper">
-    <div class="Hui-admin-logo-wrapper">
-      <a class="logo navbar-logo" href="/aboutHui.shtml">
-        <i class="va-m iconpic global-logo"></i>
-        <span class="va-m">可信数据空间</span>
-      </a>
-    </div>
-    <div class="Hui-admin-menu-dropdown bk_2">
-      <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-        <dd class="Hui-menu-item" style="display:block">
-          <ul>
-            <li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
-          </ul>
-        </dd>
-      </dl>
-      <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-        <dd class="Hui-menu-item" style="display:block">
-          <ul>
-            <li><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
-            <li><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
-            <li><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
-          </ul>
-        </dd>
-      </dl>
-      <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-        <dd class="Hui-menu-item" style="display:block">
-          <ul>
-            <li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
-            <li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
-          </ul>
-        </dd>
-      </dl>
-      <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-        <dd class="Hui-menu-item" style="display:block">
-          <ul>
-            <li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
-            <li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
-            <li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
-            <li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
-          </ul>
-        </dd>
-      </dl>
-    </div>
-  </aside>
+  <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+
+	<!--_menu 作为公共模版分离出去-->
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
+
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+
 
   <!-- 顶部导航栏 -->
   <div class="Hui-admin-dislpayArrow">
@@ -253,6 +304,7 @@
 <script>
   window.onload = function () {
   const path = sessionStorage.getItem("currentSandboxPath");
+  const zcname = sessionStorage.getItem("currentzcname");
   const pathInput = document.getElementById("sandboxPath");
   if (pathInput) {
     pathInput.value = path || "<未选择路径>";
@@ -336,6 +388,27 @@ function submitUpload() {
       console.error("❌ 上传出错：", err);
       alert("❌ 上传请求失败");
     });
+  
+  const zcname = sessionStorage.getItem("currentzcname");  // 获取 zcname
+
+$.ajax({
+  type: "post",
+  url: "http://127.0.0.1:8000/createinterfacesx/",
+  dataType: "json",
+  data: {
+    zcname: zcname   // 传递给后端
+  },
+  success: function (res) {
+    console.log("res", res);
+    if (res.status == "0") {
+      alert("新增成功,已通过区块链存证");
+      location.href = "http://127.0.0.1:8000/sisx-interface/";
+    } else {
+      alert("出现错误");
+    }
+  }
+});
+  
 }
 
 function generateReadonlyLink() {

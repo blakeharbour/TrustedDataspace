@@ -70,7 +70,7 @@ urlpatterns = [
 
     # 数据沙箱界面
     path('sjsx-interface/', views.sjsx_interface),
-
+    path('createinterfacesx/', views.createinterfacesx),
     path('searchinsbsxterface/', views.searchinsbsxterface),
 
     path('sjtzadd/', views.sjtzadd),
