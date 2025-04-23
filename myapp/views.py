@@ -1428,7 +1428,7 @@ def edit_data_asset(request, asset_id):
                 assetName=asset.assetName,
                 assetOwner=asset.assetOwner,
                 assetFormat=asset.assetFormat,
-                assetLevel=asset.assetLevel,
+                assetLevel=asset.get_assetLevel_display(),
                 assetPath=asset.assetPath,
                 star_status='无',  # 旧状态
                 end_status='未上传',  # 新状态
@@ -1468,7 +1468,7 @@ def batch_delete_data_asset(request):
                     assetName=asset.assetName,
                     assetOwner=asset.assetOwner,
                     assetFormat=asset.assetFormat,
-                    assetLevel=asset.assetLevel,
+                    assetLevel=asset.get_assetLevel_display(),
                     assetPath=asset.assetPath,
                     star_status='无',
                     end_status='未上传',
