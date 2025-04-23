@@ -19,6 +19,10 @@ from myapp import views, api_multviews, mult_open_views, modelapp_portview
 from myapp import  viewsmult
 from myapp import  api_views
 from myapp import  open_views
+from django.contrib import admin
+from django.urls import path, include
+from myapp import views, modelappview
+from myapp.views import show_latest_ip, get_data
 
 from myapp import views, modelappview
 
@@ -271,4 +275,12 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('get_pending_project_data/', views.get_pending_project_data),
     path('delete_project/', views.delete_project),
     path('update_project/', views.update_project),
+
+    # ip追踪
+    path('data-model/', views.data_model),
+    # path('show_latest_ip/', show_latest_ip, name='show_latest_ip'),
+    # path('admin/', admin.site.urls),
+   # path('myapp/', include('myapp.urls')),  # 包含 myapp 的 URL 配置
+    path('get_data/', get_data, name='get_data'),  # 让主界面直接访问 /get_data/
+
 ]

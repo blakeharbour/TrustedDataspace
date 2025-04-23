@@ -1916,3 +1916,152 @@ def search_pending_project_data(request):
             return JsonResponse({'status': '1','message': '未查询到符合条件的待处理项目数据'})
     except Exception as e:
         return JsonResponse({'status': '1','message': f'查询待处理项目数据时出现错误: {str(e)}'})
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------------------
+# IP追踪
+# myapp/views.py
+
+import logging
+from django.shortcuts import render
+from django.http import JsonResponse
+from cryptography.fernet import Fernet
+import json
+from datetime import datetime
+import base64
+import openpyxl
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+
+# 设置日志记录
+logging.basicConfig(level=logging.INFO)
+
+# 允许访问的 IP 列表
+ALLOWED_IPS = ['192.168.1.141', '10.61.222.249', '127.0.0.1']
+
+# 存储 IP 地址的文件路径
+IP_HISTORY_FILE = 'ip_history.txt'
+
+# 生成密钥
+def generate_key():
+    return Fernet.generate_key()
+
+# 加密数据
+def encrypt_data(data, key):
+    fernet = Fernet(key)
+    encrypted_data = fernet.encrypt(data.encode())
+    return encrypted_data
+
+# 创建数据包
+def create_data_packet(encrypted_data, key, client_ip, user_agent, timestamp, url, query_params):
+    return {
+        'encrypted_data': base64.b64encode(encrypted_data).decode(),
+        'key': base64.b64encode(key).decode(),
+        'client_ip': client_ip,
+        'user_agent': user_agent,
+        'timestamp': timestamp,
+        'url': url,
+        'query_params': query_params
+    }
+
+# 生成数据
+def generate_data():
+    data = []
+    excel_file_path = 'D:\\testdata\\data\\test.xlsx'
+    # 打开 Excel 文件
+    workbook = openpyxl.load_workbook(excel_file_path)
+    sheet = workbook.active  # 获取活动的工作表
+    # 遍历工作表中的每一行，并将数据添加到列表中
+    for row in sheet.iter_rows(values_only=True):
+        data.append(row)
+    return data
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        # 取第一个 IP 地址作为客户端 IP
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        # 如果没有 HTTP_X_FORWARDED_FOR 头信息，就使用 REMOTE_ADDR
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def read_ip_history():
+    try:
+        with open(IP_HISTORY_FILE, 'r') as file:
+            return [line.strip() for line in file.readlines()]
+    except FileNotFoundError:
+        return []
+
+def write_ip_history(ip_list):
+    with open(IP_HISTORY_FILE, 'w') as file:
+        for ip in ip_list:
+            file.write(ip + '\n')
+
+@csrf_exempt
+def get_data(request):
+    try:
+        if request.method == 'GET':
+            # 优先从请求头获取客户端 IP
+            client_ip = request.headers.get('X-Client-IP')
+            if not client_ip:
+                # 如果请求头没有，从请求的元数据中获取
+                client_ip = get_client_ip(request)
+
+            # 检查客户端 IP 是否在允许的 IP 列表中
+            if client_ip not in ALLOWED_IPS:
+                return JsonResponse({"status": "error", "message": "Access denied"}, status=403)
+
+            # 获取客户端的 User-Agent
+            user_agent = request.META.get('HTTP_USER_AGENT', 'Unknown')
+            # 获取请求的时间戳
+            timestamp = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            # 获取请求的 URL 和查询参数
+            url = request.build_absolute_uri()
+            query_params = request.GET.dict()
+            # 生成数据
+            data = generate_data()
+            # 将数据转换为 JSON 字符串
+            data_str = json.dumps(data, ensure_ascii=False)
+            # 生成密钥
+            key = generate_key()
+            # 加密数据
+            encrypted_data = encrypt_data(data_str, key)
+
+            # 若客户端 IP 不是 127.0.0.1，则更新 IP 历史记录
+            if client_ip != '127.0.0.1':
+                ip_history = read_ip_history()
+                if client_ip not in ip_history:
+                    ip_history.append(client_ip)
+                write_ip_history(ip_history)
+
+            # 获取 IP 历史记录
+            ip_history = read_ip_history()
+            # 取最新的非 127.0.0.1 的 IP 地址，如果没有则显示默认信息
+            latest_non_local_ip = ip_history[-1] if ip_history else 'No recent non - local clients'
+            print(ip_history)
+            # 创建数据包
+            data_packet = create_data_packet(encrypted_data, key, latest_non_local_ip, user_agent, timestamp, url, query_params)
+
+            # 在日志中记录客户端 IP 和请求的时间
+            logging.info(f"Received request from IP: {client_ip}")
+            # 返回 HTML 模板，同时传递 IP 历史记录
+            return render(request, 'data_view1.html', {'data_packet': data_packet, 'ip_history': ip_history})
+        else:
+            return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+def show_latest_ip(request):
+    latest_client_ip = request.session.get('latest_client_ip', 'No recent clients')
+    return render(request, 'show_latest_ip.html', {'latest_client_ip': latest_client_ip})
+
+def data_model(request):
+    return render(request, 'data_view1.html')
