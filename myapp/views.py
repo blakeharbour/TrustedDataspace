@@ -1576,6 +1576,18 @@ def create_project(request):
         except Exception as e:
             return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
 
+def get_status_description(currentStatus):
+    status_mapping = {
+        "0": "发起",
+        "1": "待审核",
+        "2": "审核通过",
+        "3": "审核不通过",
+        "4": "正在进行",
+        "5": "已完成"
+    }
+    return status_mapping.get(currentStatus, "未知状态")
+
+
 def submit_project_toblockchain(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
@@ -1603,12 +1615,12 @@ def submit_project_toblockchain(request):
         if conditions:
             constr = " AND ".join(conditions)
 
-        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay'
+        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
         order = 'ID DESC'
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
 
         if result:
-            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode = result[0]
+            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = result[0]
 
             blockchainData = {
                 'transactionID': ID,
@@ -1626,7 +1638,22 @@ def submit_project_toblockchain(request):
                 response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
-                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功'})
+                    # 解析区块链返回的 payload
+                    payload = json.loads(response.json().get('payload', '{}'))
+                    tx_time = payload.get('txTime')
+                    tx_id = payload.get('txID')
+                    tx_hash = payload.get('txHash')
+
+                    # 获取状态描述
+                    status = get_status_description(currentStatus)
+
+                    # 构建插入数据的字符串
+                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','已接收', '{tx_time}','{tx_id}','{tx_hash}'"
+                    # 调用 inserttable 函数插入数据到 project_notarization 表
+                    inserttable(pro_js, tablename="project_notarization",
+                                con1="id,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, operations, tranasctionTime,tranasctionId,hashDigest")
+
+                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功，数据已存入项目存证表'})
                 else:
                     print("区块链接口调用失败:", response.text)
                     return JsonResponse({'status': 'error','message': '区块链接口调用失败，请稍后重试'})
@@ -1637,6 +1664,7 @@ def submit_project_toblockchain(request):
             print("数据库查询无结果")
             return JsonResponse({'status': 'error','message': '数据库查询无结果'})
     return JsonResponse({'status': 'error','message': '无效的请求方法'})
+
 
 def get_project_data(request):
     try:
