@@ -16,6 +16,12 @@ from werkzeug.utils import secure_filename
 import os
 import io
 import tarfile
+import docker
+import random
+import threading
+import time
+import shutil
+
 from flask import request, jsonify, send_file
 app = Flask(__name__)
 client = docker.from_env()
@@ -251,6 +257,83 @@ def auto_destroy_job():
                             print(f"[解析时间失败] {c.name} - {str(e)}")
             except Exception as e:
                 print(f"[扫描失败] {str(e)}")
+
+
+@app.route('/api/generateReadonlyLink', methods=['POST'])
+def generate_readonly_link():
+    try:
+        data = request.get_json()
+        container_name = data.get('container_name')
+        if not container_name:
+            return jsonify(success=False, message="缺少容器名")
+
+
+        BASE_SANDBOX_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "sandbox_data"))
+
+        # 1️⃣ 检查沙箱数据是否存在
+        sandbox_path = os.path.abspath(os.path.join(BASE_SANDBOX_DIR, container_name))
+
+        if not os.path.exists(sandbox_path):
+            return jsonify(success=False, message="沙箱目录不存在")
+
+        # 2️⃣ 构建路径、分配端口、容器名
+        port = random.randint(6050, 6090)
+        readonly_container_name = f"readonly_{container_name}"
+        viewer_template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "readonly_template"))
+
+        temp_container_path = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "temp_viewers", readonly_container_name))
+
+        if os.path.exists(temp_container_path):
+            shutil.rmtree(temp_container_path)
+        shutil.copytree(viewer_template_path, temp_container_path)
+
+        # 3️⃣ 拷贝数据至 sandbox_data 内部
+        # 将加密数据拷贝至统一目录 sandbox_encrypted_data_txt 下
+        target_data_path = os.path.join(temp_container_path, "sandbox_data", "sandbox_encrypted_data_txt")
+        os.makedirs(target_data_path, exist_ok=True)
+
+        # 拷贝 csv 文件进来
+        for fname in os.listdir(sandbox_path):
+            fpath = os.path.join(sandbox_path, fname)
+            if os.path.isfile(fpath) and fname.endswith(".csv"):
+                shutil.copy2(fpath, os.path.join(target_data_path, fname))
+
+        # 4️⃣ 使用已有 trustedreadonlysandboxviewer 镜像启动容器（你打包时的镜像名）
+        client = docker.from_env()
+        container = client.containers.run(
+            image="trustedreadonlysandboxviewer",
+            name=readonly_container_name,
+            ports={f'{6064}/tcp': port},
+            environment={"VIEWER_PORT": "6064"},  # ✅ 告诉容器内部用哪个端口
+            volumes={temp_container_path: {'bind': '/app', 'mode': 'rw'}},
+            working_dir="/app",
+            detach=True
+        )
+
+        # 5️⃣ 自动销毁机制
+        def cleanup():
+            time.sleep(600)
+            try:
+                container.stop()
+                container.remove()
+                shutil.rmtree(temp_container_path)
+                print(f"✅ 10分钟到期：已销毁 {readonly_container_name}")
+            except Exception as e:
+                print("❌ 清理失败：", e)
+
+        threading.Thread(target=cleanup, daemon=True).start()
+
+        # 6️⃣ 返回链接地址
+        # 返回链接地址
+        ip = request.host.split(":")[0]
+        link = f"http://{ip}:{port}/?container={container_name}"
+        return jsonify(success=True, link=link)
+
+    except Exception as e:
+        return jsonify(success=False, message=f"后端异常：{str(e)}")
+
+
 # ✅ 手动销毁某个沙箱容器
 @app.route('/api/destroySandbox/<string:container_name>', methods=['DELETE'])
 def destroy_sandbox(container_name):

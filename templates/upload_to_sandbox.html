@@ -241,6 +241,12 @@
             📦 封存后导出沙箱
           </button>
         </div>
+        <div class="form-group" id="linkArea" style="display: none;">
+  <button type="button" class="btn-encrypt" onclick="generateReadonlyLink()">
+    🌐 生成只读查看链接（给接收方）
+  </button>
+</div>
+
     </form>
   </div>
 </section>
@@ -320,6 +326,7 @@ function submitUpload() {
         alert("✅ 上传成功！");
         fileInput.value = "";
         document.getElementById("exportArea").style.display = "block";
+        document.getElementById("linkArea").style.display = "block";
         currentContainerName = containerName; // 绑定导出按钮用
       } else {
         alert("❌ 上传失败：" + data.message);
@@ -330,6 +337,54 @@ function submitUpload() {
       alert("❌ 上传请求失败");
     });
 }
+
+function generateReadonlyLink() {
+  if (!currentContainerName) {
+    alert("❗ 当前无沙箱路径，无法生成链接");
+    return;
+  }
+
+  fetch("http://127.0.0.1:5001/api/generateReadonlyLink", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ container_name: currentContainerName })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const link = data.link;
+        alert("✅ 链接生成成功，复制给接收方：\n" + link);
+
+        const box = document.createElement("div");
+        box.style.marginTop = "30px";
+        box.style.padding = "20px";
+        box.style.border = "1px solid #dcdfe6";
+        box.style.borderRadius = "8px";
+        box.style.backgroundColor = "#f5f7fa";
+        box.style.fontSize = "16px";
+        box.style.color = "#606266";
+        box.style.boxShadow = "0 2px 6px rgba(0,0,0,0.05)";
+
+        box.innerHTML = `
+          <p style="font-weight: bold; color: #409EFF; margin-bottom: 10px;">
+            📎 只读查看链接已生成（接收方可访问）：
+          </p>
+          <div style="padding: 12px; background: white; border: 1px dashed #c0c4cc; border-radius: 6px;">
+            ${link}
+          </div>
+        `;
+
+        document.querySelector(".upload-container").appendChild(box);
+      } else {
+        alert("❌ 生成链接失败：" + data.message);
+      }
+    })
+    .catch(err => {
+      console.error("❌ 请求失败：", err);
+      alert("❌ 接口请求异常");
+    });
+}
+
 
 function exportSandbox() {
   if (!currentContainerName) {
