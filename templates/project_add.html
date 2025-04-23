@@ -349,7 +349,7 @@
                     // 项目修改成功后，发起查询数据的请求（区块链接口）
                     $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/submit_project/",
+                        url: "http://127.0.0.1:8000/submit_project_toblockchain/",
                         data: {
                             project_name: project_name,
                             data_demander: data_demander,
@@ -406,7 +406,7 @@
                     // 项目创建成功后，发起查询数据的请求
                     $.ajax({
                         type: "POST",
-                        url: "http://127.0.0.1:8000/submit_project/",
+                        url: "http://127.0.0.1:8000/submit_project_toblockchain/",
                         data: {
                             project_name: project_name,
                             data_demander: data_demander,

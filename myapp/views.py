@@ -1644,7 +1644,7 @@ def create_project(request):
         except Exception as e:
             return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
 
-def submit_project(request):
+def submit_project_toblockchain(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
         data_demander = request.POST.get('data_demander')

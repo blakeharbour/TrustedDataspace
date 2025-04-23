@@ -267,8 +267,7 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('audit_project/', views.audit_project),
     path('submit_project/', views.submit_project),
 
-
-    path('submit_project/', views.submit_project),
+    path('submit_project_toblockchain/', views.submit_project_toblockchain),
     path('get_project_data/', views.get_project_data),
     path('search_project_data/', views.search_project_data),
     path('search_pending_project_data/', views.search_pending_project_data),
