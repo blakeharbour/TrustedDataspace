@@ -1694,8 +1694,9 @@ def get_project_data(request):
     try:
         currentUser = request.user
         dataDemand = currentUser.com
+        dataOwner = currentUser.com
         # 构建查询条件
-        constr = f"isDeleted != 'Y' AND dataDemand = '{dataDemand}'"
+        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR dataOwner = '{dataOwner}' )"
         fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
 
