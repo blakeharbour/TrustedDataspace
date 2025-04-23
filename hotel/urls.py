@@ -66,6 +66,7 @@ urlpatterns = [
     path('deleteinterface/', views.deleteinterface),
     path('interface-edit/', views.interface_edit),
     path('searchoneinterface/', views.searchoneinterface),
+    path('useBlockchain/', views.useBlockchain),
 
     # 数据沙箱界面
     path('sjsx-interface/', views.sjsx_interface),
@@ -138,6 +139,16 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('train_model_board/', views.train_model_board),
     path('train_model_boardnew/', views.train_model_boardnew),
 
+    #项目管理
+    path('project_notarization/', views.project_notarization),
+    path('pengding_project/', views.pending_project),
+
+    # path('datasharing_add/', views.datasharing_add),
+    # 返回所有存证信息
+    path('search_notarization/', views.search_notarization),
+    # 返回按项目名称查询存证信息
+    path('search_notarization_by_projectname/', views.search_notarization_by_projectname),
+
     #模型应用
     path('model-application/', modelappview.model_application),
     path('model-application_search/', modelappview.searchModelApplication),
@@ -150,7 +161,7 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('application_result_analysis/', modelappview.application_result_analysis),
     path('application_result_open_file_manager/', modelappview.open_file_manager),
     path('model-predict/', modelappview.model_predict),
-    # path('model_predict_port/', modelapp_portview.model_predict_port),
+    path('model_predict_port/', modelapp_portview.model_predict_port),
     # path('model-application-port/', modelapp_portview.model_application),
     # path('model-application_search-port/', modelapp_portview.searchModelApplication),
     # path('application_status_modify-port/', modelapp_portview.editModelApplicationStatus),
@@ -210,7 +221,8 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),
     path('batch-delete-data-asset/', views.batch_delete_data_asset, name='batch_delete_data_asset'),
 
-    path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
+
+    # path('fetch/', views.fetch_and_save_asset_data, name='fetch_asset_data'),
     path('records/', views.asset_record_list, name='asset_record_list'),
 
     # 外部调用
@@ -241,4 +253,22 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
 
     path('multmodel_application_result_analysis/', viewsmult.multmodel_application_result_analysis),
     path('multmodel_application_status_modify/', viewsmult.editMultModelApplicationStatus),
+
+    # 项目管理
+    # 项目管理
+    path('established_project/', views.established_project),
+    path('pengding_project/', views.pending_project),
+    path('project_add/', views.project_add),
+    path('create_project/', views.create_project),
+    path('audit_project/', views.audit_project),
+    path('submit_project/', views.submit_project),
+
+
+    path('submit_project/', views.submit_project),
+    path('get_project_data/', views.get_project_data),
+    path('search_project_data/', views.search_project_data),
+    path('search_pending_project_data/', views.search_pending_project_data),
+    path('get_pending_project_data/', views.get_pending_project_data),
+    path('delete_project/', views.delete_project),
+    path('update_project/', views.update_project),
 ]

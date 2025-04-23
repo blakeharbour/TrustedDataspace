@@ -650,80 +650,246 @@ def predict_with_density_threshold(f_x, prior):
     h = np.sign(density_ratio - threshold).astype(np.int32)
     return h
 
+
+import logging
+import pandas as pd
+import numpy as np
+import torch
+import requests
+from django.http import JsonResponse
+import os
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+
 def multimodel_predict(request):
-    print('开始执行')
-    MODELS = ["imPUSB"]
+    try:
+        logger.info("========== 开始执行模型预测 ==========")
 
-    # 1. 加载数据
-    data_path = "./myapp/fed_PU_sci1203/dataset/result_in_1123.csv"
-    df = pd.read_csv(data_path)
+        # 1. 配置参数
+        MODELS = ["imPUSB"]
+        DATA_PATH = os.path.join("myapp", "fed_PU_sci1203", "dataset", "result_in_1123.csv")
+        RESULT_ROOT = os.path.join("myapp", "fed_PU_sci1203", "result", "result_in_1123")
+        COLUMNS_SET2 = ['JFLC', 'COST', 'TIME', 'DISCOUNT', 'FREIGHT_95306']
+        PORT_API_URL = "http://127.0.0.1:8000/model_predict_port/"
+        DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    COLUMNS_SET2 = ['JFLC', 'COST', 'TIME', 'DISCOUNT', 'FREIGHT_95306']  # 第二组要分割的列名 5
+        # 2. 加载数据
+        try:
+            if not os.path.exists(DATA_PATH):
+                raise FileNotFoundError(f"数据文件不存在: {DATA_PATH}")
 
-    # 2. 按列分开数据
-    # 假设df有两列: "feature" 和 "label"
-    features_2 = df[COLUMNS_SET2].values
-    labels = df["ISPOTIENTIAL"].values
+            df = pd.read_csv(DATA_PATH)
+            if df.empty:
+                raise ValueError("加载的数据为空")
 
-    # 3. 数据预处理
-    # 假设feature和label都是一维数据
-    data2 = torch.tensor(features_2, dtype=torch.float32)
-    target = torch.tensor(labels, dtype=torch.float32)
+            features_2 = df[COLUMNS_SET2].values
+            labels = df["ISPOTIENTIAL"].values
+            logger.info(f"数据加载成功，样本数: {len(labels)}")
 
-    DEVICE = torch.device("cpu")
+        except Exception as e:
+            logger.error(f"数据加载失败: {str(e)}", exc_info=True)
+            return JsonResponse({'status': 1, 'error': f'数据加载失败: {str(e)}'}, status=500)
 
-    data2 = data2.to(DEVICE)
-    result_df = None
-    root = "./myapp/fed_PU_sci1203/result/result_in_1123/"
-    for model in MODELS:
-        model_path = root + model + "/server_model.pth"
-        model_coright = SyNet_client_coright()
-        model_coright.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+        # 3. 数据预处理
+        try:
+            data2 = torch.tensor(features_2, dtype=torch.float32).to(DEVICE)
+            target = torch.tensor(labels, dtype=torch.float32)
+            logger.info("数据预处理完成")
+        except Exception as e:
+            logger.error(f"数据预处理失败: {str(e)}", exc_info=True)
+            return JsonResponse({'status': 1, 'error': f'数据预处理失败: {str(e)}'}, status=500)
 
-        model_path = root + model + "/server_top_model.pth"
-        top_model = SyNet_server_co()
-        top_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+        # 4. 模型预测
+        result_df = df.copy()
+        for model in MODELS:
+            model_start_time = datetime.now()
+            try:
+                # 4.1 加载模型
+                model_dir = os.path.join(RESULT_ROOT, model)
+                if not os.path.exists(model_dir):
+                    raise FileNotFoundError(f"模型目录不存在: {model_dir}")
 
-        model_coright = model_coright.to(DEVICE)
-        top_model = top_model.to(DEVICE)
-        with torch.no_grad():
-            model_coright.eval()
-            top_model.eval()
+                # 加载客户端模型
+                client_model_path = os.path.join(model_dir, "server_model.pth")
+                if not os.path.exists(client_model_path):
+                    raise FileNotFoundError(f"客户端模型文件不存在: {client_model_path}")
 
-            size = len(target)
-            model_dict = {"model": model}
-            print(model_dict)
-            response_from_port = requests.post("http://127.17.109.105:8000/model_predict_port/", json=model_dict)
-            response_data = response_from_port.json()
-            output1 = response_data['output1']
-            print(output1[:10000])
-            output1_tensor = torch.Tensor(output1)
+                model_coright = SyNet_client_coright()
+                model_coright.load_state_dict(
+                    torch.load(client_model_path, map_location=DEVICE)
+                )
+                model_coright = model_coright.to(DEVICE)
 
-            output2 = model_coright(data2)
+                # 加载顶层模型
+                top_model_path = os.path.join(model_dir, "server_top_model.pth")
+                if not os.path.exists(top_model_path):
+                    raise FileNotFoundError(f"顶层模型文件不存在: {top_model_path}")
 
-            output = torch.cat((output1_tensor, output2), 1)
+                top_model = SyNet_server_co()
+                top_model.load_state_dict(
+                    torch.load(top_model_path, map_location=DEVICE)
+                )
+                top_model = top_model.to(DEVICE)
+                logger.info(f"模型 {model} 加载成功")
 
-            final_output = top_model(output)
+                # 4.2 调用端口API
+                try:
+                    api_start_time = datetime.now()
+                    response = requests.post(
+                        PORT_API_URL,
+                        json={"model": model},
+                        timeout=30  # 30秒超时
+                    )
+                    api_duration = (datetime.now() - api_start_time).total_seconds()
 
-            h = np.reshape(final_output.detach().cpu().numpy(), size)
+                    if response.status_code != 200:
+                        raise ValueError(
+                            f"API返回状态码 {response.status_code}, 响应: {response.text[:200]}"
+                        )
 
-            if model == "imbalancednnPUSB":
-                prior = 0.3758
-                h = predict_with_density_threshold(h, prior)
-            else:
-                h = np.reshape(torch.sigmoid(
-                    final_output).detach().cpu().numpy(), size)
-                h = np.where(h > 0.5, 1, -1).astype(np.int32)
+                    if not response.text.strip():
+                        raise ValueError("API返回空响应")
 
-        # 4. Combine into DataFrame
-        h_df = pd.DataFrame(h, columns=[model + "_predictions"])
-        # df = df.reset_index(drop=True)
-        result_df = pd.concat([df, h_df], axis=1)
-        result_df.to_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv',
-                         index=False)  # encoding='utf-8-sig'
+                    response_data = response.json()
+                    output1 = torch.Tensor(response_data['output1']).to(DEVICE)
+                    logger.info(f"API调用成功，耗时 {api_duration:.2f}秒")
 
-    print('执行成功')
-    return JsonResponse({'status': 0, 'msg': 'success'})
+                except requests.exceptions.RequestException as e:
+                    logger.error(f"API请求失败: {str(e)}", exc_info=True)
+                    return JsonResponse(
+                        {'status': 1, 'error': f'API请求失败: {str(e)}'},
+                        status=500
+                    )
+
+                # 4.3 模型推理
+                with torch.no_grad():
+                    model_coright.eval()
+                    top_model.eval()
+
+                    output2 = model_coright(data2)
+                    output = torch.cat((output1, output2), 1)
+                    final_output = top_model(output)
+
+                    # 结果处理
+                    h = np.reshape(final_output.detach().cpu().numpy(), len(target))
+                    if model == "imbalancednnPUSB":
+                        prior = 0.3758
+                        h = predict_with_density_threshold(h, prior)
+                    else:
+                        h = np.where(
+                            torch.sigmoid(final_output).detach().cpu().numpy() > 0.5,
+                            1, -1
+                        ).astype(np.int32)
+
+                # 4.4 保存结果
+                result_df[f"{model}_predictions"] = h
+                output_dir = os.path.join(model_dir, "predictions")
+                os.makedirs(output_dir, exist_ok=True)
+
+                output_path = os.path.join(output_dir, "result_in_1123output.csv")
+                result_df.to_csv(output_path, index=False)
+                logger.info(f"预测结果已保存到 {output_path}")
+
+                model_duration = (datetime.now() - model_start_time).total_seconds()
+                logger.info(f"模型 {model} 处理完成，总耗时 {model_duration:.2f}秒")
+
+            except Exception as e:
+                logger.error(f"模型 {model} 处理失败: {str(e)}", exc_info=True)
+                return JsonResponse(
+                    {'status': 1, 'error': f'模型处理失败: {str(e)}'},
+                    status=500
+                )
+
+        logger.info("========== 模型预测执行成功 ==========")
+        return JsonResponse({
+            'status': 0,
+            'msg': 'success',
+            'output_path': output_path  # 返回结果文件路径
+        })
+
+    except Exception as e:
+        logger.critical(f"未处理的异常: {str(e)}", exc_info=True)
+        return JsonResponse(
+            {'status': 1, 'error': f'服务器内部错误: {str(e)}'},
+            status=500
+        )
+
+# def multimodel_predict(request):
+#     print('开始执行')
+#     MODELS = ["imPUSB"]
+#
+#     # 1. 加载数据
+#     data_path = "./myapp/fed_PU_sci1203/dataset/result_in_1123.csv"
+#     df = pd.read_csv(data_path)
+#
+#     COLUMNS_SET2 = ['JFLC', 'COST', 'TIME', 'DISCOUNT', 'FREIGHT_95306']  # 第二组要分割的列名 5
+#
+#     # 2. 按列分开数据
+#     # 假设df有两列: "feature" 和 "label"
+#     features_2 = df[COLUMNS_SET2].values
+#     labels = df["ISPOTIENTIAL"].values
+#
+#     # 3. 数据预处理
+#     # 假设feature和label都是一维数据
+#     data2 = torch.tensor(features_2, dtype=torch.float32)
+#     target = torch.tensor(labels, dtype=torch.float32)
+#
+#     DEVICE = torch.device("cpu")
+#
+#     data2 = data2.to(DEVICE)
+#     result_df = None
+#     root = "./myapp/fed_PU_sci1203/result/result_in_1123/"
+#     for model in MODELS:
+#         model_path = root + model + "/server_model.pth"
+#         model_coright = SyNet_client_coright()
+#         model_coright.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+#
+#         model_path = root + model + "/server_top_model.pth"
+#         top_model = SyNet_server_co()
+#         top_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+#
+#         model_coright = model_coright.to(DEVICE)
+#         top_model = top_model.to(DEVICE)
+#         with torch.no_grad():
+#             model_coright.eval()
+#             top_model.eval()
+#
+#             size = len(target)
+#             model_dict = {"model": model}
+#             print(model_dict)
+#             response_from_port = requests.post("http://127.17.109.105:8000/model_predict_port/", json=model_dict)
+#             response_data = response_from_port.json()
+#             output1 = response_data['output1']
+#             print(output1[:10000])
+#             output1_tensor = torch.Tensor(output1)
+#
+#             output2 = model_coright(data2)
+#
+#             output = torch.cat((output1_tensor, output2), 1)
+#
+#             final_output = top_model(output)
+#
+#             h = np.reshape(final_output.detach().cpu().numpy(), size)
+#
+#             if model == "imbalancednnPUSB":
+#                 prior = 0.3758
+#                 h = predict_with_density_threshold(h, prior)
+#             else:
+#                 h = np.reshape(torch.sigmoid(
+#                     final_output).detach().cpu().numpy(), size)
+#                 h = np.where(h > 0.5, 1, -1).astype(np.int32)
+#
+#         # 4. Combine into DataFrame
+#         h_df = pd.DataFrame(h, columns=[model + "_predictions"])
+#         # df = df.reset_index(drop=True)
+#         result_df = pd.concat([df, h_df], axis=1)
+#         result_df.to_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv',
+#                          index=False)  # encoding='utf-8-sig'
+#
+#     print('执行成功')
+#     return JsonResponse({'status': 0, 'msg': 'success'})
 
 
 def multmodel_predict_port(request):
@@ -841,50 +1007,99 @@ def application_result_analysis(request):
                   {'pivot_table_df': pivot_table_df,'pie_charts': pie_charts})
 
 
+# def multmodel_application_result_analysis(request):
+#     # 加载CSV文件
+#     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
+#
+#     # 创建数据透视表
+#     pivot_table = df.pivot_table(index=['FZHZM', 'imbalancednnPUSB_predictions', 'DZHZM'],
+#                                  aggfunc='size')
+#
+#     # 重命名索引以更易于理解
+#     pivot_table.index.names = ['发站站名', '预测结果', '到站站名']
+#
+#     # 将数据透视表转换为DataFrame并重置索引
+#     pivot_table_df = pivot_table.reset_index(name='计数')
+#
+#     # 筛选出imbalancednnPUSB_predictions为1的数据
+#     filtered_data = df[df["imbalancednnPUSB_predictions"] == 1]
+#
+#     # 获取不同的FZHZM值
+#     unique_fzhzm_values = filtered_data["FZHZM"].unique()
+#
+#     # 设置合适的字体，例如SimHei，用于显示汉字
+#     font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', size=12)  # 替换为你的汉字字体文件路径
+#     pie_charts = []
+#
+#     # 遍历不同的FZHZM值，为每个值生成饼图
+#     for fzhzm_value in unique_fzhzm_values:
+#         # 筛选出特定FZHZM值的数据
+#         fzhzm_data = filtered_data[filtered_data["FZHZM"] == fzhzm_value]
+#
+#         # 计算DZHZM的计数
+#         dzhzm_counts = fzhzm_data["DZHZM"].value_counts()
+#
+#         # 绘制饼图
+#         fig, ax = plt.subplots(figsize=(12, 6))
+#         wedges, texts, autotexts = ax.pie(dzhzm_counts, autopct='%1.1f%%', startangle=90)
+#         ax.axis('equal')  # 使饼图为圆形
+#
+#         # 手动添加标签
+#         labels = [f"{label}\n({count})" for label, count in zip(dzhzm_counts.index, dzhzm_counts)]
+#         ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1),prop = font)
+#
+#         plt.title(f"发站为{fzhzm_value}时各到站潜在箱源预测数量", fontproperties=font)
+#
+#         # 将图像数据转换为base64编码
+#         buf = BytesIO()
+#         plt.savefig(buf, format="png")
+#         buf.seek(0)
+#         data_uri = base64.b64encode(buf.read()).decode('utf-8')
+#         pie_charts.append(data_uri)
+#         plt.close()
+#
+#     # 将数据透视表DataFrame传递给模板
+#     return render(request, 'multpivot_table.html',
+#                   {'pivot_table_df': pivot_table_df,'pie_charts': pie_charts})
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+from matplotlib.font_manager import FontProperties
+import pandas as pd
+import base64
+from io import BytesIO
+
+# 设置默认字体路径
+try:
+    font_path = "/System/Library/Fonts/Supplemental/Songti.ttc"  # macOS
+    # font_path = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"  # Linux
+    font = FontProperties(fname=font_path, size=12)
+except:
+    font = None  # 如果找不到字体，则不使用自定义字体
+
 def multmodel_application_result_analysis(request):
-    # 加载CSV文件
     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
 
-    # 创建数据透视表
-    pivot_table = df.pivot_table(index=['FZHZM', 'imbalancednnPUSB_predictions', 'DZHZM'],
-                                 aggfunc='size')
-
-    # 重命名索引以更易于理解
+    pivot_table = df.pivot_table(index=['FZHZM', 'imbalancednnPUSB_predictions', 'DZHZM'], aggfunc='size')
     pivot_table.index.names = ['发站站名', '预测结果', '到站站名']
-
-    # 将数据透视表转换为DataFrame并重置索引
     pivot_table_df = pivot_table.reset_index(name='计数')
 
-    # 筛选出imbalancednnPUSB_predictions为1的数据
     filtered_data = df[df["imbalancednnPUSB_predictions"] == 1]
-
-    # 获取不同的FZHZM值
     unique_fzhzm_values = filtered_data["FZHZM"].unique()
 
-    # 设置合适的字体，例如SimHei，用于显示汉字
-    font = FontProperties(fname='/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc', size=12)  # 替换为你的汉字字体文件路径
     pie_charts = []
-
-    # 遍历不同的FZHZM值，为每个值生成饼图
     for fzhzm_value in unique_fzhzm_values:
-        # 筛选出特定FZHZM值的数据
         fzhzm_data = filtered_data[filtered_data["FZHZM"] == fzhzm_value]
-
-        # 计算DZHZM的计数
         dzhzm_counts = fzhzm_data["DZHZM"].value_counts()
 
-        # 绘制饼图
         fig, ax = plt.subplots(figsize=(12, 6))
         wedges, texts, autotexts = ax.pie(dzhzm_counts, autopct='%1.1f%%', startangle=90)
-        ax.axis('equal')  # 使饼图为圆形
+        ax.axis('equal')
 
-        # 手动添加标签
         labels = [f"{label}\n({count})" for label, count in zip(dzhzm_counts.index, dzhzm_counts)]
-        ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1),prop = font)
+        ax.legend(wedges, labels, loc="center left", bbox_to_anchor=(1, 0, 0.5, 1), prop=font)
 
         plt.title(f"发站为{fzhzm_value}时各到站潜在箱源预测数量", fontproperties=font)
 
-        # 将图像数据转换为base64编码
         buf = BytesIO()
         plt.savefig(buf, format="png")
         buf.seek(0)
@@ -892,9 +1107,7 @@ def multmodel_application_result_analysis(request):
         pie_charts.append(data_uri)
         plt.close()
 
-    # 将数据透视表DataFrame传递给模板
-    return render(request, 'multpivot_table.html',
-                  {'pivot_table_df': pivot_table_df,'pie_charts': pie_charts})
+    return render(request, 'multpivot_table.html', {'pivot_table_df': pivot_table_df, 'pie_charts': pie_charts})
 
 def editMultModelApplicationStatus(request):
     modelsaveid = request.GET.get('mid',None)

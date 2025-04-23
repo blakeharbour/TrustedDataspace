@@ -1,4 +1,4 @@
-﻿<!--_meta 作为公共模版分离出去-->
+<!--_meta 作为公共模版分离出去-->
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -79,10 +79,38 @@
 		<div class="Hui-admin-logo-wrapper">
 			<a class="logo navbar-logo" href="/aboutHui.shtml">
 				<i class="va-m iconpic global-logo"></i>
-				<span class="va-m">隐私计算</span>
+				<span class="va-m">铁路隐私计算平台</span>
 			</a>
 		</div>
+        <!-- Modal -->
+        <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="progressModalLabel">Model Test Progress</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" id="progress-bar"></div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 		<div class="Hui-admin-menu-dropdown bk_2">
+{#		      <dl id="menu-home" class="Hui-menu">#}
+{#        <dd class="Hui-menu-item-frist">#}
+{#          <ul>#}
+{#            <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 单方</a></li>#}
+{#          </ul>#}
+{#        </dd>#}
+{#      </dl>#}
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
@@ -95,7 +123,7 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
 					</ul>
 					<ul>
 						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
@@ -109,62 +137,67 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+						<li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
 					</ul>
-				</dd>
-                <dd class="Hui-menu-item" style="display:block">
+{#					<ul>#}
+{#						<li><a href="http://127.0.0.1:8000/model-application/" title="数据申请情况查看">数据申请情况查看</a></li>#}
+{#					</ul>#}
 					<ul>
 						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
 					</ul>
 				</dd>
 			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
 		</div>
-
-{#        <div class="Hui-admin-menu-dropdown bk_2">#}
+{#         <div class="Hui-admin-menu-dropdown bk_2">#}
 {#      <dl id="menu-home" class="Hui-menu">#}
 {#        <dd class="Hui-menu-item-frist">#}
 {#          <ul>#}
-{#            <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 多方</a></li>#}
+{#            <li><a href="_blank.html" title="多方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 多方</a></li>#}
 {#          </ul>#}
 {#        </dd>#}
 {#      </dl>#}
+{#             <dl id="menu-guest" class="Hui-menu">#}
+{#                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 外部合作者管理<i#}
+{#                        class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
+{#                <dd class="Hui-menu-item" style="display:block">#}
+{#                    <ul>#}
+{#                        <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>#}
+{#                    </ul>#}
+{#                </dd>#}
+{#            </dl>#}
+{#            <dl id="menu-model" class="Hui-menu">#}
+{#            <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i#}
+{#                    class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
+{#            <dd class="Hui-menu-item" style="display:block">#}
+{#                <ul>#}
+{#                    <li ><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>#}
+{#                </ul>#}
+{#                <ul>#}
+{#                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>#}
+{#                </ul>#}
+{#                <ul>#}
+{#                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>#}
+{#                </ul>#}
+{#            </dd>#}
+{#            </dl>#}
 {#            <dl id="menu-guest" class="Hui-menu">#}
-{#				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
+{#				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
 {#				<dd class="Hui-menu-item" style="display:block">#}
 {#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>#}
-{#                        <li><a href="http://127.0.0.1:8000/guest-record-browse/" title="浏览记录">浏览记录</a></li>#}
+{#						<li><a href="http://127.0.0.1:8000/multapplication_model-main/" title="模型使用">模型使用</a></li>#}
+{#					</ul>#}
+{#					<ul>#}
+{#						<li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>#}
 {#					</ul>#}
 {#				</dd>#}
-{#			</dl>#}
-{#			<dl id="menu-model" class="Hui-menu">#}
-{#                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#                <dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/model_list/" title="会员列表">模型列表</a></li>#}
-{#					</ul>#}
-{#                </dd>#}
-{#                <dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/sample-alignment/" title="会员列表">样本对齐情况</a></li>#}
-{#					</ul>#}
-{#				</dd>#}
-{#                 <dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/train-model/" title="会员列表">模型训练结果查看</a></li>#}
-{#					</ul>#}
-{#				 </dd>#}
-{##}
-{#                <dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/sample-alignment/" title="会员列表">样本对齐情况</a></li>#}
-{#					</ul>#}
-{#				</dd>#}
-{#                 <dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li class="current"><a href="http://127.0.0.1:8000/train-model/" title="会员列表">模型训练结果查看</a></li>#}
-{#					</ul>#}
-{#				 </dd>#}
 {#			</dl>#}
 {#		</div>#}
 	</aside>
@@ -229,36 +262,57 @@
 			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
 				首页
 				<span class="c-gray en">/</span>
-				模型管理
+				项目信息管理
 				<span class="c-gray en">/</span>
-				模型列表
+				项目存证信息
 			</nav>
 
 			<article class="Hui-admin-content clearfix">
 				<div class="panel mt-20">
 					<div class="panel-body"发布>
 						<div class="clearfix">
-							<span class="f-l">
-                                <a href="javascript:;" onclick="model_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加模型</a>
+{#							<span class="f-l">#}
+{#                                <a href="javascript:;" onclick="project_notarization_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 申请存证</a>#}
 {#								<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>#}
-							</span>
+{#							</span>#}
+                               <!-- 新增搜索表单 -->
+<span class="f-l">
+    <form id="searchForm" method="get" action="" class="form form-horizontal">
+        <div class="input-group" style="width: 300px;">
+            <input type="text" class="input-text" placeholder="请输入项目名称" name="project_name" id="project_name">
+            <span class="input-group-btn">
+                <button type="button" id="searchButton" class="btn btn-success">
+                    <i class="Hui-iconfont">&#xe665;</i> 搜索
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </form>
+        </span>
 {#							<span class="f-r">共有数据：<strong>3</strong> 条</span>#}
 						</div>
 						<div class="clearfix mt-20">
 							<table class="table table-border table-bordered table-hover table-bg table-sort">
 								<thead>
 									<tr class="text-c">
-										<th width="80">模型ID</th>
-										<th width="100">参与者</th>
-										<th width="90">模型名称</th>
-										<th width="100">建模目的</th>
-                                        <th width="100">申请状态</th>
-                                        <th width="120">样本对齐成功数量</th>
 {#                                        <th width="100">Learning-Rate(学习率)</th>#}
 {#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
 {#                                        <th width="100">Batch-Size(批次大小)</th>#}
-                                        <th width="100">联邦学习</th>
+                                        <th width="60">项目ID</th>
+										<th width="80">项目名称</th>
+										<th width="80">数据需求方</th>
+										<th width="80">数据所有方</th>
+										<th width="100">数据资源名称</th>
+                                        <th width="80">申请状态</th>
+                                        <th width="100">安全等级</th>
+{#                                        <th width="100">Learning-Rate(学习率)</th>#}
+{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
+{#                                        <th width="100">Batch-Size(批次大小)</th>#}
+                                         <th width="100">共享方式</th>
                                         <th width="100">操作</th>
+                                            <th width="80">交易ID</th>
+                                            <th width="100">交易时间</th>
+                                            <th width="100">哈希摘要</th>
 {#                                        <th width="100">精确度</th>#}
 {#                                        <th width="100">召回率</th>#}
 {#                                        <th width="80">错误率</th>#}
@@ -325,12 +379,19 @@
         function hideModal1() {
           document.getElementById('myModal1').style.display = "none";
         }
+        // 模拟 statusMethod 方法
+        function statusMethod(modelId) {
+            // 这里可以根据实际情况返回不同的状态，例如从服务器获取数据
+            // 为了演示，随机返回一个状态
+            const statuses = ['发起','审核中', '完成', '已开始'];
+            return statuses[Math.floor(Math.random() * statuses.length)];
+        }
 
 		$(function(){
 
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/searchmodel/",
+				url:"http://127.0.0.1:8000/search_notarization/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -339,33 +400,79 @@
 						var Result=res.data;
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
-                            var link="http://127.0.0.1:8000/application_result_shappng/"+Result[j][0];
-                            str+='<tr class="text-c">'+
-                             '<td><a onclick="modeldel_list(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont"></i>'+Result[j][0]+'</a></td>'+
+                             str+='<tr class="text-c">'+
+                             '<td>'+Result[j][0]+'</td>'+
                             '<td>'+Result[j][1]+'</td>'+
-                            '<td>'+Result[j][2]+'</td>'+
-                            '<td>'+Result[j][3]+'</td>'+
-                            '<td>'+Result[j][4]+'</td>'+
-                                '<td>77258</td>'+
-                            {% comment %}'<td>'+Result[j][5]+'</td>'+
-                            '<td>'+Result[j][6]+'</td>'+
-                            '<td>'+Result[j][7]+'</td>'+{% endcomment %}
-                            {% comment %}'<td><br><a title="联邦训练" onclick="model_test(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont"></i>联邦训练</a>' +
-                            '<br><a title="删除" onclick="model_dele(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+{% endcomment %}
-                            {% comment %}'<td><a onclick="model_view(this,\''+Result[j][12]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][8]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][13]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][9]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][14]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][10]+'</a></td>'+
-                            '<td><a onclick="model_view(this,\''+Result[j][15]+'\',\''+link+'\')"><i class="Hui-iconfont"></i>'+Result[j][11]+'</a></td>'+{% endcomment %}
-                                {% comment %}'<td> <a onclick="open_file(this,\''+Result[j][12]+'\')"><i class="Hui-iconfont"></i>'+Result[j][12]+'</a></td>'+{% endcomment %}
-                                '<td> <a href="javascript:;" onclick="trainModelresultshow() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 开始联邦训练</a></td>'+
-                                '<td> <a title="删除" onclick="model_dele(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;"><i class="Hui-iconfont">&#xe6e2;</i>删除</a></td>'+
-                                '</tr>'
+                                 '<td>'+Result[j][2]+'</td>'+
+                                 '<td>'+Result[j][3]+'</td>'+
+                                 '<td>'+Result[j][4]+'</td>'+
+                                 '<td>'+Result[j][5]+'</td>'+
+                                 '<td>'+Result[j][6]+'</td>'+
+                                 '<td>'+Result[j][7]+'</td>'+
+                                 '<td>'+Result[j][8]+'</td>'+
+                                 '<td>'+Result[j][9]+'</td>'+
+                                 '<td>'+Result[j][10]+'</td>'+
+                                 '<td>'+Result[j][11]+'</td>'+
+                                  '</tr>'
+
 						}
-						$("#info").append(str)
+						$("#info").html(str)  // 清空原有内容再添加新数据
 					}
 				}
 			})
 		});
+
+        $(function () {
+    // 搜索按钮点击事件
+    $('#searchButton').click(function () {
+        var project_name = $('#project_name').val(); // 获取输入的项目名称
+        searchNotarization(project_name); // 调用搜索函数
+    });
+
+    // 初始加载数据
+    searchNotarization('');
+});
+
+// 搜索函数
+function searchNotarization(project_name) {
+    $.ajax({
+        type: "GET",
+        url: "http://127.0.0.1:8000/search_notarization_by_projectname/",  // 修改为新的 URL
+        data: { project_name: project_name }, // 传递项目名称参数
+        dataType: 'json',
+        success: function (res) {
+            console.log("res", res);
+            var str = '';
+            if (res.status == "0") {
+                var Result = res.data;
+                console.log(Result);
+                for (var j = 0; j < Result.length; j++) {
+                    str += '<tr class="text-c">' +
+                        '<td>' + Result[j][0] + '</td>' +
+                        '<td>' + Result[j][1] + '</td>' +
+                        '<td>' + Result[j][2] + '</td>' +
+                        '<td>' + Result[j][3] + '</td>' +
+                        '<td>' + Result[j][4] + '</td>' +
+                        '<td>' + Result[j][5] + '</td>' +
+                        '<td>' + Result[j][6] + '</td>' +
+                        '<td>' + Result[j][7] + '</td>' +
+                      //  '<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + Result[j][7] + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + Result[j][7] + '</a></td>' +
+                        '<td>' + Result[j][8] + '</td>' +
+                        '<td>' + Result[j][9] + '</td>' +
+                        '<td>' + Result[j][10] + '</td>' +
+                        '<td>' + Result[j][11] + '</td>' +
+                        '</tr>';
+                }
+                $("#info").html(str); // 更新表格内容
+            } else {
+                $("#info").html('<tr class="text-c"><td colspan="12">未找到相关项目</td></tr>');
+            }
+        },
+        error: function (res) {
+            console.log("请求失败");
+        }
+    });
+}
 
 
 
@@ -431,10 +538,10 @@
 			location.href = "http://127.0.0.1:8000/member-edit/";
 		}
 
-		function model_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/model-add/";
+		function project_notarization_add(obj,userid) {
+			location.href = "http://127.0.0.1:8000/project_notarization_add/";
 		}
-		
+
 		function model_dele(obj,id) {
 			console.log("id:",id);
 			var userinfo={
@@ -460,12 +567,13 @@
 			});
 		}
 
-        function trainModelresultshow() {
+        {#function trainModelresultshow() {#}
+        {##}
+        {#    location.href = "http://192.168.1.121:6006/";#}
+        {##}
+        {##}
 
-            location.href = "http://192.168.1.121:6006/";
 
-
-        }
 	</script>
 	<!--/请在上方写此页面业务相关的脚本-->
 </body>

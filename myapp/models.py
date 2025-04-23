@@ -18,8 +18,10 @@ class CustomUserManager(BaseUserManager):
     def create_user(self, account, password=None, **extra_fields):
         if not account:
             raise ValueError('必须提供账号(account)')
+        print(f"[DEBUG] 原始密码: {password}")
         user = self.model(account=account,**extra_fields)
         user.set_password(password)  # 加密密码
+        print(f"[DEBUG] 加密后密码: {user.password}")
         user.save()
         return user
 
@@ -89,22 +91,22 @@ class DataAsset(models.Model):
         verbose_name_plural = "数据资产"
 class AssetRecord(models.Model):
     assetName = models.CharField(max_length=255, verbose_name="资产名称")
-    assetOwner = models.CharField(max_length=255, verbose_name="资产所有者")
-    assetField = models.CharField(max_length=255, verbose_name="资产字段")
+    assetOwner =models.CharField(max_length=255, verbose_name="资产所有者")
     assetFormat = models.CharField(max_length=100, verbose_name="资产格式")
     assetLevel = models.CharField(max_length=100, verbose_name="资产级别")
     assetPath = models.CharField(max_length=255, verbose_name="资产路径")
     star_status = models.CharField(max_length=50, verbose_name="开始状态",default='默认值')
     end_status = models.CharField(max_length=50, verbose_name="结束状态",default='默认值')
-    txTime = models.DateTimeField(verbose_name="交易时间")
-    txID = models.CharField(max_length=255, verbose_name="交易ID")
-    txHash = models.CharField(max_length=255, verbose_name="交易哈希")
+    operation = models.CharField(max_length=50, verbose_name="操作", default='默认值')
+    txTime = models.DateTimeField(verbose_name="交易时间",null=True, blank=True)
+    txID = models.CharField(max_length=255, verbose_name="交易ID",null=True, blank=True)
+    txHash = models.CharField(max_length=255, verbose_name="交易哈希",null=True, blank=True)
 
 
     def __str__(self):
         return self.assetName  # 用于在 Django Admin 或其他地方显示记录的名称
 
     class Meta:
-        db_table = 'myapp_assetrecord'
+        db_table = 'asset_record'
         verbose_name = "资产记录"  # 在 Django Admin 中显示的名称
         verbose_name_plural = "资产记录"  # 复数形式

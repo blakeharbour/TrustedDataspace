@@ -32,17 +32,11 @@
     <div class="Hui-admin-logo-wrapper">
 			<a class="logo navbar-logo" href="http://127.0.0.1:8000/index/">
 				<i class="va-m iconpic global-logo"></i>
-				<span class="va-m">铁路隐私计算平台</span>
+				<span class="va-m">隐私计算</span>
 			</a>
 		</div>
         <div class="Hui-admin-menu-dropdown bk_2">
-            <dl id="menu-home" class="Hui-menu">
-                <dd class="Hui-menu-item-frist">
-                  <ul>
-                    <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 单方</a></li>
-                  </ul>
-                </dd>
-            </dl>
+
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
@@ -344,31 +338,31 @@
         function trainModelresultshow() {
 
             location.href = "http://0.0.0.0:6006/";
-            {#// 使用 AJAX 发送 POST 请求到 Django 视图#}
-            {#var xhr = new XMLHttpRequest();#}
-            {#xhr.open('POST', 'http://127.0.0.1:8000/model_result_show/', true);#}
-            {#xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');#}
-            {#xhr.send();#}
+            // 使用 AJAX 发送 POST 请求到 Django 视图
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'http://127.0.0.1:8000/model_result_show/', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send();
 
-            {#// 监听 TensorBoard 启动完成事件#}
-            {#xhr.onreadystatechange = function () {#}
-            {#    if (xhr.readyState === 4 && xhr.status === 200) {#}
-            {#     // 创建一个隐藏的 iframe，加载 TensorBoard 页面#}
-            {#        var iframe = document.createElement('iframe');#}
-            {#        iframe.style.display = 'none';#}
-            {#        iframe.src = 'http://0.0.0.0:6006/';#}
-            {#        document.body.appendChild(iframe);#}
-            {#    }#}
-
-
+            // 监听 TensorBoard 启动完成事件
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                 // 创建一个隐藏的 iframe，加载 TensorBoard 页面
+                    var iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = 'http://0.0.0.0:6006/';
+                    document.body.appendChild(iframe);
+                }
 
 
-           {#// 弹出 TensorBoard 界面#}
-           {#setTimeout(function() {#}
-           {##}
-           {#    window.open('http://localhost:6006');#}
-           {##}
-           {#    }, 10000);  // 设置适当的延迟时间，单位为毫秒#}
+
+
+           // 弹出 TensorBoard 界面
+           setTimeout(function() {
+
+               window.open('http://localhost:6006');
+
+               }, 10000);  // 设置适当的延迟时间，单位为毫秒
 
 
             // 注意：上述地址可能需要根据你的 TensorBoard 配置进行调整
@@ -408,6 +402,7 @@
 					},
 				});
 			});
+        }
         }
 	</script>
 	<!--/请在上方写此页面业务相关的脚本-->

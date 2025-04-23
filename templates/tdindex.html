@@ -29,6 +29,20 @@
 	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
 </head>
 <body>
+    <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+
 	<!--_menu 作为公共模版分离出去-->
 	<aside class="Hui-admin-aside-wrapper">
 		<div class="Hui-admin-logo-wrapper">
@@ -46,20 +60,15 @@
 					</ul>
 				</dd>
 			</dl>
-			<dl id="menu-model" class="Hui-menu">
-                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-                <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
-					</ul>
-                </dd>
-			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
+
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
@@ -69,6 +78,17 @@
 				</dd>
 
 			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
@@ -76,18 +96,9 @@
 						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
 					</ul>
 				</dd>
-
-			</dl>
-            <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
-					</ul>
-				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -131,22 +142,6 @@
 		<header class="Hui-navbar">
 			<div class="navbar">
 				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-              <li><a href="">顶部菜单</a></li>
-              <li class="dropDown dropDown_hover">
-                <a class="dropDown_A" href="javascript:;">顶部菜单</a>
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
 							<li>超级管理员</li>
@@ -157,7 +152,6 @@
 									<li><a href="#">退出</a></li>
 								</ul>
 							</li>
-							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
 							<li id="Hui-skin" class="dropDown dropDown_hover right">
 								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
 								<ul class="dropDown-menu menu radius box-shadow">
@@ -178,60 +172,13 @@
 
 		<div class="Hui-admin-article">
 			<article class="Hui-admin-content clearfix">
-                    <div class="row-24 clearfix" style="margin-left: -12px; margin-right: -12px;">
-                        <div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-                            <div class="panel">
-                                <div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总销售额：</div>
-                                <div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-                                    <div class="c-primary" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-                                        &yen; 9,999,999
-                                    </div>
-                                    <div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日销售额</span> <span>&yen; 1,234</span></div>
-                                </div>
-                            </div>
-                        </div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总访问量：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-success" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									9,999,999
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日访问量</span> <span>1,234</span></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总会员数：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-danger" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									99,999 人
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增会员</span> <span>1,234 人</span></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-24-xs-24 col-24-sm-12 col-24-md-12 col-24-lg-12 col-24-xl-6" style="padding-left: 12px; padding-right: 12px; margin-bottom: 24px;">
-						<div class="panel">
-							<div class="panel-header" style="padding:15px 24px;font-weight: 400;color:#999;">总文章数：</div>
-							<div class="panel-body" style="padding-bottom: 0; padding-left:24px;padding-right:24px;">
-								<div class="c-warning" style="font-size: 30px;line-height: 38px;padding-bottom: 24px;">
-									99,999
-								</div>
-								<div class="f-14" style="padding: 10px 0;border-top:solid 1px #eee"><span class="c-999">今日新增文章</span> <span>1,234</span></div>
-							</div>
-						</div>
-					</div>
-				</div>
 				<div class="panel">
 					<div class="panel-body"发布>
-						<p class="f-20 text-success">欢迎使用H-ui.admin
-							<span class="f-14">v2.3</span>
-							后台模版！
+						<p class="f-20 text-success">欢迎使用多式联运可信数据空间
+							<span class="f-14">v1.0</span>
 						</p>
 						<p>登录次数：18 </p>
-						<p>上次登录IP：222.35.131.79.1  上次登录时间：2014-6-14 11:19:55</p>
+						<p>上次登录IP：222.35.131.79.1  上次登录时间：2025-4-14 11:19:55</p>
 						<table class="table table-border table-bordered table-bg mt-20">
 							<thead>
 								<tr>
@@ -245,31 +192,19 @@
 								</tr>
 								<tr>
 									<td>服务器IP地址</td>
-									<td>127.17.109.1</td>
-								</tr>
-								<tr>
-									<td>服务器域名</td>
-									<td>www.h-ui.net</td>
+									<td>192.168.1.131</td>
 								</tr>
 								<tr>
 									<td>服务器端口 </td>
-									<td>80</td>
+									<td>8000</td>
 								</tr>
 								<tr>
 									<td>服务器IIS版本 </td>
 									<td>Microsoft-IIS/6.0</td>
 								</tr>
 								<tr>
-									<td>本文件所在文件夹 </td>
-									<td>D:\WebSite\HanXiPuTai.com\XinYiCMS.Web\</td>
-								</tr>
-								<tr>
 									<td>服务器操作系统 </td>
-									<td>Microsoft Windows NT 5.2.3790 Service Pack 2</td>
-								</tr>
-								<tr>
-									<td>系统所在文件夹 </td>
-									<td>C:\WINDOWS\system32</td>
+									<td>Ubuntu</td>
 								</tr>
 								<tr>
 									<td>服务器脚本超时时间 </td>
@@ -284,10 +219,6 @@
 									<td>2.050727.3655</td>
 								</tr>
 								<tr>
-									<td>服务器当前时间 </td>
-									<td>2014-6-14 12:06:23</td>
-								</tr>
-								<tr>
 									<td>服务器IE版本 </td>
 									<td>6.0000</td>
 								</tr>
@@ -296,16 +227,8 @@
 									<td>7210分钟</td>
 								</tr>
 								<tr>
-									<td>逻辑驱动器 </td>
-									<td>C:\D:\</td>
-								</tr>
-								<tr>
 									<td>CPU 总数 </td>
-									<td>4</td>
-								</tr>
-								<tr>
-									<td>CPU 类型 </td>
-									<td>x86 Family 6 Model 42 Stepping 1, GenuineIntel</td>
+									<td>8</td>
 								</tr>
 								<tr>
 									<td>虚拟内存 </td>
@@ -326,10 +249,6 @@
 								<tr>
 									<td>当前SessionID </td>
 									<td>gznhpwmp34004345jz2q3l45</td>
-								</tr>
-								<tr>
-									<td>当前系统用户名 </td>
-									<td>NETWORK SERVICE</td>
 								</tr>
 							</tbody>
 						</table>
