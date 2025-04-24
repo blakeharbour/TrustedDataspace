@@ -212,8 +212,8 @@
               <th width="80">描述</th>
               <th width="80">格式</th>
               <th width="100">安全等级</th>
-              <th width="80">状态</th>
-              <th width="100">访问路径</th>
+{#              <th width="80">状态</th>#}
+{#              <th width="100">访问路径</th>#}
               <th width="50">操作</th>
             </tr>
           </thead>
@@ -252,14 +252,14 @@
                     <td>{{ asset.description }}</td>
                     <td>{{ asset.assetFormat }}</td>
                     <td>{{ asset.get_assetLevel_display }}</td>
-                    <td>{{ asset.get_status_display }}</td>
-                    <td>
-                        {% if asset.status == 'started' %}
-                            {{ asset.assetPath }}
-                        {% else %}
-                            未开始
-                        {% endif %}
-                    </td>
+{#                    <td>{{ asset.get_status_display }}</td>#}
+{#                    <td>#}
+{#                        {% if asset.status == 'started' %}#}
+{#                            {{ asset.assetPath }}#}
+{#                        {% else %}#}
+{#                            未开始#}
+{#                        {% endif %}#}
+{#                    </td>#}
                     <td>
                         <a href="javascript:;" onclick="edit_dataasset('{{ asset.assetID }}')" class="btn btn-primary radius">
                             <i class="Hui-iconfont">&#xe6df;</i> 编辑
