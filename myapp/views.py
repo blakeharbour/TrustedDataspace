@@ -18,7 +18,14 @@ from sqlalchemy.sql.functions import current_user
 from .models import LoginUser, AssetRecord
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+import json
+import os
+import time
+import uuid
+import shutil
 from torch.utils.tensorboard import SummaryWriter
 import os
 import json
@@ -103,6 +110,14 @@ def sjtzadd(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+def upload_to_sandbox(request):
+    return render(request, 'upload_to_sandbox.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
+
+
+
+
 @login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
@@ -110,6 +125,11 @@ def interface_add(request):
 @login_required(login_url='/login/')
 def interface_edit(request):
     return render(request, 'interface-edit.html')
+
+
+@login_required(login_url='/login/')
+def sjsxinterface_edit(request):
+    return render(request, 'sjsxinterface-edit.html')
 
 @login_required(login_url='/login/')
 # 发起训练
@@ -503,6 +523,74 @@ def createinterface(request):
     inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
     return JsonResponse({'status': 0})
 
+
+
+def createinterfacesx(request):
+
+    zcname = request.POST.get("zcname")  # 从前端拿 zcname
+
+    select_js = "assetName = '" + zcname + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
+                             '', '')
+
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = "zcname"
+    assetID = selectlist[0][5]
+
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        #将json字符串转换为字典
+        data=json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+
+
+    # 在asset_record这个表里新建一条记录
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
 
@@ -546,6 +634,20 @@ def deleteinterface(request):
     print('删除成功')
     return JsonResponse({'status': 0})
 
+def sysxdeleteinterface(request):
+    proobj = request.body
+    print(proobj)
+    projs = json.loads(proobj)
+    print(projs)
+    id = projs["id"]
+    # userid = request.POST.get('userid')
+    # userid = "2"
+    print(id)
+    fiterstr="id = "+id
+    deletetable("webinterface", fiterstr)
+    print('删除成功')
+    return JsonResponse({'status': 0})
+
 def searchoneinterface(request):
     proobj = request.body
 
@@ -557,6 +659,33 @@ def searchoneinterface(request):
     interfacelist = selecttable("webinterface", "id,webname,weburl,webprotocol,webtype,datatype,comallowed,projectName", fiterstr, '', '', '')
     print('查找成功')
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+def sysxsearchoneinterface(request):
+    proobj = request.body
+
+    projs = json.loads(proobj)
+    print(projs)
+    confirmman = projs["confirmman"]
+    print(confirmman)
+    fiterstr = "confirmman = " + confirmman
+
+
+
+
+
+    interfacelist = selecttable(
+            "webinsjsxterface",
+            "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
+            fiterstr,
+            '', '', ''
+        )
+
+    print('查找成功')
+    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
+
+
+
 
 #测试参与者
 import pytz
@@ -1515,7 +1644,19 @@ def create_project(request):
         except Exception as e:
             return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
 
-def submit_project(request):
+def get_status_description(currentStatus):
+    status_mapping = {
+        "0": "发起",
+        "1": "待审核",
+        "2": "审核通过",
+        "3": "审核不通过",
+        "4": "正在进行",
+        "5": "已完成"
+    }
+    return status_mapping.get(currentStatus, "未知状态")
+
+
+def submit_project_toblockchain(request):
     if request.method == 'POST':
         project_name = request.POST.get('project_name')
         data_demander = request.POST.get('data_demander')
@@ -1542,12 +1683,12 @@ def submit_project(request):
         if conditions:
             constr = " AND ".join(conditions)
 
-        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay'
+        fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
         order = 'ID DESC'
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
 
         if result:
-            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode = result[0]
+            ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = result[0]
 
             blockchainData = {
                 'transactionID': ID,
@@ -1565,7 +1706,22 @@ def submit_project(request):
                 response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
-                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功'})
+                    # 解析区块链返回的 payload
+                    payload = json.loads(response.json().get('payload', '{}'))
+                    tx_time = payload.get('txTime')
+                    tx_id = payload.get('txID')
+                    tx_hash = payload.get('txHash')
+
+                    # 获取状态描述
+                    status = get_status_description(currentStatus)
+
+                    # 构建插入数据的字符串
+                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','已接收', '{tx_time}','{tx_id}','{tx_hash}'"
+                    # 调用 inserttable 函数插入数据到 project_notarization 表
+                    inserttable(pro_js, tablename="project_notarization",
+                                con1="id,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, operations, tranasctionTime,tranasctionId,hashDigest")
+
+                    return JsonResponse({'status': 'ok','message': '区块链接口调用成功，数据已存入项目存证表'})
                 else:
                     print("区块链接口调用失败:", response.text)
                     return JsonResponse({'status': 'error','message': '区块链接口调用失败，请稍后重试'})
@@ -1576,6 +1732,7 @@ def submit_project(request):
             print("数据库查询无结果")
             return JsonResponse({'status': 'error','message': '数据库查询无结果'})
     return JsonResponse({'status': 'error','message': '无效的请求方法'})
+
 
 def get_project_data(request):
     try:
@@ -1855,3 +2012,152 @@ def search_pending_project_data(request):
             return JsonResponse({'status': '1','message': '未查询到符合条件的待处理项目数据'})
     except Exception as e:
         return JsonResponse({'status': '1','message': f'查询待处理项目数据时出现错误: {str(e)}'})
+
+
+
+
+
+
+
+
+#------------------------------------------------------------------------------------------
+# IP追踪
+# myapp/views.py
+
+import logging
+from django.shortcuts import render
+from django.http import JsonResponse
+from cryptography.fernet import Fernet
+import json
+from datetime import datetime
+import base64
+import openpyxl
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
+
+# 设置日志记录
+logging.basicConfig(level=logging.INFO)
+
+# 允许访问的 IP 列表
+ALLOWED_IPS = ['192.168.1.141', '10.61.222.249', '127.0.0.1']
+
+# 存储 IP 地址的文件路径
+IP_HISTORY_FILE = 'ip_history.txt'
+
+# 生成密钥
+def generate_key():
+    return Fernet.generate_key()
+
+# 加密数据
+def encrypt_data(data, key):
+    fernet = Fernet(key)
+    encrypted_data = fernet.encrypt(data.encode())
+    return encrypted_data
+
+# 创建数据包
+def create_data_packet(encrypted_data, key, client_ip, user_agent, timestamp, url, query_params):
+    return {
+        'encrypted_data': base64.b64encode(encrypted_data).decode(),
+        'key': base64.b64encode(key).decode(),
+        'client_ip': client_ip,
+        'user_agent': user_agent,
+        'timestamp': timestamp,
+        'url': url,
+        'query_params': query_params
+    }
+
+# 生成数据
+def generate_data():
+    data = []
+    excel_file_path = 'D:\\testdata\\data\\test.xlsx'
+    # 打开 Excel 文件
+    workbook = openpyxl.load_workbook(excel_file_path)
+    sheet = workbook.active  # 获取活动的工作表
+    # 遍历工作表中的每一行，并将数据添加到列表中
+    for row in sheet.iter_rows(values_only=True):
+        data.append(row)
+    return data
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        # 取第一个 IP 地址作为客户端 IP
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        # 如果没有 HTTP_X_FORWARDED_FOR 头信息，就使用 REMOTE_ADDR
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def read_ip_history():
+    try:
+        with open(IP_HISTORY_FILE, 'r') as file:
+            return [line.strip() for line in file.readlines()]
+    except FileNotFoundError:
+        return []
+
+def write_ip_history(ip_list):
+    with open(IP_HISTORY_FILE, 'w') as file:
+        for ip in ip_list:
+            file.write(ip + '\n')
+
+@csrf_exempt
+def get_data(request):
+    try:
+        if request.method == 'GET':
+            # 优先从请求头获取客户端 IP
+            client_ip = request.headers.get('X-Client-IP')
+            if not client_ip:
+                # 如果请求头没有，从请求的元数据中获取
+                client_ip = get_client_ip(request)
+
+            # 检查客户端 IP 是否在允许的 IP 列表中
+            if client_ip not in ALLOWED_IPS:
+                return JsonResponse({"status": "error", "message": "Access denied"}, status=403)
+
+            # 获取客户端的 User-Agent
+            user_agent = request.META.get('HTTP_USER_AGENT', 'Unknown')
+            # 获取请求的时间戳
+            timestamp = datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S GMT')
+            # 获取请求的 URL 和查询参数
+            url = request.build_absolute_uri()
+            query_params = request.GET.dict()
+            # 生成数据
+            data = generate_data()
+            # 将数据转换为 JSON 字符串
+            data_str = json.dumps(data, ensure_ascii=False)
+            # 生成密钥
+            key = generate_key()
+            # 加密数据
+            encrypted_data = encrypt_data(data_str, key)
+
+            # 若客户端 IP 不是 127.0.0.1，则更新 IP 历史记录
+            if client_ip != '127.0.0.1':
+                ip_history = read_ip_history()
+                if client_ip not in ip_history:
+                    ip_history.append(client_ip)
+                write_ip_history(ip_history)
+
+            # 获取 IP 历史记录
+            ip_history = read_ip_history()
+            # 取最新的非 127.0.0.1 的 IP 地址，如果没有则显示默认信息
+            latest_non_local_ip = ip_history[-1] if ip_history else 'No recent non - local clients'
+            print(ip_history)
+            # 创建数据包
+            data_packet = create_data_packet(encrypted_data, key, latest_non_local_ip, user_agent, timestamp, url, query_params)
+
+            # 在日志中记录客户端 IP 和请求的时间
+            logging.info(f"Received request from IP: {client_ip}")
+            # 返回 HTML 模板，同时传递 IP 历史记录
+            return render(request, 'data_view1.html', {'data_packet': data_packet, 'ip_history': ip_history})
+        else:
+            return JsonResponse({"status": "error", "message": "Method not allowed"}, status=405)
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+def show_latest_ip(request):
+    latest_client_ip = request.session.get('latest_client_ip', 'No recent clients')
+    return render(request, 'show_latest_ip.html', {'latest_client_ip': latest_client_ip})
+
+def data_model(request):
+    return render(request, 'data_view1.html')

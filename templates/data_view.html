@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data View</title>
+    <!-- 引入Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 添加一些样式以匹配现有界面 */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>数据查看</h1>
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>加密数据</th>
+                    <td>{{ data_packet.encrypted_data }}</td>
+                </tr>
+                <tr>
+                    <th>密钥</th>
+                    <td>{{ data_packet.key }}</td>
+                </tr>
+                <tr>
+                    <th>客户端IP</th>
+                    <td>{{ data_packet.client_ip }}</td>
+                </tr>
+                <tr>
+                    <th>用户代理</th>
+                    <td>{{ data_packet.user_agent }}</td>
+                </tr>
+                <tr>
+                    <th>时间戳</th>
+                    <td>{{ data_packet.timestamp }}</td>
+                </tr>
+                <tr>
+                    <th>URL</th>
+                    <td>{{ data_packet.url }}</td>
+                </tr>
+                <tr>
+                    <th>查询参数</th>
+                    <td>
+                        <pre>{{ data_packet.query_params|json_script:"query_params" }}</pre>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 用来展示格式化后的查询参数 -->
+    <script>
+        // 解析查询参数的 JSON 格式并打印到控制台（用于调试）
+        const queryParams = JSON.parse(document.getElementById('query_params').textContent);
+        console.log(queryParams);
+    </script>
+</body>
+</html>

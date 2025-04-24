@@ -203,6 +203,39 @@
 <script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
 <script>
     
+   
+
+   $(function () {
+                var getData = sessionStorage.getItem("confirmman");
+                console.log(getData)
+                {#将json字符串转化为json对象#}
+                var confirmman = $.parseJSON(getData);
+                console.log(confirmman)
+                var wbdic={
+                        confirmman:confirmman
+                    };
+                var wbdata = JSON.stringify(wbdic)
+                $.ajax({
+                    type: "post",
+                    url: "http://127.0.0.1:8000/sysxsearchoneinterface/" ,//接口地址
+                    dataType:'json',
+                    data: wbdata,
+                    success: function (res) {
+                        console.log("res385:");
+                        console.log(res);
+                        result = res.data;
+                        console.log(result)
+                        $("#confirmman").val(result[0][1]);
+                        $("#confirmtime").val(result[0][2]);
+                        $("#saveurl").val(result[0][3]);
+                        $("#zichanname").val(result[0][4]);
+                        $("#staytime").val(result[0][5]);
+                        $("#jiamipro").val(result[0][6]);
+                        $("#autoscope").val(result[0][7]);
+                        $("#delchannle").val(result[0][8]);
+                    },
+                })
+            }); 
     
   function submitSandbox() {
   const confirmman = $("#creator").val();         // 沙箱创建人
@@ -220,32 +253,64 @@
     return false;
   }
 
-  const data = {
-  confirmman: $('#creator').val(),
-  confirmtime: $('#createTime').val(),
-  saveurl: $('#dataPath').val(),
-  zichanname: $('#assetName').val(),
-  staytime: $('#validUntil').val(),
-  jiamipro: $('#encryption').val(),
-  autoscope: $('#accessRange').val(),
-  delchannle: $('#destroyPolicy').val()
-};
+  // 👉 第一步：获取旧的 id（即 saveurl），执行删除
+  const getData = sessionStorage.getItem("confirmman");
+  console.log("获取 session 中的 confirmman:", getData);
+  const confirmman1 = $.parseJSON(getData);
+  sessionStorage.removeItem("confirmman1");
 
-$.ajax({
-  type: "post",
-  url: "http://127.0.0.1:8000/create-sandbox/",
-  data: JSON.stringify(data),         // ✅ 一定要加 stringify
-  contentType: "application/json",   // ✅ 确保告诉后端是 JSON 格式
-  dataType: "json",
-  success: function(res) {
-    console.log("提交成功：", res);
-  },
-  error: function(err) {
-    console.log("提交出错：", err);
-  }
-});
+  const deleteBody = JSON.stringify({ confirmman1: confirmman1 });
 
+  $.ajax({
+    type: 'post',
+    url: 'http://127.0.0.1:8000/sysxdeleteinterface/',
+    dataType: 'json',
+    data: deleteBody,
+    contentType: 'application/json',
+    success: function (data) {
+      console.log("删除结果:", data.status);
+
+      // 👉 第二步：删除成功后执行新增
+      const dataObj = {
+        confirmman: confirmman,
+        confirmtime: confirmtime,
+        saveurl: saveurl,
+        zichanname: zichanname,
+        staytime: staytime,
+        jiamipro: jiamipro,
+        autoscope: autoscope,
+        delchannle: delchannle
+      };
+
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/create-sandbox/",
+        data: JSON.stringify(dataObj),
+        contentType: "application/json",
+        dataType: "json",
+        success: function (res) {
+          console.log("提交成功：", res);
+          if (res.status === 0) {
+            layer.msg("编辑成功，数据已更新", { icon: 1 });
+            setTimeout(() => {
+              window.location.href = "/sjsx-interface/";
+            }, 1000);
+          } else {
+            layer.alert("提交失败，请检查数据");
+          }
+        },
+        error: function (err) {
+          console.error("提交错误：", err);
+        }
+      });
+
+    },
+    error: function (err) {
+      console.error("删除失败：", err);
+    }
+  });
 }
+
 
 </script>
 </body>
