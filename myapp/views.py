@@ -533,14 +533,14 @@ def createinterfacesx(request):
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
                              '', '')
 
-    assetName = selectlist[0][0]
+
     assetOwner = selectlist[0][1]
     assetFormat = selectlist[0][2]
     assetLevel = selectlist[0][3]
-    assetPath = "zcname"
+    assetPath = selectlist[0][4]
     assetID = selectlist[0][5]
 
-    print(assetName)
+
 
     if (assetLevel == "L1"):
         assetLevel = "高敏感密文"
@@ -550,9 +550,9 @@ def createinterfacesx(request):
         assetLevel = "敏感"
     elif (assetLevel == "L4"):
         assetLevel = "低敏感"
-
+    print("资产信息：", assetOwner, assetFormat, assetLevel, assetPath, assetID)
     # 上传到区块链
-    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+    blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -587,8 +587,9 @@ def createinterfacesx(request):
 
 
     # 在asset_record这个表里新建一条记录
-    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    asset_js = "'" + zcname + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','封装沙箱数据','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+    return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
 
 
 def createsandbox(request):
