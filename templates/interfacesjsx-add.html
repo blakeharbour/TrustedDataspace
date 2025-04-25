@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>上传数据接口</title>
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<section class="Hui-admin-article-wrapper">
+  <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+    首页 <span class="c-gray en">/</span> 数据共享方法 <span class="c-gray en">/</span> 添加接口
+  </nav>
+
+  <article class="clearfix pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-interface-add">
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>接口所存数据名称：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="webname" name="webname" placeholder="">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>接口地址（URL）：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="weburl" name="weburl" placeholder="">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>接口协议：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="webprotocol" name="webprotocol" placeholder="如 HTTP/HTTPS">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>接口类型：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="webtype" name="webtype" placeholder="GET / POST">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>响应格式：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="datatype" name="datatype" placeholder="如 JSON/XML">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>访问授权范围：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="comallowed" name="comallowed" placeholder="如 指定组织/角色">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>项目名称：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="projectName" name="projectName" placeholder="">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">模型绑定：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <select class="select" id="modelBind" name="modelBind">
+            <option value="Docker">Docker 封装</option>
+            <option value="未绑定">未绑定</option>
+          </select>
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">支持工具：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="tools" name="tools" placeholder="如 Excel, Anaconda">
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">哈希校验状态：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <select class="select" id="hashCheck" name="hashCheck">
+            <option value="通过">通过</option>
+            <option value="未验证">未验证</option>
+          </select>
+        </div>
+      </div>
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3">销毁状态：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <select class="select" id="destroyStatus" name="destroyStatus">
+            <option value="待销毁">待销毁</option>
+            <option value="已销毁">已销毁</option>
+          </select>
+        </div>
+      </div>
+      <div class="row clearfix">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+          <input class="btn btn-primary radius" type="button" onclick="submit_order()" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+        </div>
+      </div>
+    </form>
+  </article>
+</section>
+
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+<script>
+  function submit_order() {
+    const payload = {
+      webname: $('#webname').val(),
+      weburl: $('#weburl').val(),
+      webprotocol: $('#webprotocol').val(),
+      webtype: $('#webtype').val(),
+      datatype: $('#datatype').val(),
+      comallowed: $('#comallowed').val(),
+      projectName: $('#projectName').val(),
+      modelBind: $('#modelBind').val(),
+      tools: $('#tools').val(),
+      hashCheck: $('#hashCheck').val(),
+      destroyStatus: $('#destroyStatus').val()
+    };
+
+    if (!payload.webname || !payload.weburl || !payload.webprotocol) {
+      alert("带 * 字段不能为空");
+      return;
+    }
+    $.ajax({
+      type: 'post',
+      url: 'http://127.0.0.1:8000/createinterface/',
+      data: JSON.stringify([payload]),
+      contentType: 'application/json',
+      success: function(res) {
+        if (res.status === "0") {
+          alert("新增成功,已通过区块链存证");
+          location.href = "http://127.0.0.1:8000/wb-interface/";
+        } else {
+          alert("出现错误");
+        }
+      }
+    });
+  }
+</script>
+</body>
+</html>
