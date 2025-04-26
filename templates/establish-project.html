@@ -333,6 +333,11 @@
     <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
     <script type="text/javascript" src="/static/static/business/js/main.js"></script>
     <script type="text/javascript">
+     var currentUser = {id:"{current_user.id }}",
+              account:"{current_user.account }}",
+              com:"{current_user.com }}",
+              comid:"{ current_user.comid }}",
+     };
         // 显示模态框
     function showModal() {
       document.getElementById('myModal').style.display = "block";
@@ -475,8 +480,7 @@
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
               row.append('<td>' + item.dataAsset + '</td>');
-              row.append('<td>' + item.dataSecurity + '</td>');
-              row.append('<td><a href="javascript:;" ' + 'onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + encodeURIComponent(item.projectName) + '\', ' +  (item.isDataOwner? 0 : 1) + ')" ' +  'class="btn btn-primary radius">' +  '<i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
+              row.append('<td>' + item.dataSecurity + '</td>');row.append('<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + item.dataOwner + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
               row.append('<td>' + statusText + '</td>');
               // 使用 data-* 属性传递数据，包括项目 id
               var disabledClass = "";
@@ -602,12 +606,12 @@
     });
 }
 // 新增共享方式跳转函数
-function sharingTypeResultShow(shareType) {
+function sharingTypeResultShow(shareType, dataOwner) {
     // 定义合法的共享方式列表
     const validShareTypes = {
         '接口交换': 'http://127.0.0.1:8000/wb-interface/',
-        '安全沙箱': 'http://192.168.1.133/url2',// 替换为实际的URL2
-        '隐私计算': 'http://127.0.0.1:8000/index/',// 替换为实际的URL2
+        '安全沙箱': 'http://127.0.0.1:8000/sjsx-interface/',
+        '隐私计算': 'http://127.0.0.1:8000/index/',
         '密文计算': 'http://127.0.0.1:8000/mutiindex/'
     };
     // 参数校验
@@ -627,6 +631,13 @@ function sharingTypeResultShow(shareType) {
         layer.msg(`不支持的共享方式：${shareType}`, {icon: 2});
         return;
     }
+     // 判断当前用户是否为数据所有方
+    const isDataOwner = currentUser.com === dataOwner; // 根据实际业务逻辑修改判断条件
+    const targetId = isDataOwner ? '1' : '0'; // 数据所有方传1，否则传0
+   if (shareType === '接口交换')
+    // 存储到sessionStorage
+    sessionStorage.setItem('target_id', targetId);
+
     // 获取对应的URL
     const url = validShareTypes[shareType];
     try {
@@ -641,6 +652,9 @@ function sharingTypeResultShow(shareType) {
         layer.msg('链接打开失败，请联系管理员', {icon: 2});
     }
 }
+//打印当前用户信息到控制台（用于调试）
+   console.Log("当前用户ID:",currentUser,id);
+  console.Log("当前用户所属方：",currentUser.com);
 
     </script>
     <!--/请在上方写此页面业务相关的脚本-->
