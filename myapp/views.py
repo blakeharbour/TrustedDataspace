@@ -1228,7 +1228,7 @@ def search_notarization(request):
     currentUser = request.user
     assetDemander = currentUser.com
     assetOwner = currentUser.com
-    # 修正引号，添加括号确保逻辑正确
+    #增加当前用户登录判断，当用户所属方为数据所有方或者数据需求方才显示对应的存证项
     condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
     notarizationlist = selecttable(
         "project_notarization",
@@ -1239,6 +1239,7 @@ def search_notarization(request):
 
 #根据项目名称查找存证信息
 def search_notarization_by_projectname(request):
+    # 增加当前用户登录判断，当用户所属方为数据所有方或者数据需求方才显示对应的存证项
     currentUser = request.user
     assetDemander = currentUser.com
     assetOwner = currentUser.com
@@ -1247,7 +1248,7 @@ def search_notarization_by_projectname(request):
     base_condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
 
     if project_name:
-        # 模糊查询 + 权限校验（用括号包裹 OR 条件）
+        # 模糊查询 + 权限校验
         search_condition = f"(projectName LIKE '%{project_name}%') AND {base_condition}"
         notarizationlist = selecttable(
             "project_notarization",

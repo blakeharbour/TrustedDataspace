@@ -447,9 +447,9 @@ function sharingTypeResultShow(shareType, dataOwner) {
         layer.msg(`不支持的共享方式：${shareType}`, {icon: 2});
         return;
     }
-   // 判断当前用户是否为数据所有方
+   // 判断当前用户是否为数据所有方，并传值
     const isDataOwner = currentUser.com === dataOwner; // 根据实际业务逻辑修改判断条件
-    const targetId = isDataOwner ? '0' : '1'; // 数据所有方传0，否则传1
+    const targetId = isDataOwner ? '1' : '0'; // 数据所有方传1，否则传0
    if (shareType === '接口交换')
     // 存储到sessionStorage
     sessionStorage.setItem('target_id', targetId);
