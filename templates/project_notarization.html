@@ -26,50 +26,63 @@
 	<title>可信数据空间</title>
 	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
 	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
-    <style>
-  .loader {
-    border: 6px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 6px solid #3498db;
-    width: 40px;
-    height: 40px;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
-  }
+        <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
 
-  /* Safari */
-  @-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-  }
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+<!--	<style>-->
+<!--  .loader {-->
+<!--    border: 6px solid #f3f3f3;-->
+<!--    border-radius: 50%;-->
+<!--    border-top: 6px solid #3498db;-->
+<!--    width: 40px;-->
+<!--    height: 40px;-->
+<!--    -webkit-animation: spin 2s linear infinite; /* Safari */-->
+<!--    animation: spin 2s linear infinite;-->
+<!--  }-->
 
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
+<!--  /* Safari */-->
+<!--  @-webkit-keyframes spin {-->
+<!--    0% { -webkit-transform: rotate(0deg); }-->
+<!--    100% { -webkit-transform: rotate(360deg); }-->
+<!--  }-->
 
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4);
-    padding-top: 60px;
-  }
+<!--  @keyframes spin {-->
+<!--    0% { transform: rotate(0deg); }-->
+<!--    100% { transform: rotate(360deg); }-->
+<!--  }-->
 
-  .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 40%;
-    right: 0;
-  }
+<!--  .modal {-->
+<!--    display: none;-->
+<!--    position: fixed;-->
+<!--    z-index: 1;-->
+<!--    left: 0;-->
+<!--    top: 0;-->
+<!--    width: 100%;-->
+<!--    height: 100%;-->
+<!--    overflow: auto;-->
+<!--    background-color: rgb(0,0,0);-->
+<!--    background-color: rgba(0,0,0,0.4);-->
+<!--    padding-top: 60px;-->
+<!--  }-->
+
+<!--  .modal-content {-->
+<!--    background-color: #fefefe;-->
+<!--    margin: 5% auto;-->
+<!--    padding: 20px;-->
+<!--    border: 1px solid #888;-->
+<!--    width: 40%;-->
+<!--    right: 0;-->
+<!--  }-->
 
 </style>
 </head>
@@ -91,6 +104,14 @@
 					</ul>
 				</dd>
 			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
@@ -262,7 +283,6 @@
                                         <th width="80">申请状态</th>
                                         <th width="60">安全等级</th>
                                         <th width="100">共享方式</th>
-                                        <th width="80">操作</th>
                                             <th width="80">交易ID</th>
                                             <th width="100">交易时间</th>
                                             <th width="100">哈希摘要</th>
@@ -359,7 +379,6 @@
                                  '<td>'+Result[j][8]+'</td>'+
                                  '<td>'+Result[j][9]+'</td>'+
                                  '<td>'+Result[j][10]+'</td>'+
-                                 '<td>'+Result[j][11]+'</td>'+
                                   '</tr>'
 
 						}
@@ -407,7 +426,6 @@ function searchNotarization(project_name) {
                         '<td>' + Result[j][8] + '</td>' +
                         '<td>' + Result[j][9] + '</td>' +
                         '<td>' + Result[j][10] + '</td>' +
-                        '<td>' + Result[j][11] + '</td>' +
                         '</tr>';
                 }
                 $("#info").html(str); // 更新表格内容
