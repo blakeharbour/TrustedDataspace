@@ -181,7 +181,9 @@ def train_model(request):
     return render(request, 'model_training.html')
 @login_required(login_url='/login/')
 def established_project(request):
-    return render(request, 'establish-project.html')
+    return render(request, 'establish-project.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 @login_required(login_url='/login/')
 def pending_project(request):
     return render(request, 'pending_project.html')
@@ -193,8 +195,9 @@ def project_add(request):
 
 @login_required(login_url='/login/')
 def project_notarization(request):
-    return render(request, 'project_notarization.html')
-
+    return render(request, 'project_notarization.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 @login_required(login_url='/login/')
 def pengding_project(request):
     return render(request, 'pending_project.html')
@@ -1581,42 +1584,43 @@ def asset_record_list(request):
 
 #查找存证信息
 def search_notarization(request):
-
-    notarizationlist = selecttable("project_notarization", "id, projectId，projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
-    print('查找成功')
-    print(notarizationlist)
+    #新增限制条件：当前登录用户必须为数据需求方或者所有方
+    currentUser = request.user
+    assetDemander = currentUser.com
+    assetOwner = currentUser.com
+    condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
+    notarizationlist = selecttable(
+        "project_notarization",
+        "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+        condition, '', '', ''
+    )
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
 
 #根据项目名称查找存证信息
 def search_notarization_by_projectname(request):
-    # 获取查询参数
+    # 新增限制条件：当前登录用户必须为数据需求方或者所有方
+    currentUser = request.user
+    assetDemander = currentUser.com
+    assetOwner = currentUser.com
     project_name = request.GET.get('project_name', '')
 
-    # 按项目名称模糊查询
+    base_condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
+
     if project_name:
-        # 构造查询条件
-        condition = f"projectName LIKE '%{project_name}%'"
+        # 模糊查询 + 权限校验
+        search_condition = f"(projectName LIKE '%{project_name}%') AND {base_condition}"
         notarizationlist = selecttable(
             "project_notarization",
-            "id,prjectid,projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
-            condition,  # 添加查询条件
-            '',
-            '',
-            ''
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            search_condition, '', '', ''
         )
     else:
-        # 如果没有输入项目名称，返回所有数据
+        # 直接使用权限校验条件
         notarizationlist = selecttable(
             "project_notarization",
-            "id,prjectid,projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
-            '',
-            '',
-            '',
-            ''
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            base_condition, '', '', ''
         )
-
-    print('查找成功')
-    print(notarizationlist)
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
 
 @csrf_exempt

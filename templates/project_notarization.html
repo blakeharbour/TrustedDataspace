@@ -23,7 +23,7 @@
 {#	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>#}
 	<script>DD_belatedPNG.fix('*');</script><![endif]-->
 	<!--/meta 作为公共模版分离出去-->
-	<title>铁路隐私计算平台</title>
+	<title>可信数据空间</title>
 	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
 	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
     <style>
@@ -79,127 +79,75 @@
 		<div class="Hui-admin-logo-wrapper">
 			<a class="logo navbar-logo" href="/aboutHui.shtml">
 				<i class="va-m iconpic global-logo"></i>
-				<span class="va-m">铁路隐私计算平台</span>
+					<span class="va-m">可信数据空间</span>
 			</a>
 		</div>
-        <!-- Modal -->
-        <div class="modal fade" id="progressModal" tabindex="-1" role="dialog" aria-labelledby="progressModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="progressModalLabel">Model Test Progress</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" id="progress-bar"></div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-		<div class="Hui-admin-menu-dropdown bk_2">
-{#		      <dl id="menu-home" class="Hui-menu">#}
-{#        <dd class="Hui-menu-item-frist">#}
-{#          <ul>#}
-{#            <li><a href="_blank.html" title="单方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 单方</a></li>#}
-{#          </ul>#}
-{#        </dd>#}
-{#      </dl>#}
+	<div class="Hui-admin-menu-dropdown bk_2">
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
 					</ul>
 				</dd>
 			</dl>
-			<dl id="menu-model" class="Hui-menu">
-                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
-					</ul>
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
-					</ul>
-                </dd>
-			</dl>
-            <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
-					</ul>
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/model-application/" title="数据申请情况查看">数据申请情况查看</a></li>#}
-{#					</ul>#}
-					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+						<li><li class="current"><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
 					</ul>
 				</dd>
 			</dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
 			</dl>
 		</div>
-{#         <div class="Hui-admin-menu-dropdown bk_2">#}
-{#      <dl id="menu-home" class="Hui-menu">#}
-{#        <dd class="Hui-menu-item-frist">#}
-{#          <ul>#}
-{#            <li><a href="_blank.html" title="多方"><i class="Hui-iconfont">&#xe616;</i>&nbsp; 多方</a></li>#}
-{#          </ul>#}
-{#        </dd>#}
-{#      </dl>#}
-{#             <dl id="menu-guest" class="Hui-menu">#}
-{#                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 外部合作者管理<i#}
-{#                        class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#                <dd class="Hui-menu-item" style="display:block">#}
-{#                    <ul>#}
-{#                        <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>#}
-{#                    </ul>#}
-{#                </dd>#}
-{#            </dl>#}
-{#            <dl id="menu-model" class="Hui-menu">#}
-{#            <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i#}
-{#                    class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#            <dd class="Hui-menu-item" style="display:block">#}
-{#                <ul>#}
-{#                    <li ><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>#}
-{#                </ul>#}
-{#                <ul>#}
-{#                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>#}
-{#                </ul>#}
-{#                <ul>#}
-{#                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>#}
-{#                </ul>#}
-{#            </dd>#}
-{#            </dl>#}
-{#            <dl id="menu-guest" class="Hui-menu">#}
-{#				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>#}
-{#				<dd class="Hui-menu-item" style="display:block">#}
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/multapplication_model-main/" title="模型使用">模型使用</a></li>#}
-{#					</ul>#}
-{#					<ul>#}
-{#						<li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>#}
-{#					</ul>#}
-{#				</dd>#}
-{#			</dl>#}
-{#		</div>#}
 	</aside>
 	<div class="Hui-admin-aside-mask"></div>
 
@@ -232,7 +180,7 @@
           </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
-{#							<li>超级管理员</li>#}
+{#							<li>current_user.account</li>#}
 							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
 								<ul class="dropDown-menu menu radius box-shadow">
 									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
@@ -262,63 +210,68 @@
 			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
 				首页
 				<span class="c-gray en">/</span>
-				项目信息管理
+				存证信息管理
 				<span class="c-gray en">/</span>
 				项目存证信息
 			</nav>
 
-			<article class="Hui-admin-content clearfix">
-				<div class="panel mt-20">
+	<article class="Hui-admin-content clearfix">
+  <div class="panel mt-20">
+  <div class="user-info">
+        <p>{{ current_user.com }} 的项目存证记录</p>
+        <p>账号: {{ current_user.account }} | comID: {{ current_user.comid }}</p>
+    </div>
+
+    <!-- 错误提示 -->
+    <div class="error-message">
+        <p style="color: red;"> </p>
+    </div>
+
 					<div class="panel-body"发布>
-						<div class="clearfix">
-{#							<span class="f-l">#}
-{#                                <a href="javascript:;" onclick="project_notarization_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 申请存证</a>#}
-{#								<a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a>#}
-{#							</span>#}
-                               <!-- 新增搜索表单 -->
-<span class="f-l">
+                    <div class="clearfix">
+        <!-- 新增搜索表单 -->
+   <span class="f-l">
     <form id="searchForm" method="get" action="" class="form form-horizontal">
-        <div class="input-group" style="width: 300px;">
-            <input type="text" class="input-text" placeholder="请输入项目名称" name="project_name" id="project_name">
+        <div class="input-group" style="width: 300px; display: flex; align-items: center;">
+            <input
+                type="text"
+                class="input-text"
+                placeholder="请输入项目名称"
+                name="project_name"
+                id="project_name"
+                style="flex: 1; margin-right: 5px;"
+            >
             <span class="input-group-btn">
-                <button type="button" id="searchButton" class="btn btn-success">
+                <button
+                    type="button"
+                    id="searchButton"
+                    class="btn btn-success"
+                    style="white-space: nowrap;"
+                >
                     <i class="Hui-iconfont">&#xe665;</i> 搜索
-                            </button>
-                        </span>
-                    </div>
-                </div>
-            </form>
-        </span>
+                </button>
+            </span>
+        </div>
+    </form>
+</span>
 {#							<span class="f-r">共有数据：<strong>3</strong> 条</span>#}
 						</div>
 						<div class="clearfix mt-20">
 							<table class="table table-border table-bordered table-hover table-bg table-sort">
 								<thead>
 									<tr class="text-c">
-{#                                        <th width="100">Learning-Rate(学习率)</th>#}
-{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
-{#                                        <th width="100">Batch-Size(批次大小)</th>#}
-                                        <th width="60">项目ID</th>
+                                   <th width="50">存证编号</th>
 										<th width="80">项目名称</th>
 										<th width="80">数据需求方</th>
 										<th width="80">数据所有方</th>
-										<th width="100">数据资源名称</th>
+										<th width="100">数据资产名称</th>
                                         <th width="80">申请状态</th>
-                                        <th width="100">安全等级</th>
-{#                                        <th width="100">Learning-Rate(学习率)</th>#}
-{#                                        <th width="100">Weight-Decay(权重衰减)</th>#}
-{#                                        <th width="100">Batch-Size(批次大小)</th>#}
-                                         <th width="100">共享方式</th>
-                                        <th width="100">操作</th>
+                                        <th width="60">安全等级</th>
+                                        <th width="100">共享方式</th>
+                                        <th width="80">操作</th>
                                             <th width="80">交易ID</th>
                                             <th width="100">交易时间</th>
                                             <th width="100">哈希摘要</th>
-{#                                        <th width="100">精确度</th>#}
-{#                                        <th width="100">召回率</th>#}
-{#                                        <th width="80">错误率</th>#}
-{#										<th width="100">损失值</th>#}
-{#                                        <th width="100">模型位置</th>#}
-{#                                        <th width="100">模型结果</th>#}
 									</tr>
 								</thead>
 								<tbody id="info">
@@ -566,12 +519,9 @@ function searchNotarization(project_name) {
 				});
 			});
 		}
-
-        {#function trainModelresultshow() {#}
-        {##}
-        {#    location.href = "http://192.168.1.121:6006/";#}
-        {##}
-        {##}
+//打印当前用户信息到控制台（用于调试）
+   console.Log("当前用户ID:",currentUser,id);
+  console.Log("当前用户所属方：",currentUser.com);
 
 
 	</script>
