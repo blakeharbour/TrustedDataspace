@@ -301,6 +301,7 @@
                                  '<td>' +
                                     '<input type="radio" name="selected_interface" ' +
                                             'data-webname="' + Result[j][1] + '" '+
+                                            'data-projectname="' + Result[j][7] + '" '+
                                            'data-url="' + Result[j][2] + '" />' +
                                 '</td>' +
                                  '<td>'+Result[j][0]+'</td>'+
@@ -329,13 +330,23 @@
             }
             const apiUrl = selectedRadio.dataset.url;
             const webName = selectedRadio.dataset.webname;
+            const projectName = selectedRadio.dataset.projectname;
             console.log(webName)
             console.log(apiUrl)
+            console.log(porjectname)
             window.location.href = apiUrl;  // 直接跳转触发下载
+			var webinfo=[];
+			var webdic={
+			    webname:webName,
+                projectName:projectName,
+            };
+			webinfo.push(webdic);
+			console.log(webinfo);
+			var webdata = JSON.stringify(webinfo)
             $.ajax({
 				type:"post",
 				url:"http://127.0.0.1:8000/useBlockchain/",
-                data:webName,
+                data:webdata,
 				dataType:'string',
 				success:function (res) {
 					console.log("res",res);
