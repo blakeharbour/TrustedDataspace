@@ -382,12 +382,11 @@ def searchinsbsxterface(request):
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
 def useBlockchain(request):
-    # 从请求体中获取数据
-    # data = json.loads(request.body)
-    # print(data)
-    webName = request.body.decode('utf-8')  # 转换为字符串
-    # projs = json.loads(proobj)
-    # webName = projs[0]["webName"]
+    proobj = request.body
+    projs = json.loads(proobj)
+    # webName = request.body.decode('utf-8')  # 转换为字符串
+    webName = projs[0]["webName"]
+    projectName = projs[0]["projectName"]
     select_js = "assetName = '" + webName + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
                              select_js, '',
@@ -442,10 +441,28 @@ def useBlockchain(request):
         print(tx_id)
         print(tx_hash)
 
+    # 查询项目表信息
+    select_js = "projectName = '" + projectName + "'"
+    selectlist = selecttable("pb8_ProjectAdd",
+                             "projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
+                             select_js, '',
+                             '', '')
+    dataDemand = selectlist[0][1]
+    dataOwner = selectlist[0][2]
+    dataAsset = selectlist[0][3]
+    dataSecurity = selectlist[0][4]
+    shareWay = selectlist[0][5]
+
     # 在asset_record这个表里新建一条记录
     asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据传输','调用数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(asset_js, tablename="asset_record",
                 con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+    # 在asset_record这个表里新建一条记录
+    pro_js = "'" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(pro_js, tablename="project_notarization",
+                con1="projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
+
     return JsonResponse({'status': 0})
 
 
@@ -460,6 +477,7 @@ def createinterface(request):
     comallowed = projs[0]["comallowed"]
     projectName = projs[0]["projectName"]
 
+    #查询数据资产表信息
     select_js = "assetName = '" + webname + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
                              '', '')
@@ -479,6 +497,7 @@ def createinterface(request):
         assetLevel = "敏感"
     elif (assetLevel == "L4"):
         assetLevel = "低敏感"
+
 
     # 上传到区块链
     blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
@@ -513,14 +532,14 @@ def createinterface(request):
         print(tx_id)
         print(tx_hash)
 
-
-
     # 在asset_record这个表里新建一条记录
     asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + weburl + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+
     # 在webinterface这个表里新建一条记录
-    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
-    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
+    web_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
+    inserttable(web_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
     return JsonResponse({'status': 0})
 
 
