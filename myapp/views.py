@@ -447,9 +447,10 @@ def useBlockchain(request):
     # 查询项目表信息
     select_js = "projectName = '" + projectName + "'"
     selectlist = selecttable("pb8_ProjectAdd",
-                             "projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
+                             "ID,  dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
                              select_js, '',
                              '', '')
+    projectId = str(selectlist[0][0])
     dataDemand = selectlist[0][1]
     dataOwner = selectlist[0][2]
     dataAsset = selectlist[0][3]
@@ -462,9 +463,9 @@ def useBlockchain(request):
                 con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
 
     # 在asset_record这个表里新建一条记录
-    pro_js = "'" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    pro_js = "'" + projectId + "','" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(pro_js, tablename="project_notarization",
-                con1="projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
+                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
 
     return JsonResponse({'status': 0})
 
