@@ -1591,7 +1591,7 @@ def search_notarization(request):
     condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
     notarizationlist = selecttable(
         "project_notarization",
-        "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+        "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
         condition, '', '', ''
     )
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
@@ -1611,14 +1611,14 @@ def search_notarization_by_projectname(request):
         search_condition = f"(projectName LIKE '%{project_name}%') AND {base_condition}"
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
             search_condition, '', '', ''
         )
     else:
         # 直接使用权限校验条件
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
             base_condition, '', '', ''
         )
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
