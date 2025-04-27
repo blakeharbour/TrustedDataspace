@@ -12,8 +12,8 @@ from django.conf import settings
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from huggingface_hub.utils import parse_datetime
-from sqlalchemy.sql.functions import current_user
+# from huggingface_hub.utils import parse_datetime
+# from sqlalchemy.sql.functions import current_user
 
 from .models import LoginUser, AssetRecord
 from django.contrib.auth.decorators import login_required
@@ -181,7 +181,9 @@ def train_model(request):
     return render(request, 'model_training.html')
 @login_required(login_url='/login/')
 def established_project(request):
-    return render(request, 'establish-project.html')
+    return render(request, 'establish-project.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 @login_required(login_url='/login/')
 def pending_project(request):
     return render(request, 'pending_project.html')
@@ -193,8 +195,9 @@ def project_add(request):
 
 @login_required(login_url='/login/')
 def project_notarization(request):
-    return render(request, 'project_notarization.html')
-
+    return render(request, 'project_notarization.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 @login_required(login_url='/login/')
 def pengding_project(request):
     return render(request, 'pending_project.html')
@@ -382,12 +385,11 @@ def searchinsbsxterface(request):
     return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
 def useBlockchain(request):
-    # 从请求体中获取数据
-    # data = json.loads(request.body)
-    # print(data)
-    webName = request.body.decode('utf-8')  # 转换为字符串
-    # projs = json.loads(proobj)
-    # webName = projs[0]["webName"]
+    proobj = request.body
+    projs = json.loads(proobj)
+    # webName = request.body.decode('utf-8')  # 转换为字符串
+    webName = projs[0]["webName"]
+    projectName = projs[0]["projectName"]
     select_js = "assetName = '" + webName + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
                              select_js, '',
@@ -442,10 +444,29 @@ def useBlockchain(request):
         print(tx_id)
         print(tx_hash)
 
+    # 查询项目表信息
+    select_js = "projectName = '" + projectName + "'"
+    selectlist = selecttable("pb8_ProjectAdd",
+                             "ID,  dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
+                             select_js, '',
+                             '', '')
+    projectId = str(selectlist[0][0])
+    dataDemand = selectlist[0][1]
+    dataOwner = selectlist[0][2]
+    dataAsset = selectlist[0][3]
+    dataSecurity = selectlist[0][4]
+    shareWay = selectlist[0][5]
+
     # 在asset_record这个表里新建一条记录
     asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据传输','调用数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(asset_js, tablename="asset_record",
                 con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+    # 在asset_record这个表里新建一条记录
+    pro_js = "'" + projectId + "','" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(pro_js, tablename="project_notarization",
+                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
+
     return JsonResponse({'status': 0})
 
 
@@ -460,6 +481,7 @@ def createinterface(request):
     comallowed = projs[0]["comallowed"]
     projectName = projs[0]["projectName"]
 
+    #查询数据资产表信息
     select_js = "assetName = '" + webname + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
                              '', '')
@@ -479,6 +501,7 @@ def createinterface(request):
         assetLevel = "敏感"
     elif (assetLevel == "L4"):
         assetLevel = "低敏感"
+
 
     # 上传到区块链
     blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
@@ -513,15 +536,84 @@ def createinterface(request):
         print(tx_id)
         print(tx_hash)
 
+    # 在asset_record这个表里新建一条记录
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + weburl + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+
+    # 在webinterface这个表里新建一条记录
+    web_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
+    inserttable(web_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
+    return JsonResponse({'status': 0})
+
+
+
+def createinterfacesx(request):
+
+    zcname = request.POST.get("zcname")  # 从前端拿 zcname
+
+    select_js = "assetName = '" + zcname + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',
+                             '', '')
+
+
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+
+
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+    print("资产信息：", assetOwner, assetFormat, assetLevel, assetPath, assetID)
+    # 上传到区块链
+    blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        #将json字符串转换为字典
+        data=json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
 
 
     # 在asset_record这个表里新建一条记录
-    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','上传数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    asset_js = "'" + zcname + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未上传数据','已上传数据','封装沙箱数据','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
-    # 在webinterface这个表里新建一条记录
-    pro_js = "'" + webname + "','" + weburl + "','" + webprotocol + "','" + webtype + "','" + datatype + "','" + comallowed + "','" + projectName + "'"
-    inserttable(pro_js, tablename="webinterface", con1="webname,weburl,webprotocol,webtype,datatype,comallowed,projectName")
-    return JsonResponse({'status': 0})
+    return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
+
 
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
@@ -1280,8 +1372,8 @@ def add_data_asset(request):
                 description=request.POST['description'],
                 assetFormat=request.POST['assetFormat'],
                 assetLevel=request.POST['assetLevel'],
-                status=request.POST['status'],
-                assetPath=request.POST['assetPath'],
+                # status=request.POST['status'],
+                # assetPath=request.POST['assetPath'],
             )
 
             # 创建初始存证记录（状态：无 → 未上传）
@@ -1290,7 +1382,7 @@ def add_data_asset(request):
                 assetOwner=asset.assetOwner,
                 assetFormat=asset.assetFormat,
                 assetLevel=asset.assetLevel,
-                assetPath=asset.assetPath,
+                assetPath='无',
                 star_status='已上传数据资产项',
                 end_status='未上传数据',
                 operation='新增数据资产项',
@@ -1308,7 +1400,7 @@ def add_data_asset(request):
                 # "assetField": asset.description,
                 "assetFormat": asset.assetFormat,
                 "assetLevel": asset.assetLevel,
-                "assetPath": asset.assetPath,
+                # "assetPath": asset.assetPath,
                 "assetRole": "test"
             }
             headers = {'Content-Type': 'application/json'}
@@ -1415,8 +1507,8 @@ def edit_data_asset(request, asset_id):
             asset.description = request.POST.get('description')
             asset.assetFormat = request.POST.get('assetFormat')
             asset.assetLevel = request.POST.get('assetLevel')
-            asset.status = request.POST.get('status')
-            asset.assetPath = request.POST.get('assetPath')
+            # asset.status = request.POST.get('status')
+            # asset.assetPath = request.POST.get('assetPath')
             asset.save()
 
             # 创建存证记录（不调用区块链）
@@ -1425,7 +1517,7 @@ def edit_data_asset(request, asset_id):
                 assetOwner=asset.assetOwner,
                 assetFormat=asset.assetFormat,
                 assetLevel=asset.get_assetLevel_display(),
-                assetPath=asset.assetPath,
+                assetPath='无',
                 star_status='已上传数据资产项',  # 旧状态
                 end_status='未上传数据',  # 新状态
                 operation='编辑数据资产项',
@@ -1465,7 +1557,7 @@ def batch_delete_data_asset(request):
                     assetOwner=asset.assetOwner,
                     assetFormat=asset.assetFormat,
                     assetLevel=asset.get_assetLevel_display(),
-                    assetPath=asset.assetPath,
+                    assetPath='无',
                     star_status='已上传数据资产项',
                     end_status='未上传数据',
                     operation='删除数据资产项',
@@ -1513,41 +1605,43 @@ def asset_record_list(request):
 
 #查找存证信息
 def search_notarization(request):
-    notarizationlist = selecttable("project_notarization", "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
-    print('查找成功')
-    print(notarizationlist)
+    #新增限制条件：当前登录用户必须为数据需求方或者所有方
+    currentUser = request.user
+    assetDemander = currentUser.com
+    assetOwner = currentUser.com
+    condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
+    notarizationlist = selecttable(
+        "project_notarization",
+        "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
+        condition, '', '', ''
+    )
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
 
 #根据项目名称查找存证信息
 def search_notarization_by_projectname(request):
-    # 获取查询参数
+    # 新增限制条件：当前登录用户必须为数据需求方或者所有方
+    currentUser = request.user
+    assetDemander = currentUser.com
+    assetOwner = currentUser.com
     project_name = request.GET.get('project_name', '')
 
-    # 按项目名称模糊查询
+    base_condition = f"(assetDemander='{assetDemander}' OR assetOwner='{assetOwner}')"
+
     if project_name:
-        # 构造查询条件
-        condition = f"projectName LIKE '%{project_name}%'"
+        # 模糊查询 + 权限校验
+        search_condition = f"(projectName LIKE '%{project_name}%') AND {base_condition}"
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
-            condition,  # 添加查询条件
-            '',
-            '',
-            ''
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
+            search_condition, '', '', ''
         )
     else:
-        # 如果没有输入项目名称，返回所有数据
+        # 直接使用权限校验条件
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
-            '',
-            '',
-            '',
-            ''
+            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, tranasctionId, tranasctionTime, hashDigest",
+            base_condition, '', '', ''
         )
-
-    print('查找成功')
-    print(notarizationlist)
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
 
 @csrf_exempt
@@ -1585,7 +1679,7 @@ def get_status_description(currentStatus):
         "4": "正在进行",
         "5": "已完成"
     }
-    return status_mapping.get(currentStatus, "未知状态")
+    return status_mapping.get(currentStatus, "已删除")
 
 
 def submit_project_toblockchain(request):
@@ -1648,10 +1742,10 @@ def submit_project_toblockchain(request):
                     status = get_status_description(currentStatus)
 
                     # 构建插入数据的字符串
-                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','已接收', '{tx_time}','{tx_id}','{tx_hash}'"
+                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
                     # 调用 inserttable 函数插入数据到 project_notarization 表
                     inserttable(pro_js, tablename="project_notarization",
-                                con1="id,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, operations, tranasctionTime,tranasctionId,hashDigest")
+                                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
 
                     return JsonResponse({'status': 'ok','message': '区块链接口调用成功，数据已存入项目存证表'})
                 else:
@@ -1672,7 +1766,7 @@ def get_project_data(request):
         dataDemand = currentUser.com
         dataOwner = currentUser.com
         # 构建查询条件
-        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR dataOwner = '{dataOwner}' )"
+        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR (dataOwner = '{dataOwner}' AND currentStatus = '2'))"
         fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
 
@@ -1737,7 +1831,55 @@ def delete_project(request):
             constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
             result = updatetable('pb8_ProjectAdd', updatstr, constr)
             if result == 1:
-                return JsonResponse({'status': '0','message': '删除成功'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
+
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','已删除','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '删除成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '删除成功，但数据库查询无结果'})
             else:
                 return JsonResponse({'status': '1','message': '删除失败'})
         else:
@@ -1797,7 +1939,7 @@ def audit_project(request):
 
             # 检查是否提供了必要的参数
             if id is None or currentStatus is None:
-                return JsonResponse({'status': '1', 'message': '缺少必要参数'})
+                return JsonResponse({'status': '1','message': '缺少必要参数'})
 
             # 构建更新字符串
             update_str = f"currentStatus = '{currentStatus}'"
@@ -1807,12 +1949,59 @@ def audit_project(request):
             result = updatetable("pb8_ProjectAdd", update_str, condition_str)
 
             if result == 1:
-                return JsonResponse({'status': '0', 'message': '审核状态更新成功'})
-            else:
-                return JsonResponse({'status': '1', 'message': '审核状态更新失败'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=condition_str, order=order, limit=1)
 
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '审核状态更新成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '审核状态更新成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '审核状态更新成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '审核状态更新成功，但数据库查询无结果'})
+            else:
+                return JsonResponse({'status': '1','message': '审核状态更新失败'})
     except Exception as e:
-        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+        return JsonResponse({'status': '1','message': f'出现错误: {str(e)}'})
 
 def submit_project(request):
     try:
@@ -1824,7 +2013,7 @@ def submit_project(request):
 
             # 检查是否提供了必要的参数
             if id is None:
-                return JsonResponse({'status': '1', 'message': '缺少必要参数: id'})
+                return JsonResponse({'status': '1','message': '缺少必要参数: id'})
 
             # 构建更新字符串
             update_str = f"currentStatus = '{currentStatus}'"
@@ -1834,12 +2023,60 @@ def submit_project(request):
             result = updatetable("pb8_ProjectAdd", update_str, condition_str)
 
             if result == 1:
-                return JsonResponse({'status': '0', 'message': '项目提交成功'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=condition_str, order=order, limit=1)
+
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '项目提交成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '项目提交成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '项目提交成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '项目提交成功，但数据库查询无结果'})
             else:
-                return JsonResponse({'status': '1', 'message': '项目提交失败'})
+                return JsonResponse({'status': '1','message': '项目提交失败'})
 
     except Exception as e:
-        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+        return JsonResponse({'status': '1','message': f'出现错误: {str(e)}'})
 
 from django.http import JsonResponse
 
