@@ -254,7 +254,11 @@
 		</div>
 	</aside>
 
-
+<!--_footer 作为公共模版分离出去-->
+	<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+  	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
+	<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
   <!-- 顶部导航栏 -->
   <div class="Hui-admin-dislpayArrow">
     <a href="javascript:void(0);" onClick="displaynavbar(this)">
@@ -305,6 +309,7 @@
   window.onload = function () {
   const path = sessionStorage.getItem("currentSandboxPath");
   const zcname = sessionStorage.getItem("currentzcname");
+  
   const pathInput = document.getElementById("sandboxPath");
   if (pathInput) {
     pathInput.value = path || "<未选择路径>";
@@ -369,45 +374,59 @@ function submitUpload() {
   formData.append("sandbox_path", containerName);
 
   fetch("http://127.0.0.1:5001/api/uploadToSandbox", {
-    method: "POST",
-    body: formData
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        alert("✅ 上传成功！");
-        fileInput.value = "";
-        document.getElementById("exportArea").style.display = "block";
-        document.getElementById("linkArea").style.display = "block";
-        currentContainerName = containerName; // 绑定导出按钮用
-      } else {
-        alert("❌ 上传失败：" + data.message);
-      }
-    })
-    .catch(err => {
-      console.error("❌ 上传出错：", err);
-      alert("❌ 上传请求失败");
-    });
-  
-  const zcname = sessionStorage.getItem("currentzcname");  // 获取 zcname
+  method: "POST",
+  body: formData
+})
+  .then(res => res.json())
+  .then(data => {
+    if (data.success) {
+      alert("✅ 上传成功！");
+      fileInput.value = "";
+      document.getElementById("exportArea").style.display = "block";
+      document.getElementById("linkArea").style.display = "block";
+      currentContainerName = containerName;
 
-$.ajax({
-  type: "post",
-  url: "http://127.0.0.1:8000/createinterfacesx/",
-  dataType: "json",
-  data: {
-    zcname: zcname   // 传递给后端
-  },
-  success: function (res) {
-    console.log("res", res);
-    if (res.status == "0") {
-      alert("新增成功,已通过区块链存证");
-      location.href = "http://127.0.0.1:8000/sisx-interface/";
+      // ✅ ⚠️ 把 AJAX 请求移进来！
+      const zcname = sessionStorage.getItem("currentzcname");
+      console.log("准备发送的 zcname:", zcname);
+
+      $.ajax({
+        type: "post",
+        url: "http://127.0.0.1:8000/createinterfacesx/",
+        dataType: "json",
+        data: { zcname: zcname },
+        success: function (res) {
+          console.log("后端返回结果 res:", res);
+          if (res.status == "0") {
+            alert("新增成功,已通过区块链存证");
+          } else {
+            alert("出现错误：" + (res.message || "未知错误"));
+          }
+        },
+        error: function (xhr, status, error) {
+          console.error("AJAX 请求失败");
+          console.error("状态码:", status);
+          console.error("错误信息:", error);
+          console.error("响应体:", xhr.responseText);
+          alert("请求失败，请检查控制台日志");
+        },
+        beforeSend: function () {
+          console.log("即将发送 AJAX 请求到 /createinterfacesx/");
+        },
+        complete: function () {
+          console.log("AJAX 请求已完成");
+        }
+      });
+
     } else {
-      alert("出现错误");
+      alert("❌ 上传失败：" + data.message);
     }
-  }
-});
+  })
+  .catch(err => {
+    console.error("❌ 上传出错：", err);
+    alert("❌ 上传请求失败");
+  });
+
   
 }
 
@@ -428,6 +447,7 @@ function generateReadonlyLink() {
         const link = data.link;
         alert("✅ 链接生成成功，复制给接收方：\n" + link);
 
+        
         const box = document.createElement("div");
         box.style.marginTop = "30px";
         box.style.padding = "20px";
@@ -456,6 +476,8 @@ function generateReadonlyLink() {
       console.error("❌ 请求失败：", err);
       alert("❌ 接口请求异常");
     });
+  
+  
 }
 
 
