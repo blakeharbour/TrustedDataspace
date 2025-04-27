@@ -1352,8 +1352,8 @@ def add_data_asset(request):
                 description=request.POST['description'],
                 assetFormat=request.POST['assetFormat'],
                 assetLevel=request.POST['assetLevel'],
-                status=request.POST['status'],
-                assetPath=request.POST['assetPath'],
+                # status=request.POST['status'],
+                # assetPath=request.POST['assetPath'],
             )
 
             # 创建初始存证记录（状态：无 → 未上传）
@@ -1362,7 +1362,7 @@ def add_data_asset(request):
                 assetOwner=asset.assetOwner,
                 assetFormat=asset.assetFormat,
                 assetLevel=asset.assetLevel,
-                assetPath=asset.assetPath,
+                assetPath='无',
                 star_status='已上传数据资产项',
                 end_status='未上传数据',
                 operation='新增数据资产项',
@@ -1380,7 +1380,7 @@ def add_data_asset(request):
                 # "assetField": asset.description,
                 "assetFormat": asset.assetFormat,
                 "assetLevel": asset.assetLevel,
-                "assetPath": asset.assetPath,
+                # "assetPath": asset.assetPath,
                 "assetRole": "test"
             }
             headers = {'Content-Type': 'application/json'}
@@ -1487,8 +1487,8 @@ def edit_data_asset(request, asset_id):
             asset.description = request.POST.get('description')
             asset.assetFormat = request.POST.get('assetFormat')
             asset.assetLevel = request.POST.get('assetLevel')
-            asset.status = request.POST.get('status')
-            asset.assetPath = request.POST.get('assetPath')
+            # asset.status = request.POST.get('status')
+            # asset.assetPath = request.POST.get('assetPath')
             asset.save()
 
             # 创建存证记录（不调用区块链）
@@ -1497,7 +1497,7 @@ def edit_data_asset(request, asset_id):
                 assetOwner=asset.assetOwner,
                 assetFormat=asset.assetFormat,
                 assetLevel=asset.get_assetLevel_display(),
-                assetPath=asset.assetPath,
+                assetPath='无',
                 star_status='已上传数据资产项',  # 旧状态
                 end_status='未上传数据',  # 新状态
                 operation='编辑数据资产项',
@@ -1537,7 +1537,7 @@ def batch_delete_data_asset(request):
                     assetOwner=asset.assetOwner,
                     assetFormat=asset.assetFormat,
                     assetLevel=asset.get_assetLevel_display(),
-                    assetPath=asset.assetPath,
+                    assetPath='无',
                     star_status='已上传数据资产项',
                     end_status='未上传数据',
                     operation='删除数据资产项',

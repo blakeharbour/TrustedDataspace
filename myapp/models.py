@@ -74,14 +74,14 @@ class DataAsset(models.Model):
     ]
     assetLevel = models.CharField(max_length=10, choices=SECURITY_LEVEL_CHOICES, verbose_name="安全等级")
     # 项目状态
-    STATUS_CHOICES = [
-        ('pending', '未开始'),
-        ('started', '开始'),
-        ('completed', '完成'),
-    ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending', verbose_name="状态")
-    # 访问路径
-    assetPath = models.CharField(max_length=200, blank=True, null=True, verbose_name="访问路径")
+    # STATUS_CHOICES = [
+    #     ('pending', '未开始'),
+    #     ('started', '开始'),
+    #     ('completed', '完成'),
+    # ]
+    status = models.CharField(max_length=20, blank=True, null=True, verbose_name="状态")
+    # # 访问路径
+    assetPath = models.CharField(max_length=200, default='无', verbose_name="访问路径")
 
     def __str__(self):
         return self.name

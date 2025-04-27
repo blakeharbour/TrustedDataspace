@@ -214,23 +214,23 @@
                         </td>
                     </tr>
                     <!-- 状态 -->
-                    <tr class="text-c">
-                        <td style="width: 150px; text-align: center;">状态</td>
-                        <td>
-                            <select name="status" class="form-control" required style="width: 100%;">
-                                <option value="pending" {% if asset.status == 'pending' %}selected{% endif %}>未开始</option>
-                                <option value="started" {% if asset.status == 'started' %}selected{% endif %}>开始</option>
-                                <option value="completed" {% if asset.status == 'completed' %}selected{% endif %}>完成</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <!-- 访问路径 -->
-                    <tr class="text-c">
-                        <td style="width: 150px; text-align: center;">访问路径</td>
-                        <td>
-                            <input type="text" name="assetPath" class="form-control" value="{{ asset.assetPath }}" style="width: 100%;">
-                        </td>
-                    </tr>
+{#                    <tr class="text-c">#}
+{#                        <td style="width: 150px; text-align: center;">状态</td>#}
+{#                        <td>#}
+{#                            <select name="status" class="form-control" required style="width: 100%;">#}
+{#                                <option value="pending" {% if asset.status == 'pending' %}selected{% endif %}>未开始</option>#}
+{#                                <option value="started" {% if asset.status == 'started' %}selected{% endif %}>开始</option>#}
+{#                                <option value="completed" {% if asset.status == 'completed' %}selected{% endif %}>完成</option>#}
+{#                            </select>#}
+{#                        </td>#}
+{#                    </tr>#}
+{#                    <!-- 访问路径 -->#}
+{#                    <tr class="text-c">#}
+{#                        <td style="width: 150px; text-align: center;">访问路径</td>#}
+{#                        <td>#}
+{#                            <input type="text" name="assetPath" class="form-control" value="{{ asset.assetPath }}" style="width: 100%;">#}
+{#                        </td>#}
+{#                    </tr>#}
                     <!-- 提交按钮 -->
                     <tr class="text-c">
                         <td colspan="2" style="text-align: center;">
@@ -291,8 +291,8 @@
             description: $('#id_description').val(),
             assetFormat: $('#id_assetFormat').val(),
             assetLevel: $('#id_assetLevel').val(),
-            status: $('#id_status').val(),
-            assetPath: $('#id_assetPath').val(),
+            {#status: $('#id_status').val(),#}
+            {#assetPath: $('#id_assetPath').val(),#}
             csrfmiddlewaretoken: '{{ csrf_token }}'
         };
 
