@@ -1581,7 +1581,8 @@ def asset_record_list(request):
 
 #查找存证信息
 def search_notarization(request):
-    notarizationlist = selecttable("project_notarization", "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
+
+    notarizationlist = selecttable("project_notarization", "id, projectId，projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations,tranasctionId, tranasctionTime, hashDigest", '', '', '', '')
     print('查找成功')
     print(notarizationlist)
     return JsonResponse({'status': 0, 'data': notarizationlist, 'msg': 'success'})
@@ -1597,7 +1598,7 @@ def search_notarization_by_projectname(request):
         condition = f"projectName LIKE '%{project_name}%'"
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            "id,prjectid,projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
             condition,  # 添加查询条件
             '',
             '',
@@ -1607,7 +1608,7 @@ def search_notarization_by_projectname(request):
         # 如果没有输入项目名称，返回所有数据
         notarizationlist = selecttable(
             "project_notarization",
-            "id, projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
+            "id,prjectid,projectName, assetDemander, assetOwner, assetName, status, assetLevel, assetSharingType, operations, tranasctionId, tranasctionTime, hashDigest",
             '',
             '',
             '',

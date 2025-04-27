@@ -1070,8 +1070,8 @@ from io import BytesIO
 
 # 设置默认字体路径
 try:
-    font_path = "/System/Library/Fonts/Supplemental/Songti.ttc"  # macOS
-    # font_path = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"  # Linux
+    # font_path = "/System/Library/Fonts/Supplemental/Songti.ttc"  # macOS
+    font_path = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"  # Linux
     font = FontProperties(fname=font_path, size=12)
 except:
     font = None  # 如果找不到字体，则不使用自定义字体
