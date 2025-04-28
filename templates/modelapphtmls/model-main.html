@@ -295,8 +295,8 @@
                             '<td>'+Result[j][2]+'</td>'+
                             '<td>'+Result[j][3]+'</td>'+
                             '<td>'+Result[j][4]+'</td>'+
-                                '<td> <a href="javascript:;" onclick="trainModelresultshow() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 应用申请</a></td>'+
-                                '<td> <a href="javascript:;" onclick="trainModelresultshow() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 上传数据</a></td>'+
+                                '<td> <a href="javascript:;" onclick="getApplyDetail() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 查看数据申请情况 </a></td>'+
+                                '<td> <a href="javascript:;" onclick="model_test() " class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 运行 </a></td>'+
                             {% comment %}'<td><a href="http://127.0.0.1:8000/model-application/" title="模型使用" style="color: cornflowerblue;">' +
                                 '<i class="Hui-iconfont"></i>数据申请情况</a>'+
                             '<br><a title="模型应用" onclick="model_test(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;">' +
@@ -308,6 +308,11 @@
 				}
 			})
 		});
+
+         function getApplyDetail(obj, modelid) {
+        location.href = "http://127.0.0.1:8000/model-application/";
+        }
+
         function model_test(obj, modelid) {
                 $("myButton").show();
                 showModal();
