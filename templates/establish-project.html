@@ -336,10 +336,11 @@
     <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
     <script type="text/javascript" src="/static/static/business/js/main.js"></script>
     <script type="text/javascript">
-     var currentUser = {id:"{current_user.id }}",
-              account:"{current_user.account }}",
-              com:"{current_user.com }}",
-              comid:"{ current_user.comid }}",
+     var currentUser = {
+              id:"{{current_user.id }}",
+              account:"{{current_user.account }}",
+              com:"{{current_user.com }}",
+              comid:"{{ current_user.comid }}",
      };
         // 显示模态框
     function showModal() {
@@ -637,6 +638,9 @@ function sharingTypeResultShow(shareType, dataOwner) {
      // 判断当前用户是否为数据所有方
     const isDataOwner = currentUser.com === dataOwner; // 根据实际业务逻辑修改判断条件
     const targetId = isDataOwner ? '1' : '0'; // 数据所有方传1，否则传0
+    console.log("targetId:", targetId);
+    console.log(dataOwner)
+    console.log(currentUser.com)
    if (shareType === '接口交换')
     // 存储到sessionStorage
     sessionStorage.setItem('target_id', targetId);
