@@ -148,9 +148,11 @@ def application_result_analysis(request):
     # 获取不同的 FZHZM 值
     unique_fzhzm_values = filtered_data["FZHZM"].unique()
 
-    # 设置合适的字体（macOS字体路径可能不同）
-    font_path = '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc'  # Linux
-    font = FontProperties(fname=font_path, size=12)
+    # # 设置合适的字体（macOS字体路径可能不同）
+    # font_path = '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc'  # Linux
+    # font = FontProperties(fname=font_path, size=12)
+
+    font = None
 
     pie_charts = []
 
