@@ -2353,7 +2353,7 @@ def get_user_role(user):
             return group.name
     return None
 
-# 数据确权数据确权数据确权
+# 数据确权数据确权数据确权shujuquequanshujuquanquanshujuquanqhnximlc
 @login_required
 def data_assets_list(request):
     """数据资产列表页，根据用户角色显示不同内容"""

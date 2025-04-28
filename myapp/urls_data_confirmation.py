@@ -20,3 +20,4 @@ urlpatterns = [
     # 操作日志
     path('logs/', views.operation_logs, name='operation_logs'),
 ]
+##shujuquequanshujuquaunqquuuuuuuuuu

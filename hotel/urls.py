@@ -283,6 +283,6 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('get_data/', get_data, name='get_data'),  # 让主界面直接访问 /get_data/
 
 ]
-#####
+#####数据确权
 path('data-confirmation/', include('myappp.urls_data_confirmation'))
-######
+######数据确权
