@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -110,3 +110,104 @@ class AssetRecord(models.Model):
         db_table = 'asset_record'
         verbose_name = "资产记录"  # 在 Django Admin 中显示的名称
         verbose_name_plural = "资产记录"  # 复数形式
+
+# 数据确权dadadaadaadad
+# 数据资产类型枚举
+DATA_ASSET_TYPES = [
+    ('铁路准入到货信息', '铁路准入到货信息'),
+    ('预配舱单', '预配舱单'),
+    ('理货报告编制要求', '理货报告编制要求'),
+    # 可以添加更多数据类型
+]
+
+# 申请状态枚举
+REQUEST_STATUS = [
+    ('pending', '待审核'),
+    ('approved', '已批准'),
+    ('rejected', '已拒绝'),
+]
+
+# 操作类型枚举
+OPERATION_TYPES = [
+    ('request', '申请数据'),
+    ('approve', '批准申请'),
+    ('reject', '拒绝申请'),
+    ('view', '查看数据'),
+]
+
+# 角色枚举
+ROLE_TYPES = [
+    ('customs', '海关'),
+    ('port', '港口'),
+    ('railway', '铁路'),
+    ('foreign', '外方'),
+]
+
+
+class DataAsset1(models.Model):
+    """数据资产模型，用于关联已有的数据资产"""
+    name = models.CharField('资产名称', max_length=100)
+    asset_type = models.CharField('资产类型', max_length=50, choices=DATA_ASSET_TYPES)
+    owner = models.CharField('所有方', max_length=20, choices=ROLE_TYPES)
+    description = models.TextField('描述', blank=True, null=True)
+    file_path = models.CharField('文件路径', max_length=255)
+    created_at = models.DateTimeField('创建时间', auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.get_owner_display()})"
+
+    class Meta:
+        verbose_name = '数据资产'
+        verbose_name_plural = '数据资产'
+
+
+class DataRequest(models.Model):
+    """数据请求模型，记录数据申请信息"""
+    asset = models.ForeignKey(DataAsset1, on_delete=models.CASCADE, verbose_name='申请资产')
+    requester = models.ForeignKey(User, on_delete=models.CASCADE, related_name='data_requests', verbose_name='申请人')
+    request_reason = models.TextField('申请原因')
+    request_purpose = models.TextField('用途说明')
+    status = models.CharField('申请状态', max_length=20, choices=REQUEST_STATUS, default='pending')
+    created_at = models.DateTimeField('申请时间', auto_now_add=True)
+    updated_at = models.DateTimeField('更新时间', auto_now=True)
+    remark = models.TextField('备注', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.requester.username} 申请 {self.asset.name}"
+
+    class Meta:
+        verbose_name = '数据申请'
+        verbose_name_plural = '数据申请'
+
+
+class DataAuthorization(models.Model):
+    """数据授权模型，记录授权信息"""
+    request = models.OneToOneField(DataRequest, on_delete=models.CASCADE, verbose_name='关联申请')
+    authorizer = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='授权人')
+    authorized_at = models.DateTimeField('授权时间', default=timezone.now)
+    is_active = models.BooleanField('是否有效', default=True)
+    remark = models.TextField('授权备注', blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.request.asset.name} 授权给 {self.request.requester.username}"
+
+    class Meta:
+        verbose_name = '数据授权'
+        verbose_name_plural = '数据授权'
+
+
+class OperationLog(models.Model):
+    """操作日志模型，记录所有数据确权相关操作"""
+    operation_type = models.CharField('操作类型', max_length=20, choices=OPERATION_TYPES)
+    operator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='操作人')
+    operation_time = models.DateTimeField('操作时间', auto_now_add=True)
+    operation_detail = models.TextField('操作详情')
+    related_request = models.ForeignKey(DataRequest, on_delete=models.SET_NULL, null=True, blank=True,
+                                        verbose_name='关联申请')
+
+    def __str__(self):
+        return f"{self.operator.username} {self.get_operation_type_display()} at {self.operation_time}"
+
+    class Meta:
+        verbose_name = '操作日志'
+        verbose_name_plural = '操作日志'
