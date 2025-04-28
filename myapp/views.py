@@ -50,10 +50,11 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 
 from .models import (
-    DataAsset, DataRequest, DataAuthorization, OperationLog,
+    DataAsset1, DataRequest, DataAuthorization, OperationLog,
     DATA_ASSET_TYPES, REQUEST_STATUS, OPERATION_TYPES, ROLE_TYPES
 )
 ######
+
 
 def login_page(request):
     return render(request, 'login.html')
@@ -2353,7 +2354,15 @@ def get_user_role(user):
             return group.name
     return None
 
-# 数据确权数据确权数据确权shujuquequanshujuquanquanshujuquanqhnximlc
+# 数据确权数据确权数据确权shujuquequanshujuquanquanshujuquanqhnximlcooo
+def get_user_role(user):
+    """获取用户角色"""
+    for group in user.groups.all():
+        if group.name in [role[0] for role in ROLE_TYPES]:
+            return group.name
+    return None
+
+
 @login_required
 def data_assets_list(request):
     """数据资产列表页，根据用户角色显示不同内容"""
@@ -2364,7 +2373,7 @@ def data_assets_list(request):
     owner = request.GET.get('owner', '')
 
     # 基础查询: 显示所有可申请的数据资产(非本角色拥有的)
-    assets = DataAsset.objects.exclude(owner=user_role)
+    assets = DataAsset1.objects.exclude(owner=user_role)
 
     # 应用筛选
     if asset_type:
@@ -2385,7 +2394,7 @@ def data_assets_list(request):
 @login_required
 def data_asset_detail(request, asset_id):
     """数据资产详情页"""
-    asset = get_object_or_404(DataAsset, id=asset_id)
+    asset = get_object_or_404(DataAsset1, id=asset_id)
     user_role = get_user_role(request.user)
 
     # 检查是否有权查看此资产
@@ -2439,7 +2448,7 @@ def data_asset_detail(request, asset_id):
 @login_required
 def create_data_request(request, asset_id):
     """创建数据申请"""
-    asset = get_object_or_404(DataAsset, id=asset_id)
+    asset = get_object_or_404(DataAsset1, id=asset_id)
     user_role = get_user_role(request.user)
 
     # 检查是否为数据所有者 (不能申请自己的数据)
