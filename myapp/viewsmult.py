@@ -1079,11 +1079,11 @@ except:
 def multmodel_application_result_analysis(request):
     df = pd.read_csv('./myapp/fed_PU_sci1203/result/result_in_1123/imPUSB/result_in_1123output.csv')
 
-    pivot_table = df.pivot_table(index=['FZHZM', 'imbalancednnPUSB_predictions', 'DZHZM'], aggfunc='size')
+    pivot_table = df.pivot_table(index=['FZHZM', 'imPUSB_predictions', 'DZHZM'], aggfunc='size')
     pivot_table.index.names = ['发站站名', '预测结果', '到站站名']
     pivot_table_df = pivot_table.reset_index(name='计数')
 
-    filtered_data = df[df["imbalancednnPUSB_predictions"] == 1]
+    filtered_data = df[df["imPUSB_predictions"] == 1]
     unique_fzhzm_values = filtered_data["FZHZM"].unique()
 
     pie_charts = []
