@@ -575,7 +575,7 @@ def createinterfacesx(request):
         assetLevel = "低敏感"
     print("资产信息：", assetOwner, assetFormat, assetLevel, assetPath, assetID)
     # 上传到区块链
-    blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -1852,7 +1852,7 @@ def delete_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -1970,7 +1970,7 @@ def audit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -2044,7 +2044,7 @@ def submit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
