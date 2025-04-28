@@ -27,10 +27,22 @@
 	<link rel="stylesheet" href="/static/lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
 </head>
 <body>
-	<!--_menu 作为公共模版分离出去-->
+	 <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
 	<aside class="Hui-admin-aside-wrapper">
 		<div class="Hui-admin-logo-wrapper">
-			<a class="logo navbar-logo" href="http://127.0.0.1:8000/index/">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
 				<i class="va-m iconpic global-logo"></i>
 				<span class="va-m">隐私计算</span>
 			</a>
