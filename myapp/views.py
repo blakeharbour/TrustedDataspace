@@ -12,8 +12,8 @@ from django.conf import settings
 
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
-from huggingface_hub.utils import parse_datetime
-from sqlalchemy.sql.functions import current_user
+# from huggingface_hub.utils import parse_datetime
+# from sqlalchemy.sql.functions import current_user
 
 from .models import LoginUser, AssetRecord
 from django.contrib.auth.decorators import login_required
@@ -575,7 +575,7 @@ def createinterfacesx(request):
         assetLevel = "低敏感"
     print("资产信息：", assetOwner, assetFormat, assetLevel, assetPath, assetID)
     # 上传到区块链
-    blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -1679,7 +1679,7 @@ def get_status_description(currentStatus):
         "4": "正在进行",
         "5": "已完成"
     }
-    return status_mapping.get(currentStatus, "未知状态")
+    return status_mapping.get(currentStatus, "已删除")
 
 
 def submit_project_toblockchain(request):
@@ -1742,10 +1742,10 @@ def submit_project_toblockchain(request):
                     status = get_status_description(currentStatus)
 
                     # 构建插入数据的字符串
-                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','已接收', '{tx_time}','{tx_id}','{tx_hash}'"
+                    pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
                     # 调用 inserttable 函数插入数据到 project_notarization 表
                     inserttable(pro_js, tablename="project_notarization",
-                                con1="id,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, operations, tranasctionTime,tranasctionId,hashDigest")
+                                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
 
                     return JsonResponse({'status': 'ok','message': '区块链接口调用成功，数据已存入项目存证表'})
                 else:
@@ -1766,7 +1766,7 @@ def get_project_data(request):
         dataDemand = currentUser.com
         dataOwner = currentUser.com
         # 构建查询条件
-        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR dataOwner = '{dataOwner}' )"
+        constr = f"isDeleted != 'Y' AND (dataDemand = '{dataDemand}' OR (dataOwner = '{dataOwner}' AND currentStatus = '2'))"
         fields = "ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus"
         result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr)
 
@@ -1831,7 +1831,55 @@ def delete_project(request):
             constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
             result = updatetable('pb8_ProjectAdd', updatstr, constr)
             if result == 1:
-                return JsonResponse({'status': '0','message': '删除成功'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
+
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','已删除','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '删除成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '删除成功，但数据库查询无结果'})
             else:
                 return JsonResponse({'status': '1','message': '删除失败'})
         else:
@@ -1891,7 +1939,7 @@ def audit_project(request):
 
             # 检查是否提供了必要的参数
             if id is None or currentStatus is None:
-                return JsonResponse({'status': '1', 'message': '缺少必要参数'})
+                return JsonResponse({'status': '1','message': '缺少必要参数'})
 
             # 构建更新字符串
             update_str = f"currentStatus = '{currentStatus}'"
@@ -1901,12 +1949,59 @@ def audit_project(request):
             result = updatetable("pb8_ProjectAdd", update_str, condition_str)
 
             if result == 1:
-                return JsonResponse({'status': '0', 'message': '审核状态更新成功'})
-            else:
-                return JsonResponse({'status': '1', 'message': '审核状态更新失败'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=condition_str, order=order, limit=1)
 
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '审核状态更新成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '审核状态更新成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '审核状态更新成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '审核状态更新成功，但数据库查询无结果'})
+            else:
+                return JsonResponse({'status': '1','message': '审核状态更新失败'})
     except Exception as e:
-        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+        return JsonResponse({'status': '1','message': f'出现错误: {str(e)}'})
 
 def submit_project(request):
     try:
@@ -1918,7 +2013,7 @@ def submit_project(request):
 
             # 检查是否提供了必要的参数
             if id is None:
-                return JsonResponse({'status': '1', 'message': '缺少必要参数: id'})
+                return JsonResponse({'status': '1','message': '缺少必要参数: id'})
 
             # 构建更新字符串
             update_str = f"currentStatus = '{currentStatus}'"
@@ -1928,12 +2023,60 @@ def submit_project(request):
             result = updatetable("pb8_ProjectAdd", update_str, condition_str)
 
             if result == 1:
-                return JsonResponse({'status': '0', 'message': '项目提交成功'})
+                # 获取项目相关信息
+                fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                order = 'ID DESC'
+                project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=condition_str, order=order, limit=1)
+
+                if project_result:
+                    ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                    blockchainData = {
+                        'transactionID': ID,
+                        'projectName': project_name,
+                        'assetName': data_asset,
+                        'assetOwner': data_owner,
+                        'assetDemander': data_demander,
+                        'assetLevel': security_level,
+                        'assetSharingType': trans_mode,
+                        'ipfs': ''
+                    }
+                    blockchainDataStr = json.dumps(blockchainData)
+
+                    try:
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        if response.status_code == 200:
+                            print("区块链接口响应:", response.json())
+                            # 解析区块链返回的 payload
+                            payload = json.loads(response.json().get('payload', '{}'))
+                            tx_time = payload.get('txTime')
+                            tx_id = payload.get('txID')
+                            tx_hash = payload.get('txHash')
+
+                            # 获取状态描述
+                            status = get_status_description(currentStatus)
+
+                            # 构建插入数据的字符串
+                            pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                            # 调用 inserttable 函数插入数据到 project_notarization 表
+                            inserttable(pro_js, tablename="project_notarization",
+                                        con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+                            return JsonResponse({'status': '0','message': '项目提交成功，区块链接口调用成功，数据已存入项目存证表'})
+                        else:
+                            print("区块链接口调用失败:", response.text)
+                            return JsonResponse({'status': '1','message': '项目提交成功，但区块链接口调用失败，请稍后重试'})
+                    except requests.RequestException as e:
+                        print("请求异常:", e)
+                        return JsonResponse({'status': '1','message': '项目提交成功，但请求区块链接口时发生异常，请稍后重试'})
+                else:
+                    print("数据库查询无结果")
+                    return JsonResponse({'status': '1','message': '项目提交成功，但数据库查询无结果'})
             else:
-                return JsonResponse({'status': '1', 'message': '项目提交失败'})
+                return JsonResponse({'status': '1','message': '项目提交失败'})
 
     except Exception as e:
-        return JsonResponse({'status': '1', 'message': f'出现错误: {str(e)}'})
+        return JsonResponse({'status': '1','message': f'出现错误: {str(e)}'})
 
 from django.http import JsonResponse
 
