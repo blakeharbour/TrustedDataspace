@@ -1,0 +1,53 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}申请数据{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="pd-20 bg-white">
+        <div class="row cl mb-15">
+            <h3 class="f-18 c-dark">申请数据 - {{ asset.name }}</h3>
+        </div>
+        <div class="line"></div>
+        <form method="post" class="form form-horizontal mt-20">
+            {% csrf_token %}
+            <div class="row cl">
+                <label class="form-label col-sm-2">资产名称：</label>
+                <div class="formControls col-sm-9">
+                    <span class="form-control">{{ asset.name }}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-sm-2">资产类型：</label>
+                <div class="formControls col-sm-9">
+                    <span class="form-control">{{ asset.get_asset_type_display }}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-sm-2">所有方：</label>
+                <div class="formControls col-sm-9">
+                    <span class="form-control">{{ asset.get_owner_display }}</span>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-sm-2"><span class="c-red">*</span>申请原因：</label>
+                <div class="formControls col-sm-9">
+                    <textarea id="request_reason" name="request_reason" class="textarea" placeholder="请详细说明您申请此数据的原因" rows="5" required></textarea>
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-sm-2"><span class="c-red">*</span>用途说明：</label>
+                <div class="formControls col-sm-9">
+                    <textarea id="request_purpose" name="request_purpose" class="textarea" placeholder="请说明您将如何使用此数据" rows="5" required></textarea>
+                </div>
+            </div>
+            <div class="row cl mt-20">
+                <div class="col-sm-9 col-sm-offset-2">
+                    <button type="submit" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe632;</i> 提交申请</button>
+                    <a href="{% url 'data_confirmation:asset_detail' asset.id %}" class="btn btn-default radius"><i class="Hui-iconfont">&#xe66b;</i> 取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}授权记录{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="mt-20">
+        <div class="pd-10 bg-white">
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">ID</th>
+                            <th width="200">数据资产</th>
+                            <th width="100">申请人</th>
+                            <th width="100">授权人</th>
+                            <th width="150">授权时间</th>
+                            <th width="80">状态</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for auth in authorizations %}
+                        <tr class="text-c">
+                            <td>{{ auth.id }}</td>
+                            <td>{{ auth.request.asset.name }}</td>
+                            <td>{{ auth.request.requester.username }}</td>
+                            <td>{{ auth.authorizer.username }}</td>
+                            <td>{{ auth.authorized_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {% if auth.is_active %}
+                                    <span class="label label-success radius">有效</span>
+                                {% else %}
+                                    <span class="label label-default radius">已失效</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ auth.remark|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-c">暂无授权记录</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 0, "desc" ]],
+        "bStateSave": true,
+        "aoColumnDefs": [
+            {"orderable":false, "aTargets":[6]}
+        ]
+    });
+});
+</script>
+{% endblock %}

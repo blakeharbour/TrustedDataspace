@@ -24,9 +24,9 @@
 	<![endif]-->
 	<!--/meta 作为公共模版分离出去-->
 
-	<title>h-ui.admin.pro v1.0</title>
-	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
-	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+	<title>数据确权 - 可信数据空间</title>
+	<meta name="keywords" content="数据确权,可信数据空间">
+	<meta name="description" content="可信数据空间数据确权模块">
 </head>
 <body>
     <style>
@@ -56,22 +56,22 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+						<li class="current"><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
 					</ul>
 				</dd>
 			</dl>
             <dl id="menu-data-confirmation" class="Hui-menu">
-  <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-  <dd class="Hui-menu-item" style="display:block">
-    <ul>
-      <li><a href="http://127.0.0.1:8000/data-confirmation/assets/" title="数据资产目录">数据资产目录</a></li>
-      <li><a href="http://127.0.0.1:8000/data-confirmation/my-requests/" title="我的申请">我的申请</a></li>
-      <li><a href="http://127.0.0.1:8000/data-confirmation/pending-approvals/" title="待审批申请">待审批申请</a></li>
-      <li><a href="http://127.0.0.1:8000/data-confirmation/authorizations/" title="授权记录">授权记录</a></li>
-      <li><a href="http://127.0.0.1:8000/data-confirmation/logs/" title="操作日志">操作日志</a></li>
-    </ul>
-  </dd>
-</dl>
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="{% url 'data_confirmation:assets_list' %}" title="数据资产目录">数据资产目录</a></li>
+                  <li><a href="{% url 'data_confirmation:my_requests' %}" title="我的申请">我的申请</a></li>
+                  <li><a href="{% url 'data_confirmation:pending_approvals' %}" title="待审批申请">待审批申请</a></li>
+                  <li><a href="{% url 'data_confirmation:authorizations' %}" title="授权记录">授权记录</a></li>
+                  <li><a href="{% url 'data_confirmation:operation_logs' %}" title="操作日志">操作日志</a></li>
+                </ul>
+              </dd>
+            </dl>
 
             <dl id="menu-guest" class="Hui-menu">
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
@@ -80,7 +80,6 @@
 						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
 					</ul>
 				</dd>
-
 			</dl>
              <dl id="menu-guest" class="Hui-menu">
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
@@ -128,11 +127,6 @@
 						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/get_data/" title="IP追踪">IP追踪</a></li>
-					</ul>
-				</dd>
 			</dl>
 		</div>
 	</aside>
@@ -151,8 +145,27 @@
 		<header class="Hui-navbar">
 			<div class="navbar">
 				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
+              <li class="dropDown dropDown_hover">
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
+							{% comment %}<li>超级管理员</li>{% endcomment %}
+
+							{% comment %}<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
 							<li id="Hui-skin" class="dropDown dropDown_hover right">
 								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
 								<ul class="dropDown-menu menu radius box-shadow">
@@ -163,102 +176,27 @@
 									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
 									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
 								</ul>
-							</li>
+							</li>{% endcomment %}
 						</ul>
 					</nav>
 				</div>
 			</div>
 		</header>
 		<!--/_header 作为公共模版分离出去-->
-
 		<div class="Hui-admin-article">
-			<article class="Hui-admin-content clearfix">
-				<div class="panel">
-					<div class="panel-body"发布>
-						<p class="f-20 text-success">欢迎使用多式联运可信数据空间
-							<span class="f-14">v1.0</span>
-						</p>
-						<p>登录次数：18 </p>
-						<p>上次登录IP：222.35.131.79.1  上次登录时间：2025-4-14 11:19:55</p>
-						<table class="table table-border table-bordered table-bg mt-20">
-							<thead>
-								<tr>
-									<th colspan="2" scope="col">服务器信息</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<th width="30%">服务器计算机名</th>
-									<td><span id="lbServerName">http://127.0.0.1/</span></td>
-								</tr>
-								<tr>
-									<td>服务器IP地址</td>
-									<td>192.168.1.131</td>
-								</tr>
-								<tr>
-									<td>服务器端口 </td>
-									<td>8000</td>
-								</tr>
-								<tr>
-									<td>服务器IIS版本 </td>
-									<td>Microsoft-IIS/6.0</td>
-								</tr>
-								<tr>
-									<td>服务器操作系统 </td>
-									<td>Ubuntu</td>
-								</tr>
-								<tr>
-									<td>服务器脚本超时时间 </td>
-									<td>30000秒</td>
-								</tr>
-								<tr>
-									<td>服务器的语言种类 </td>
-									<td>Chinese (People's Republic of China)</td>
-								</tr>
-								<tr>
-									<td>.NET Framework 版本 </td>
-									<td>2.050727.3655</td>
-								</tr>
-								<tr>
-									<td>服务器IE版本 </td>
-									<td>6.0000</td>
-								</tr>
-								<tr>
-									<td>服务器上次启动到现在已运行 </td>
-									<td>7210分钟</td>
-								</tr>
-								<tr>
-									<td>CPU 总数 </td>
-									<td>8</td>
-								</tr>
-								<tr>
-									<td>虚拟内存 </td>
-									<td>52480M</td>
-								</tr>
-								<tr>
-									<td>当前程序占用内存 </td>
-									<td>3.29M</td>
-								</tr>
-								<tr>
-									<td>Asp.net所占内存 </td>
-									<td>51.46M</td>
-								</tr>
-								<tr>
-									<td>当前Session数量 </td>
-									<td>8</td>
-								</tr>
-								<tr>
-									<td>当前SessionID </td>
-									<td>gznhpwmp34004345jz2q3l45</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</article>
-			<footer class="footer Hui-admin-footer">
-				<p>感谢jQuery、layer、laypage、Validform、UEditor、iconfont、Datatables、WebUploaded、icheck、highcharts、bootstrap-Switch<br> Copyright &copy;2015 h-ui.admin.pro v1.0 All Rights Reserved.<br> 本后台系统由<a href="http://www.h-ui.net/" target="_blank" title="H-ui前端框架">H-ui前端框架</a>提供前端技术支持</p>
-			</footer>
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				数据确权
+				<span class="c-gray en">/</span>
+				{% block breadcrumb %}{% endblock %}
+			</nav>
+
+            <div class="Hui-article">
+                <article class="cl pd-20">
+                    {% block content %}{% endblock %}
+                </article>
+            </div>
 		</div>
 	</section>
 
@@ -269,8 +207,8 @@
 <script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.js"></script>
 <!--/_footer /作为公共模版分离出去-->
 
-<!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="/static/static/business/js/main.js">
-</script>
+<!-- 自定义 JavaScript -->
+<script type="text/javascript" src="/static/js/data_confirmation.js"></script>
+{% block scripts %}{% endblock %}
 </body>
 </html>

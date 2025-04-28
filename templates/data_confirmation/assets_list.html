@@ -1,0 +1,81 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}数据资产目录{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="mt-20">
+        <div class="pd-10 bg-white">
+            <div class="row cl mb-15">
+                <form class="form-inline" method="get">
+                    <div class="select-box radius f-l mr-10" style="width:150px">
+                        <select name="asset_type" class="select">
+                            <option value="">全部类型</option>
+                            {% for type_code, type_name in asset_types %}
+                                <option value="{{ type_code }}" {% if current_asset_type == type_code %}selected{% endif %}>{{ type_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="select-box radius f-l mr-10" style="width:150px">
+                        <select name="owner" class="select">
+                            <option value="">全部所有方</option>
+                            {% for owner_code, owner_name in owners %}
+                                <option value="{{ owner_code }}" {% if current_owner == owner_code %}selected{% endif %}>{{ owner_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+                </form>
+            </div>
+            
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">ID</th>
+                            <th width="200">资产名称</th>
+                            <th width="150">资产类型</th>
+                            <th width="120">所有方</th>
+                            <th width="150">创建时间</th>
+                            <th width="120">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in assets %}
+                        <tr class="text-c">
+                            <td>{{ asset.id }}</td>
+                            <td>{{ asset.name }}</td>
+                            <td>{{ asset.get_asset_type_display }}</td>
+                            <td>{{ asset.get_owner_display }}</td>
+                            <td>{{ asset.created_at|date:"Y-m-d" }}</td>
+                            <td class="f-14">
+                                <a title="查看详情" href="{% url 'data_confirmation:asset_detail' asset.id %}" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe725;</i></a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-c">无可申请的数据资产</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 0, "desc" ]],
+        "bStateSave": true,
+        "aoColumnDefs": [
+            {"orderable":false, "aTargets":[5]}
+        ]
+    });
+});
+</script>
+{% endblock %}

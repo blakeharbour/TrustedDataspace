@@ -1,0 +1,82 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}操作日志{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="mt-20">
+        <div class="pd-10 bg-white">
+            <div class="row cl mb-15">
+                <form class="form-inline" method="get">
+                    <div class="select-box radius f-l mr-10" style="width:150px">
+                        <select name="operation_type" class="select">
+                            <option value="">全部操作类型</option>
+                            {% for op_code, op_name in operation_types %}
+                                <option value="{{ op_code }}" {% if current_operation_type == op_code %}selected{% endif %}>{{ op_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="f-l mr-10">
+                        <input type="date" name="start_date" class="input-text radius" value="{{ start_date }}" placeholder="开始日期">
+                    </div>
+                    <div class="f-l mr-10">
+                        <input type="date" name="end_date" class="input-text radius" value="{{ end_date }}" placeholder="结束日期">
+                    </div>
+                    <button type="submit" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+                </form>
+            </div>
+            
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">ID</th>
+                            <th width="120">操作类型</th>
+                            <th width="100">操作人</th>
+                            <th width="180">操作时间</th>
+                            <th>操作详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr class="text-c">
+                            <td>{{ log.id }}</td>
+                            <td>{{ log.get_operation_type_display }}</td>
+                            <td>{{ log.operator.username }}</td>
+                            <td>{{ log.operation_time|date:"Y-m-d H:i:s" }}</td>
+                            <td class="text-l">{{ log.operation_detail }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-c">暂无操作日志</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 0, "desc" ]],
+        "bStateSave": true,
+        "aoColumnDefs": [
+            {"orderable":false, "aTargets":[4]}
+        ]
+    });
+    
+    // 日期选择器变更时自动提交
+    $('input[type="date"]').change(function() {
+        if ($(this).val() !== '') {
+            $(this).closest('form').submit();
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,174 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}待审批申请{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="mt-20">
+        <div class="pd-10 bg-white">
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">编号</th>
+                            <th width="100">申请人</th>
+                            <th width="200">数据资产</th>
+                            <th width="150">申请时间</th>
+                            <th width="120">申请详情</th>
+                            <th width="120">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request_item in pending_requests %}
+                        <tr class="text-c">
+                            <td>{{ request_item.id }}</td>
+                            <td>{{ request_item.requester.username }}</td>
+                            <td>{{ request_item.asset.name }}</td>
+                            <td>{{ request_item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary-outline radius size-S" onclick="showDetails({{ request_item.id }})">
+                                    <i class="Hui-iconfont">&#xe695;</i> 查看详情
+                                </button>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-success-outline radius size-S" onclick="showApproveModal({{ request_item.id }})">
+                                    <i class="Hui-iconfont">&#xe6a7;</i> 批准
+                                </button>
+                                <button type="button" class="btn btn-danger-outline radius size-S" onclick="showRejectModal({{ request_item.id }})">
+                                    <i class="Hui-iconfont">&#xe6a6;</i> 拒绝
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-c">暂无待审批申请</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 申请详情模态框 -->
+{% for request_item in pending_requests %}
+<div id="detailsModal{{ request_item.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailsModalLabel">申请详情</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <div class="modal-body">
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>申请人：</strong></div>
+                    <div class="col-sm-9">{{ request_item.requester.username }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>申请时间：</strong></div>
+                    <div class="col-sm-9">{{ request_item.created_at|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>申请原因：</strong></div>
+                    <div class="col-sm-9">{{ request_item.request_reason }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>用途说明：</strong></div>
+                    <div class="col-sm-9">{{ request_item.request_purpose }}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default radius" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 批准模态框 -->
+<div id="approveModal{{ request_item.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title" id="approveModalLabel">批准申请</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <form method="post" action="{% url 'data_confirmation:process_request' request_item.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p>您确定要批准这项申请吗？</p>
+                    <div class="row cl mt-15">
+                        <label class="form-label col-sm-3">备注 (可选)：</label>
+                        <div class="formControls col-sm-9">
+                            <textarea name="remark" class="textarea" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" name="action" value="approve">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default radius" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary radius">确认批准</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 拒绝模态框 -->
+<div id="rejectModal{{ request_item.id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content radius">
+            <div class="modal-header">
+                <h3 class="modal-title" id="rejectModalLabel">拒绝申请</h3>
+                <a class="close" data-dismiss="modal" aria-hidden="true" href="javascript:void();">×</a>
+            </div>
+            <form method="post" action="{% url 'data_confirmation:process_request' request_item.id %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <p>您确定要拒绝这项申请吗？</p>
+                    <div class="row cl mt-15">
+                        <label class="form-label col-sm-3"><span class="c-red">*</span>拒绝原因：</label>
+                        <div class="formControls col-sm-9">
+                            <textarea name="remark" class="textarea" rows="3" required></textarea>
+                        </div>
+                    </div>
+                    <input type="hidden" name="action" value="reject">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default radius" data-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-danger radius">确认拒绝</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 0, "desc" ]],
+        "bStateSave": true,
+        "aoColumnDefs": [
+            {"orderable":false, "aTargets":[4,5]}
+        ]
+    });
+});
+
+function showDetails(id) {
+    $("#detailsModal" + id).modal("show");
+}
+
+function showApproveModal(id) {
+    $("#approveModal" + id).modal("show");
+}
+
+function showRejectModal(id) {
+    $("#rejectModal" + id).modal("show");
+}
+</script>
+{% endblock %}

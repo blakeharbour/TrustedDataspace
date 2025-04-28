@@ -1,0 +1,79 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}我的申请{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="mt-20">
+        <div class="pd-10 bg-white">
+            <div class="row cl mb-15">
+                <form class="form-inline" method="get">
+                    <div class="select-box radius f-l mr-10" style="width:150px">
+                        <select name="status" class="select">
+                            <option value="">全部状态</option>
+                            {% for status_code, status_name in statuses %}
+                                <option value="{{ status_code }}" {% if request.GET.status == status_code %}selected{% endif %}>{{ status_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe665;</i> 查询</button>
+                </form>
+            </div>
+            
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-hover table-bg table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">编号</th>
+                            <th width="180">数据资产</th>
+                            <th width="120">所有方</th>
+                            <th width="150">申请时间</th>
+                            <th width="100">状态</th>
+                            <th>备注</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request_item in requests %}
+                        <tr class="text-c">
+                            <td>{{ request_item.id }}</td>
+                            <td>{{ request_item.asset.name }}</td>
+                            <td>{{ request_item.asset.get_owner_display }}</td>
+                            <td>{{ request_item.created_at|date:"Y-m-d H:i" }}</td>
+                            <td>
+                                {% if request_item.status == 'pending' %}
+                                    <span class="label label-warning radius">待审核</span>
+                                {% elif request_item.status == 'approved' %}
+                                    <span class="label label-success radius">已批准</span>
+                                {% elif request_item.status == 'rejected' %}
+                                    <span class="label label-danger radius">已拒绝</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ request_item.remark|default:"-" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-c">暂无申请记录</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$(function(){
+    $('.table-sort').dataTable({
+        "aaSorting": [[ 0, "desc" ]],
+        "bStateSave": true,
+        "aoColumnDefs": [
+            {"orderable":false, "aTargets":[5]}
+        ]
+    });
+});
+</script>
+{% endblock %}

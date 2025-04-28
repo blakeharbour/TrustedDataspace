@@ -40,6 +40,20 @@ from .models import SampleAlignment
 from .myjob import *
 from .service import TensorBoardService
 from django.contrib.auth.decorators import login_required
+#####
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponseForbidden
+from django.contrib import messages
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+from django.db.models import Q
+
+from .models import (
+    DataAsset, DataRequest, DataAuthorization, OperationLog,
+    DATA_ASSET_TYPES, REQUEST_STATUS, OPERATION_TYPES, ROLE_TYPES
+)
+######
 
 def login_page(request):
     return render(request, 'login.html')
@@ -2330,3 +2344,289 @@ def show_latest_ip(request):
 
 def data_model(request):
     return render(request, 'data_view1.html')
+
+
+def get_user_role(user):
+    """获取用户角色"""
+    for group in user.groups.all():
+        if group.name in [role[0] for role in ROLE_TYPES]:
+            return group.name
+    return None
+
+# 数据确权数据确权数据确权
+@login_required
+def data_assets_list(request):
+    """数据资产列表页，根据用户角色显示不同内容"""
+    user_role = get_user_role(request.user)
+
+    # 筛选条件
+    asset_type = request.GET.get('asset_type', '')
+    owner = request.GET.get('owner', '')
+
+    # 基础查询: 显示所有可申请的数据资产(非本角色拥有的)
+    assets = DataAsset.objects.exclude(owner=user_role)
+
+    # 应用筛选
+    if asset_type:
+        assets = assets.filter(asset_type=asset_type)
+    if owner:
+        assets = assets.filter(owner=owner)
+
+    context = {
+        'assets': assets,
+        'asset_types': DATA_ASSET_TYPES,
+        'owners': ROLE_TYPES,
+        'current_asset_type': asset_type,
+        'current_owner': owner,
+    }
+    return render(request, 'data_confirmation/assets_list.html', context)
+
+
+@login_required
+def data_asset_detail(request, asset_id):
+    """数据资产详情页"""
+    asset = get_object_or_404(DataAsset, id=asset_id)
+    user_role = get_user_role(request.user)
+
+    # 检查是否有权查看此资产
+    if asset.owner == user_role:
+        # 用户是数据所有者，可以查看详情
+        is_owner = True
+    else:
+        # 用户不是所有者，需要检查是否有访问权限
+        is_owner = False
+        authorizations = DataAuthorization.objects.filter(
+            request__asset=asset,
+            request__requester=request.user,
+            request__status='approved',
+            is_active=True
+        )
+        has_authorization = authorizations.exists()
+        if not has_authorization:
+            # 无权访问，但可以申请
+            has_pending_request = DataRequest.objects.filter(
+                asset=asset,
+                requester=request.user,
+                status='pending'
+            ).exists()
+
+            context = {
+                'asset': asset,
+                'is_owner': is_owner,
+                'has_authorization': False,
+                'has_pending_request': has_pending_request
+            }
+            return render(request, 'data_confirmation/asset_detail.html', context)
+
+    # 有访问权限
+    context = {
+        'asset': asset,
+        'is_owner': is_owner,
+        'has_authorization': True
+    }
+
+    # 记录查看日志
+    if not is_owner:
+        OperationLog.objects.create(
+            operation_type='view',
+            operator=request.user,
+            operation_detail=f"查看数据资产: {asset.name}"
+        )
+
+    return render(request, 'data_confirmation/asset_detail.html', context)
+
+
+@login_required
+def create_data_request(request, asset_id):
+    """创建数据申请"""
+    asset = get_object_or_404(DataAsset, id=asset_id)
+    user_role = get_user_role(request.user)
+
+    # 检查是否为数据所有者 (不能申请自己的数据)
+    if asset.owner == user_role:
+        messages.error(request, "不能申请自己拥有的数据")
+        return redirect('data_confirmation:asset_detail', asset_id=asset_id)
+
+    # 检查是否已有待审批的申请
+    has_pending = DataRequest.objects.filter(
+        asset=asset,
+        requester=request.user,
+        status='pending'
+    ).exists()
+
+    if has_pending:
+        messages.warning(request, "您已有一个待审批的申请，请等待审批")
+        return redirect('data_confirmation:asset_detail', asset_id=asset_id)
+
+    if request.method == 'POST':
+        reason = request.POST.get('request_reason')
+        purpose = request.POST.get('request_purpose')
+
+        if not reason or not purpose:
+            messages.error(request, "请填写申请原因和用途说明")
+            return render(request, 'data_confirmation/create_request.html', {'asset': asset})
+
+        # 创建申请
+        data_request = DataRequest.objects.create(
+            asset=asset,
+            requester=request.user,
+            request_reason=reason,
+            request_purpose=purpose,
+            status='pending'
+        )
+
+        # 记录日志
+        OperationLog.objects.create(
+            operation_type='request',
+            operator=request.user,
+            operation_detail=f"申请数据资产: {asset.name}",
+            related_request=data_request
+        )
+
+        messages.success(request, "申请已提交，请等待审批")
+        return redirect('data_confirmation:my_requests')
+
+    return render(request, 'data_confirmation/create_request.html', {'asset': asset})
+
+
+@login_required
+def my_requests(request):
+    """我的申请列表"""
+    requests = DataRequest.objects.filter(requester=request.user).order_by('-created_at')
+
+    # 筛选条件
+    status = request.GET.get('status', '')
+    if status:
+        requests = requests.filter(status=status)
+
+    context = {
+        'requests': requests,
+        'statuses': REQUEST_STATUS
+    }
+    return render(request, 'data_confirmation/my_requests.html', context)
+
+
+@login_required
+def pending_approvals(request):
+    """待审批申请列表"""
+    user_role = get_user_role(request.user)
+
+    # 只显示属于当前用户角色所有的数据资产的申请
+    pending_requests = DataRequest.objects.filter(
+        asset__owner=user_role,
+        status='pending'
+    ).order_by('-created_at')
+
+    return render(request, 'data_confirmation/pending_approvals.html', {
+        'pending_requests': pending_requests
+    })
+
+
+@login_required
+@require_POST
+def process_request(request, request_id):
+    """处理数据申请(批准/拒绝)"""
+    data_request = get_object_or_404(DataRequest, id=request_id)
+    user_role = get_user_role(request.user)
+
+    # 检查是否有权限处理此申请
+    if data_request.asset.owner != user_role:
+        return HttpResponseForbidden("您没有权限处理此申请")
+
+    action = request.POST.get('action')
+    remark = request.POST.get('remark', '')
+
+    if action not in ['approve', 'reject']:
+        messages.error(request, "无效的操作")
+        return redirect('data_confirmation:pending_approvals')
+
+    # 更新申请状态
+    if action == 'approve':
+        data_request.status = 'approved'
+        data_request.remark = remark
+        data_request.save()
+
+        # 创建授权记录
+        DataAuthorization.objects.create(
+            request=data_request,
+            authorizer=request.user,
+            authorized_at=timezone.now(),
+            is_active=True,
+            remark=remark
+        )
+
+        # 记录日志
+        OperationLog.objects.create(
+            operation_type='approve',
+            operator=request.user,
+            operation_detail=f"批准数据申请: {data_request.asset.name}",
+            related_request=data_request
+        )
+
+        messages.success(request, "已批准数据申请")
+    else:
+        data_request.status = 'rejected'
+        data_request.remark = remark
+        data_request.save()
+
+        # 记录日志
+        OperationLog.objects.create(
+            operation_type='reject',
+            operator=request.user,
+            operation_detail=f"拒绝数据申请: {data_request.asset.name}",
+            related_request=data_request
+        )
+
+        messages.success(request, "已拒绝数据申请")
+
+    return redirect('data_confirmation:pending_approvals')
+
+
+@login_required
+def authorizations(request):
+    """授权记录列表"""
+    user_role = get_user_role(request.user)
+
+    # 两种情况：1. 用户是申请方 2. 用户是授权方
+    authorizations = DataAuthorization.objects.filter(
+        Q(request__requester=request.user) |  # 申请方
+        Q(request__asset__owner=user_role)  # 授权方(数据所有者)
+    ).select_related('request', 'request__asset', 'request__requester', 'authorizer').order_by('-authorized_at')
+
+    return render(request, 'data_confirmation/authorizations.html', {
+        'authorizations': authorizations
+    })
+
+
+@login_required
+def operation_logs(request):
+    """操作日志查询"""
+    user_role = get_user_role(request.user)
+
+    # 查询条件
+    operation_type = request.GET.get('operation_type', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+
+    # 基础查询：只能查看与自己相关的日志
+    logs = OperationLog.objects.filter(
+        Q(operator=request.user) |  # 自己的操作
+        Q(related_request__asset__owner=user_role)  # 与自己数据相关的操作
+    ).order_by('-operation_time')
+
+    # 应用筛选
+    if operation_type:
+        logs = logs.filter(operation_type=operation_type)
+    if start_date:
+        logs = logs.filter(operation_time__gte=start_date)
+    if end_date:
+        logs = logs.filter(operation_time__lte=end_date)
+
+    context = {
+        'logs': logs,
+        'operation_types': OPERATION_TYPES,
+        'current_operation_type': operation_type,
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    return render(request, 'data_confirmation/operation_logs.html', context)

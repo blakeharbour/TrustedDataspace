@@ -1,0 +1,64 @@
+{% extends "data_confirmation/data_confirmation_base.html" %}
+
+{% block breadcrumb %}数据资产详情{% endblock %}
+
+{% block content %}
+<div class="page-container">
+    <div class="pd-20 bg-white">
+        <div class="row cl mb-15">
+            <h3 class="f-24 c-dark">{{ asset.name }}</h3>
+        </div>
+        <div class="line"></div>
+        <div class="row cl mt-15">
+            <div class="col-sm-12">
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>资产类型：</strong></div>
+                    <div class="col-sm-9">{{ asset.get_asset_type_display }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>所有方：</strong></div>
+                    <div class="col-sm-9">{{ asset.get_owner_display }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>创建时间：</strong></div>
+                    <div class="col-sm-9">{{ asset.created_at|date:"Y-m-d H:i" }}</div>
+                </div>
+                <div class="row cl mb-10">
+                    <div class="col-sm-3 text-r"><strong>描述：</strong></div>
+                    <div class="col-sm-9">{{ asset.description|default:"暂无描述" }}</div>
+                </div>
+                
+                <div class="line mt-20 mb-20"></div>
+                
+                {% if is_owner %}
+                    <!-- 数据所有者 -->
+                    <div class="alert alert-success radius">
+                        <i class="Hui-iconfont">&#xe6a7;</i> 您是此数据资产的所有者，可以查看完整数据。
+                    </div>
+                {% elif has_authorization %}
+                    <!-- 已获得授权 -->
+                    <div class="alert alert-success radius">
+                        <i class="Hui-iconfont">&#xe6a7;</i> 您已获得此数据的访问授权，可以查看数据内容。
+                    </div>
+                    <div class="mt-20">
+                        <a href="javascript:;" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe640;</i> 下载数据</a>
+                    </div>
+                {% elif has_pending_request %}
+                    <!-- 有待审批的申请 -->
+                    <div class="alert alert-warning radius">
+                        <i class="Hui-iconfont">&#xe662;</i> 您已提交了申请，正在等待审批。
+                    </div>
+                {% else %}
+                    <!-- 未授权，可以申请 -->
+                    <div class="alert alert-info radius">
+                        <i class="Hui-iconfont">&#xe6a6;</i> 您需要申请授权才能访问此数据。
+                    </div>
+                    <div class="mt-20">
+                        <a href="{% url 'data_confirmation:create_request' asset.id %}" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 申请数据</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
