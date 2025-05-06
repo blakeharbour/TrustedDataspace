@@ -615,8 +615,8 @@ function sharingTypeResultShow(shareType, dataOwner,projectName) {
     const validShareTypes = {
         '接口交换': 'http://127.0.0.1:8000/wb-interface/',
         '安全沙箱': 'http://127.0.0.1:8000/sjsx-interface/',
-        '隐私计算': 'http://127.0.0.1:8000/index/',
-        '密文计算': 'http://127.0.0.1:8000/mutiindex/'
+        '隐私计算': 'http://127.0.0.1:8000/guest-list/',
+        '密文计算': 'http://127.0.0.1:8000/multguest-list/'
     };
     // 参数校验
     if (!shareType) {
@@ -654,11 +654,7 @@ function sharingTypeResultShow(shareType, dataOwner,projectName) {
     const url = validShareTypes[shareType];
     try {
         // 打开新窗口
-        const newWindow = window.open(url, '_blank');
-        // 处理弹窗拦截
-        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-            layer.msg('请允许弹窗以继续操作', {icon: 2});
-        }
+        location.href=url
     } catch (e) {
         console.error('打开链接失败:', e);
         layer.msg('链接打开失败，请联系管理员', {icon: 2});
