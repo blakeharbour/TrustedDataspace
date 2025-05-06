@@ -336,10 +336,11 @@
     <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
     <script type="text/javascript" src="/static/static/business/js/main.js"></script>
     <script type="text/javascript">
-     var currentUser = {id:"{current_user.id }}",
-              account:"{current_user.account }}",
-              com:"{current_user.com }}",
-              comid:"{ current_user.comid }}",
+     var currentUser = {
+              id:"{{current_user.id }}",
+              account:"{{current_user.account }}",
+              com:"{{current_user.com }}",
+              comid:"{{ current_user.comid }}",
      };
         // 显示模态框
     function showModal() {
@@ -483,7 +484,7 @@
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
               row.append('<td>' + item.dataAsset + '</td>');
-              row.append('<td>' + item.dataSecurity + '</td>');row.append('<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + item.dataOwner + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
+              row.append('<td>' + item.dataSecurity + '</td>');row.append('<td><a href="javascript:;" onclick="sharingTypeResultShow(\'' + item.shareWay + '\', \'' + item.dataOwner + '\', \'' + item.projectName + '\')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> ' + item.shareWay + '</a></td>');
               row.append('<td>' + statusText + '</td>');
               // 使用 data-* 属性传递数据，包括项目 id
               var disabledClass = "";
@@ -609,7 +610,7 @@
     });
 }
 // 新增共享方式跳转函数
-function sharingTypeResultShow(shareType, dataOwner) {
+function sharingTypeResultShow(shareType, dataOwner,projectName) {
     // 定义合法的共享方式列表
     const validShareTypes = {
         '接口交换': 'http://127.0.0.1:8000/wb-interface/',
@@ -637,9 +638,17 @@ function sharingTypeResultShow(shareType, dataOwner) {
      // 判断当前用户是否为数据所有方
     const isDataOwner = currentUser.com === dataOwner; // 根据实际业务逻辑修改判断条件
     const targetId = isDataOwner ? '1' : '0'; // 数据所有方传1，否则传0
-   if (shareType === '接口交换')
-    // 存储到sessionStorage
-    sessionStorage.setItem('target_id', targetId);
+    console.log("targetId:", targetId);
+    console.log(dataOwner)
+    console.log(currentUser.com)
+    if (shareType === '接口交换')
+        // 存储到sessionStorage
+    {sessionStorage.setItem('target_id', targetId);
+        sessionStorage.setItem('project_name', projectName);}
+    if (shareType === '安全沙箱')
+        // 存储到sessionStorage
+    {sessionStorage.setItem('target_id', targetId);
+        sessionStorage.setItem('project_name', projectName);}
 
     // 获取对应的URL
     const url = validShareTypes[shareType];

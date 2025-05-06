@@ -212,7 +212,7 @@
 {#                                {% endif %}#}
 
 
-                                <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
+                                <a href="javascript:;" id="downloadSelected" onclick="downloadSelected()" class="btn btn-primary radius">
                                     调用数据接口
                                 </a>
                             </span>
@@ -268,14 +268,17 @@
           const targetId = sessionStorage.getItem('target_id');
           console.log(targetId)
           // 根据值是否存在控制按钮显示
-          const btn = document.getElementById('interfaceAdd');
+          const btnAdd = document.getElementById('interfaceAdd');
+          const btnDownload = document.getElementById('downloadSelected');
           //数据所有方
           if (parseInt(targetId) === 1) {
-            btn.style.display = 'inline-block';  // 显示按钮
+            btnAdd.style.display = 'inline-block';  // 显示按钮
+            btnDownload.style.display = 'none';  // 隐藏按钮
           }
           //数据需求方
           else {
-            {#btn.style.display = 'none';  // 隐藏按钮#}
+            btnAdd.style.display = 'none';  // 隐藏按钮
+            btnDownload.style.display = 'inline-block';  // 显示按钮
           }
 
           // 如果只需使用一次，可清除 sessionStorage
@@ -283,6 +286,15 @@
         });
 
 		$(function(){
+            {#var project = sessionStorage.getItem('project_name');#}
+            {#console.log(project)#}
+            {#将json字符串转化为json对象#}
+            {#var projectName = $.parseJSON(project);#}
+            {#console.log(projectName)#}
+            {#var wbdic={#}
+            {#        projectName:projectName#}
+            {#    };#}
+            {#var wbdata = JSON.stringify(wbdic)#}
             // 或通过 JavaScript 变量获取
             console.log("当前用户ID:", currentUser.id);
             console.log("当前用户名:", currentUser.account);
@@ -290,6 +302,7 @@
 				type:"post",
 				url:"http://127.0.0.1:8000/searchinterface/",
 				dataType:'json',
+                {#data:wbdata,#}
 				success:function (res) {
 					console.log("res",res);
 					str=''

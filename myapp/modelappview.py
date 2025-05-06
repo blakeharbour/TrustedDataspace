@@ -123,6 +123,13 @@ def application_result_shappng(request,i):
 # 使用 Agg 后端，防止 GUI 操作
 plt.switch_backend('Agg')
 
+# # 设置默认字体路径
+# try:
+#     # font_path = "/System/Library/Fonts/Supplemental/Songti.ttc"  # macOS
+#     font_path = "/usr/share/fonts/truetype/wqy/wqy-microhei.ttc"  # Linux
+#     font = FontProperties(fname=font_path, size=12)
+# except:
+#     font = None  # 如果找不到字体，则不使用自定义字体
 
 def application_result_analysis(request):
     # 加载CSV文件
@@ -141,9 +148,11 @@ def application_result_analysis(request):
     # 获取不同的 FZHZM 值
     unique_fzhzm_values = filtered_data["FZHZM"].unique()
 
-    # 设置合适的字体（macOS字体路径可能不同）
-    font_path = '/System/Library/Fonts/Supplemental/Songti.ttc'  # macOS系统字体路径
-    font = FontProperties(fname=font_path, size=12)
+    # # 设置合适的字体（macOS字体路径可能不同）
+    # font_path = '/usr/share/fonts/truetype/wqy/wqy-microhei.ttc'  # Linux
+    # font = FontProperties(fname=font_path, size=12)
+
+    font = None
 
     pie_charts = []
 

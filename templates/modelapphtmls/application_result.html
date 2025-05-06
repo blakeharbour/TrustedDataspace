@@ -181,10 +181,10 @@
 										<th width="100">模型名称</th>
                                         <th width="100">模型描述</th>
 										<th width="100">模型应用结果</th>
-{#                                        <th width="100">应用结果分析</th>#}
-{#                                        <th width="100">标签字段</th>#}
-{#                                        <th width="60">&nbsp&nbsp</th>#}
-{#                                        <th width="60">&nbsp&nbsp</th>#}
+                                        <th width="100">应用结果分析</th>
+                                        <th width="100">标签字段</th>
+                                        <th width="60">&nbsp&nbsp</th>
+                                        <th width="60">&nbsp&nbsp</th>
 									</tr>
 								</thead>
 								<tbody id="info">
@@ -230,13 +230,17 @@
                             imgStr = Result[j][0]
                             var link = 'http://127.0.0.1:8000/application_result_shappng/' + imgStr;
                             str+= '<tr class="text-c">' +
-                                {+
-                            '"btn btn-success popup" onclick="open_shap(this,\''+Result[j][5]+'\',\''+link+'\')" style="color: white;"><span>模型预测结果分析</span></a>'+
-                            '<a title="模型预测结果统计" class='+
-                                '"btn btn-success popup" onclick="open_analysis(this,\''+Result[j][0]+'\')" style="color: white;"><span>模型预测结果统计</span></a>'+
+                            '<td>' + Result[j][2] + '</td>' +
+                            '<td>' + Result[j][1] + '</td>' +
+                            '<td>' + Result[j][3] + '</td>' +
+                            '<td>' + Result[j][4] + '</td>' +
+                            '<td>' + Result[j][5] + '</td>' +
+                            '<td>' + Result[j][6] + '</td>' +
+                                 '<td><a title="模型预测结果查看" class=' +
+                            '"btn btn-success popup" onclick="open_shap(this,\''+Result[j][5]+'\',\''+link+'\')" style="color: white;"><span>模型预测结果查看</span></a>'+
                                 '</td>'+
                              '<td> <a title="模型预测结果统计" class='+
-                                '"btn btn-success popup" onclick="open_analysis(this,\''+Result[j][0]+'\')" style="color: white;"><span>模型预测结果统计</span></a>'+
+                                '"btn btn-success popup" onclick="open_analysis(this,\''+Result[j][0]+'\')" style="color: white;"><span>模型预测结果分析</span></a>'+
                                 '</td>'+
                             {#'<td><a href="'+Result[j][5]+'" download></i>模型预测结果下载</a>'+#}
                             {#'"btn btn-success popup" onclick="member_edit(this,\''+Result[j][0]+'\')" style="color: white;"><span>发起申请</span></a>'+#}
