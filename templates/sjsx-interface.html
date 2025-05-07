@@ -111,6 +111,11 @@
 						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/get_data/" title="IP追踪">IP追踪</a></li>
+					</ul>
+				</dd>
 			</dl>
 		</div>
 	</aside>
@@ -157,6 +162,13 @@
               </a>
               <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
                 创建所需规格数据沙箱
+              </a>
+                <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                <i class="Hui-iconfont">&#xe600;</i> 限制沙箱IP
+              </a>
+                </a>
+                <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                <i class="Hui-iconfont">&#xe645;</i> 查询沙箱IP追踪
               </a>
               <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
             </span>
@@ -456,6 +468,9 @@ function uploadDataFeature() {
   location.href = "http://127.0.0.1:8000/sjtzadd/";
 }
 
+function uploadDataIP() {
+  location.href = "http://127.0.0.1:8000/shaxiangip/";
+}
 
 
 

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+  <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+  <title>新增数据沙箱</title>
+</head>
+<body>
+<style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+
+	<!--_menu 作为公共模版分离出去-->
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
+
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/guest-list/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+<div class="Hui-admin-dislpayArrow">
+  <a href="javascript:void(0);" onClick="displaynavbar(this)">
+    <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+    <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+  </a>
+</div>
+<section class="Hui-admin-article-wrapper">
+  <header class="Hui-navbar">
+    <div class="navbar">
+      <div class="container-fluid clearfix">
+        <nav class="nav navbar-nav"></nav>
+        <nav class="nav navbar-nav navbar-userbar">
+
+        </nav>
+      </div>
+    </div>
+  </header>
+  <article class="clearfix pd-20">
+    <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+      首页 <span class="c-gray en">/</span> 数据共享方法 <span class="c-gray en">/</span> 新增数据沙箱限制IP
+    </nav>
+    <form action="" method="post" class="form form-horizontal" id="form-sandbox-add">
+      <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>沙箱路径：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="address" name="address" placeholder="请输入沙箱路径">
+        </div>
+      </div>
+        <div class="row clearfix">
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>合法IP：</label>
+        <div class="form-controls col-xs-8 col-sm-9">
+          <input type="text" class="input-text" id="ip" name="ip" placeholder="请输入合法IP">
+        </div>
+      </div>
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>合法IP：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="datetime-local" class="input-text" id="createTime" name="createTime">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据访问路径：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="text" class="input-text" id="dataPath" name="dataPath" placeholder="请输入数据访问URL或文件路径">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>所存资产项名称：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="text" class="input-text" id="assetName" name="assetName" placeholder="例如：车辆总量、时刻表等">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>沙箱有效期：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="date" class="input-text" id="validUntil" name="validUntil">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3">加密算法说明：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="text" class="input-text" id="encryption" name="encryption" placeholder="如 AES256, RSA, 哈希算法等">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3">访问授权范围：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <input type="text" class="input-text" id="accessRange" name="accessRange" placeholder="如 铁路局、调度所 等授权方">-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <div class="row clearfix">-->
+<!--        <label class="form-label col-xs-4 col-sm-3">沙箱销毁策略：</label>-->
+<!--        <div class="form-controls col-xs-8 col-sm-9">-->
+<!--          <textarea class="textarea" id="destroyPolicy" name="destroyPolicy" placeholder="如 超时自动销毁 / 使用后立即销毁 / 管理员审核销毁"></textarea>-->
+<!--        </div>-->
+<!--      </div>-->
+      <div class="row clearfix">
+        <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+          <input class="btn btn-primary radius" type="button" onclick="submitSandbox()" value="&nbsp;&nbsp;保存数据沙箱IP&nbsp;&nbsp;">
+        </div>
+      </div>
+    </form>
+  </article>
+</section>
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+<script>
+
+
+
+function submitSandbox() {
+const address = $("#address").val();         // 沙箱地址
+const ip = $("#ip").val();         // IP
+  if (address === "") {
+    alert("沙箱地址不能为空");
+    $("#address").focus();
+    return false;
+  }
+
+<!--confirmman: $('#creator').val(),-->
+  const data = {
+
+ address: $('#address').val(),
+ ip: $('#ip').val()
+};
+
+$.ajax({
+  type: "post",
+  url: "http://127.0.0.1:8000/create-ip/",
+  data: JSON.stringify(data),         // ✅ 一定要加 stringify
+  contentType: "application/json",   // ✅ 确保告诉后端是 JSON 格式
+  dataType: "json",
+  success: function(res) {
+    console.log("提交成功：", res);
+  },
+  error: function(err) {
+    console.log("提交出错：", err);
+  }
+});
+
+}
+
+</script>
+</body>
+</html>

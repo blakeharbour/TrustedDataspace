@@ -110,6 +110,11 @@ def sjtzadd(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+def shaxiangip(request):
+    return render(request, 'shaxiangip.html', {
+        'current_user': request.user  # 传递用户对象到模板shaxiangip
+    })
+
 def upload_to_sandbox(request):
     return render(request, 'upload_to_sandbox.html', {
         'current_user': request.user  # 传递用户对象到模板
@@ -614,6 +619,36 @@ def createinterfacesx(request):
     inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
     return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
 
+
+
+#createip
+def createip(request):
+    projs = json.loads(request.body)  # 是 dict，不是 list
+    # confirmman = projs["confirmman"]
+    # confirmtime = projs["confirmtime"]
+    # saveurl = projs["saveurl"]
+    # zichanname = projs["zichanname"]
+    # staytime = projs["staytime"]
+    # jiamipro = projs["jiamipro"]
+    # autoscope = projs["autoscope"]
+    # delchannle = projs["delchannle"]
+
+    address = projs["address"]
+    ip = projs["ip"]
+
+
+    pro_js = (
+        "'" + address + "','" + ip + "'"
+    )
+
+    inserttable(
+        pro_js,
+        tablename="sandboxip",
+        con1="address,ip"
+    )
+
+    print("xinzengchenggong")
+    return JsonResponse({'status': 0})
 
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
