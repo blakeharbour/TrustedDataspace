@@ -110,13 +110,21 @@ def sjtzadd(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+def shaxiangip(request):
+    return render(request, 'shaxiangip.html', {
+        'current_user': request.user  # 传递用户对象到模板shaxiangip
+    })
+
 def upload_to_sandbox(request):
     return render(request, 'upload_to_sandbox.html', {
         'current_user': request.user  # 传递用户对象到模板
     })
 
 
-
+def xqflist_open(request):
+    return render(request, 'xqflist_open.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
 @login_required(login_url='/login/')
 def interface_add(request):
@@ -614,6 +622,36 @@ def createinterfacesx(request):
     inserttable(asset_js, tablename="asset_record", con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
     return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
 
+
+
+#createip
+def createip(request):
+    projs = json.loads(request.body)  # 是 dict，不是 list
+    # confirmman = projs["confirmman"]
+    # confirmtime = projs["confirmtime"]
+    # saveurl = projs["saveurl"]
+    # zichanname = projs["zichanname"]
+    # staytime = projs["staytime"]
+    # jiamipro = projs["jiamipro"]
+    # autoscope = projs["autoscope"]
+    # delchannle = projs["delchannle"]
+
+    address = projs["address"]
+    ip = projs["ip"]
+
+
+    pro_js = (
+        "'" + address + "','" + ip + "'"
+    )
+
+    inserttable(
+        pro_js,
+        tablename="sandboxip",
+        con1="address,ip"
+    )
+
+    print("xinzengchenggong")
+    return JsonResponse({'status': 0})
 
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
@@ -1729,7 +1767,7 @@ def submit_project_toblockchain(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     # 解析区块链返回的 payload
@@ -1825,13 +1863,15 @@ def delete_project(request):
         dataDemand = request.POST.get('dataDemand')
         dataOwner = request.POST.get('dataOwner')
         dataAsset = request.POST.get('dataAsset')
+        id = request.POST.get('id')  # 获取 ID 参数
 
-        if projectName and dataDemand and dataOwner and dataAsset:
+        if projectName and dataDemand and dataOwner and dataAsset and id:
+            # 构建删除条件时添加 ID
             updatstr = "isDeleted = 'Y'"
-            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
+            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}' and ID = '{id}'"
             result = updatetable('pb8_ProjectAdd', updatstr, constr)
             if result == 1:
-                # 获取项目相关信息
+                # 获取项目相关信息，查询条件同样添加 ID
                 fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
                 order = 'ID DESC'
                 project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
@@ -1852,7 +1892,7 @@ def delete_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -1870,22 +1910,22 @@ def delete_project(request):
                             inserttable(pro_js, tablename="project_notarization",
                                         con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
 
-                            return JsonResponse({'status': '0','message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
+                            return JsonResponse({'status': '0', 'message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
                         else:
                             print("区块链接口调用失败:", response.text)
-                            return JsonResponse({'status': '1','message': '删除成功，但区块链接口调用失败，请稍后重试'})
+                            return JsonResponse({'status': '1', 'message': '删除成功，但区块链接口调用失败，请稍后重试'})
                     except requests.RequestException as e:
                         print("请求异常:", e)
-                        return JsonResponse({'status': '1','message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
+                        return JsonResponse({'status': '1', 'message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
                 else:
                     print("数据库查询无结果")
-                    return JsonResponse({'status': '1','message': '删除成功，但数据库查询无结果'})
+                    return JsonResponse({'status': '1', 'message': '删除成功，但数据库查询无结果'})
             else:
-                return JsonResponse({'status': '1','message': '删除失败'})
+                return JsonResponse({'status': '1', 'message': '删除失败'})
         else:
-            return JsonResponse({'status': '1','message': '缺少必要的参数'})
+            return JsonResponse({'status': '1', 'message': '缺少必要的参数'})
     else:
-        return JsonResponse({'status': '1','message': '请求方法错误，仅支持POST请求'})
+        return JsonResponse({'status': '1', 'message': '请求方法错误，仅支持POST请求'})
 
 
 def update_project(request):
@@ -1970,7 +2010,7 @@ def audit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -2044,7 +2084,7 @@ def submit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
