@@ -87,6 +87,7 @@ path('sjsxinterface-edit/', views.sjsxinterface_edit),
 path('sysxdeleteinterface/', views.sysxdeleteinterface),
 path('upload_to_sandbox/', views.upload_to_sandbox),
 
+path('xqflist_open/', views.xqflist_open),
 # 沙箱接口
 # path('api/listSandboxes', views.list_sandboxes),
 # path('api/createSandbox', views.create_sandbox),

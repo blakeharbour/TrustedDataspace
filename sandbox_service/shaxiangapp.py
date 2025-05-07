@@ -3,6 +3,7 @@ import docker
 import os
 import time
 import threading
+import os
 from datetime import datetime
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -26,6 +27,8 @@ from flask import request, jsonify, send_file
 app = Flask(__name__)
 client = docker.from_env()
 CORS(app)  # 允许所有跨域
+
+
 
 # ✅ 创建沙箱
 @app.route('/api/createSandbox', methods=['POST'])
@@ -330,12 +333,15 @@ def generate_readonly_link():
 
         # 6️⃣ 返回链接地址
         # 返回链接地址
-        ip = request.host.split(":")[0]
-        link = f"http://{ip}:{port}/?container={container_name}"
+        # ip = request.host.split(":")[0]
+        # link = f"http://{ip}:{port}/?container={container_name}"
+        # return jsonify(success=True, link=link)
+        link = f"http://0.0.0.0/{container_name}"
         return jsonify(success=True, link=link)
 
     except Exception as e:
         return jsonify(success=False, message=f"后端异常：{str(e)}")
+
 
 
 # ✅ 手动销毁某个沙箱容器

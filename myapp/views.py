@@ -121,7 +121,10 @@ def upload_to_sandbox(request):
     })
 
 
-
+def xqflist_open(request):
+    return render(request, 'xqflist_open.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 
 @login_required(login_url='/login/')
 def interface_add(request):
