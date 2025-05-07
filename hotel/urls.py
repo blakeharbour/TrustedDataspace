@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from myapp import views, api_multviews, mult_open_views, modelapp_portview
+from myapp import views, api_multviews, mult_open_views, modelapp_portview, urls_data_confirmation
 from myapp import  viewsmult
 from myapp import  api_views
 from myapp import  open_views
@@ -274,6 +274,7 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
     path('get_pending_project_data/', views.get_pending_project_data),
     path('delete_project/', views.delete_project),
     path('update_project/', views.update_project),
+path('data-confirmation/', include('myapp.urls_data_confirmation')),
 
     # ip追踪
     path('data-model/', views.data_model),
@@ -284,5 +285,5 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
 
 ]
 #####数据确权
-path('data-confirmation/', include('myappp.urls_data_confirmation'))
+
 ######数据确权oo

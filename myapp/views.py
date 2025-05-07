@@ -2347,33 +2347,23 @@ def data_model(request):
     return render(request, 'data_view1.html')
 
 
-def get_user_role(user):
-    """获取用户角色"""
-    for group in user.groups.all():
-        if group.name in [role[0] for role in ROLE_TYPES]:
-            return group.name
-    return None
+# 以下是数据确权相关的视图函数
 
-# 数据确权数据确权数据确权shujuquequanshujuquanquanshujuquanqhnximlcooo
 def get_user_role(user):
-    """获取用户角色"""
-    for group in user.groups.all():
-        if group.name in [role[0] for role in ROLE_TYPES]:
-            return group.name
-    return None
+    """获取用户角色（简化版）"""
+    # 简化角色获取，可以根据需要修改
+    return 'customs'  # 默认为海关
 
 
 @login_required
 def data_assets_list(request):
-    """数据资产列表页，根据用户角色显示不同内容"""
-    user_role = get_user_role(request.user)
-
+    """数据资产列表页"""
     # 筛选条件
     asset_type = request.GET.get('asset_type', '')
     owner = request.GET.get('owner', '')
 
-    # 基础查询: 显示所有可申请的数据资产(非本角色拥有的)
-    assets = DataAsset1.objects.exclude(owner=user_role)
+    # 基础查询: 显示所有可申请的数据资产
+    assets = DataAsset1.objects.all()
 
     # 应用筛选
     if asset_type:
@@ -2395,50 +2385,43 @@ def data_assets_list(request):
 def data_asset_detail(request, asset_id):
     """数据资产详情页"""
     asset = get_object_or_404(DataAsset1, id=asset_id)
-    user_role = get_user_role(request.user)
+    username = request.user.username
 
     # 检查是否有权查看此资产
-    if asset.owner == user_role:
-        # 用户是数据所有者，可以查看详情
-        is_owner = True
-    else:
-        # 用户不是所有者，需要检查是否有访问权限
-        is_owner = False
-        authorizations = DataAuthorization.objects.filter(
+    is_owner = (asset.owner == get_user_role(request.user))
+
+    # 用户不是所有者，检查是否有访问权限
+    has_authorization = False
+    has_pending_request = False
+
+    if not is_owner:
+        # 检查是否有授权
+        has_authorization = DataAuthorization.objects.filter(
             request__asset=asset,
-            request__requester=request.user,
+            request__requester_name=username,
             request__status='approved',
             is_active=True
-        )
-        has_authorization = authorizations.exists()
-        if not has_authorization:
-            # 无权访问，但可以申请
-            has_pending_request = DataRequest.objects.filter(
-                asset=asset,
-                requester=request.user,
-                status='pending'
-            ).exists()
+        ).exists()
 
-            context = {
-                'asset': asset,
-                'is_owner': is_owner,
-                'has_authorization': False,
-                'has_pending_request': has_pending_request
-            }
-            return render(request, 'data_confirmation/asset_detail.html', context)
+        # 检查是否有待审批的申请
+        has_pending_request = DataRequest.objects.filter(
+            asset=asset,
+            requester_name=username,
+            status='pending'
+        ).exists()
 
-    # 有访问权限
     context = {
         'asset': asset,
         'is_owner': is_owner,
-        'has_authorization': True
+        'has_authorization': has_authorization,
+        'has_pending_request': has_pending_request
     }
 
     # 记录查看日志
-    if not is_owner:
+    if not is_owner and has_authorization:
         OperationLog.objects.create(
             operation_type='view',
-            operator=request.user,
+            operator_name=username,
             operation_detail=f"查看数据资产: {asset.name}"
         )
 
@@ -2449,6 +2432,7 @@ def data_asset_detail(request, asset_id):
 def create_data_request(request, asset_id):
     """创建数据申请"""
     asset = get_object_or_404(DataAsset1, id=asset_id)
+    username = request.user.username
     user_role = get_user_role(request.user)
 
     # 检查是否为数据所有者 (不能申请自己的数据)
@@ -2459,7 +2443,7 @@ def create_data_request(request, asset_id):
     # 检查是否已有待审批的申请
     has_pending = DataRequest.objects.filter(
         asset=asset,
-        requester=request.user,
+        requester_name=username,
         status='pending'
     ).exists()
 
@@ -2478,7 +2462,7 @@ def create_data_request(request, asset_id):
         # 创建申请
         data_request = DataRequest.objects.create(
             asset=asset,
-            requester=request.user,
+            requester_name=username,
             request_reason=reason,
             request_purpose=purpose,
             status='pending'
@@ -2487,7 +2471,7 @@ def create_data_request(request, asset_id):
         # 记录日志
         OperationLog.objects.create(
             operation_type='request',
-            operator=request.user,
+            operator_name=username,
             operation_detail=f"申请数据资产: {asset.name}",
             related_request=data_request
         )
@@ -2501,7 +2485,9 @@ def create_data_request(request, asset_id):
 @login_required
 def my_requests(request):
     """我的申请列表"""
-    requests = DataRequest.objects.filter(requester=request.user).order_by('-created_at')
+    username = request.user.username
+
+    requests = DataRequest.objects.filter(requester_name=username).order_by('-created_at')
 
     # 筛选条件
     status = request.GET.get('status', '')
@@ -2536,6 +2522,7 @@ def pending_approvals(request):
 def process_request(request, request_id):
     """处理数据申请(批准/拒绝)"""
     data_request = get_object_or_404(DataRequest, id=request_id)
+    username = request.user.username
     user_role = get_user_role(request.user)
 
     # 检查是否有权限处理此申请
@@ -2558,7 +2545,7 @@ def process_request(request, request_id):
         # 创建授权记录
         DataAuthorization.objects.create(
             request=data_request,
-            authorizer=request.user,
+            authorizer_name=username,
             authorized_at=timezone.now(),
             is_active=True,
             remark=remark
@@ -2567,7 +2554,7 @@ def process_request(request, request_id):
         # 记录日志
         OperationLog.objects.create(
             operation_type='approve',
-            operator=request.user,
+            operator_name=username,
             operation_detail=f"批准数据申请: {data_request.asset.name}",
             related_request=data_request
         )
@@ -2581,7 +2568,7 @@ def process_request(request, request_id):
         # 记录日志
         OperationLog.objects.create(
             operation_type='reject',
-            operator=request.user,
+            operator_name=username,
             operation_detail=f"拒绝数据申请: {data_request.asset.name}",
             related_request=data_request
         )
@@ -2594,13 +2581,14 @@ def process_request(request, request_id):
 @login_required
 def authorizations(request):
     """授权记录列表"""
+    username = request.user.username
     user_role = get_user_role(request.user)
 
     # 两种情况：1. 用户是申请方 2. 用户是授权方
     authorizations = DataAuthorization.objects.filter(
-        Q(request__requester=request.user) |  # 申请方
+        Q(request__requester_name=username) |  # 申请方
         Q(request__asset__owner=user_role)  # 授权方(数据所有者)
-    ).select_related('request', 'request__asset', 'request__requester', 'authorizer').order_by('-authorized_at')
+    ).select_related('request', 'request__asset').order_by('-authorized_at')
 
     return render(request, 'data_confirmation/authorizations.html', {
         'authorizations': authorizations
@@ -2610,6 +2598,7 @@ def authorizations(request):
 @login_required
 def operation_logs(request):
     """操作日志查询"""
+    username = request.user.username
     user_role = get_user_role(request.user)
 
     # 查询条件
@@ -2619,7 +2608,7 @@ def operation_logs(request):
 
     # 基础查询：只能查看与自己相关的日志
     logs = OperationLog.objects.filter(
-        Q(operator=request.user) |  # 自己的操作
+        Q(operator_name=username) |  # 自己的操作
         Q(related_request__asset__owner=user_role)  # 与自己数据相关的操作
     ).order_by('-operation_time')
 
