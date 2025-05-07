@@ -78,7 +78,10 @@ urlpatterns = [
     path('searchinsbsxterface/', views.searchinsbsxterface),
 
     path('sjtzadd/', views.sjtzadd),
+    #数据IP追踪
+path('shaxiangip/', views.shaxiangip),
     path('create-sandbox/', views.createsandbox),
+    path('create-ip/', views.createip),
 path('sjsxinterface-edit/', views.sjsxinterface_edit),
     path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
 path('sysxdeleteinterface/', views.sysxdeleteinterface),
