@@ -1,0 +1,250 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+  <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+  <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+  <title>可信数据空间</title>
+  <style>
+    /* 页面基础设置 */
+    body {
+      background-color: #f5f7fa;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .content-container {
+      padding: 30px;
+      margin-left: 220px;
+    }
+
+    /* 卡片式布局 */
+    .card {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      margin-bottom: 30px;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+    }
+
+    .card h3 {
+      font-size: 24px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* 表单样式 */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #dcdfe6;
+      background-color: #f9f9f9;
+      transition: all 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: #409eff;
+      background-color: #ffffff;
+      box-shadow: 0 0 5px rgba(64, 158, 255, 0.3);
+    }
+
+    /* 表格优化 */
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .table th, .table td {
+      text-align: center;
+      padding: 12px;
+      font-size: 14px;
+      color: #555;
+      border: 1px solid #eaeaea;
+    }
+
+    .table thead {
+      background-color: #f2f6fc;
+    }
+
+    .table tbody tr:hover {
+      background-color: #eef4fb;
+    }
+
+    /* 按钮样式 */
+    .btn-copy {
+      background-color: #409eff;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-copy:hover {
+      background-color: #66b1ff;
+    }
+
+    .link-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin: 30px 0 10px;
+    }
+
+    .link-section-title small {
+      font-size: 14px;
+      color: #888;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 侧边菜单 -->
+  <aside class="Hui-admin-aside-wrapper">
+    <div class="Hui-admin-logo-wrapper">
+      <a class="logo navbar-logo" href="/aboutHui.shtml">
+        <i class="va-m iconpic global-logo"></i>
+        <span class="va-m">可信数据空间</span>
+      </a>
+    </div>
+    <div class="Hui-admin-menu-dropdown bk_2">
+      <!-- 用户管理 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+        <dd class="Hui-menu-item" style="display:block">
+          <ul><li><a href="/user-list/" title="用户管理">用户管理</a></li></ul>
+        </dd>
+      </dl>
+      <!-- 数据确权 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+        <dd class="Hui-menu-item" style="display:block">
+          <ul><li><a href="/data-confirmation/" title="数据确权">数据确权</a></li></ul>
+        </dd>
+      </dl>
+      <!-- 数据管理 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dd class="Hui-menu-item" style="display:block">
+          <ul><li><a href="/data_asset_list/" title="数据列表">数据列表</a></li></ul>
+        </dd>
+      </dl>
+      <!-- 项目信息管理 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dd class="Hui-menu-item" style="display:block">
+          <ul><li><a href="/established_project/" title="已建立项目">已建立项目</a></li></ul>
+          <ul><li><a href="/pengding_project/" title="待接受项目">待接受项目</a></li></ul>
+        </dd>
+      </dl>
+      <!-- 存证信息管理 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dd class="Hui-menu-item" style="display:block">
+          <ul><li><a href="/records/" title="数据存证信息">数据存证信息</a></li></ul>
+          <ul><li><a href="/project_notarization/" title="项目存证信息">项目存证信息</a></li></ul>
+        </dd>
+      </dl>
+      <!-- 数据安全共享方法 -->
+      <dl class="Hui-menu">
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dd class="Hui-menu-item" style="display:block"><ul><li><a href="/wb-interface/" title="数据接口">数据接口</a></li></ul></dd>
+        <dd class="Hui-menu-item" style="display:block"><ul><li class="current"><a href="/sjsx-interface/" title="数据沙箱">数据沙箱</a></li></ul></dd>
+        <dd class="Hui-menu-item" style="display:block"><ul><li><a href="/index/" title="隐私计算">隐私计算</a></li></ul></dd>
+        <dd class="Hui-menu-item" style="display:block"><ul><li><a href="/mutiindex/" title="密文计算">密文计算</a></li></ul></dd>
+      </dl>
+    </div>
+  </aside>
+
+  <!-- 主要内容区域 -->
+  <div class="content-container">
+    <!-- 当前沙箱信息 -->
+    <div class="card">
+      <h3>📄 当前沙箱信息</h3>
+      <form id="sandboxInfoForm">
+        <div class="form-group">
+          <label>🧱 当前选中沙箱路径：</label>
+          <input type="text" id="sandboxPath" name="sandbox_path" readonly placeholder="尚未选择沙箱">
+        </div>
+      </form>
+    </div>
+
+    <!-- 链接管理 -->
+    <div class="card">
+      <h3>🔗 链接管理</h3>
+      <div class="link-section-title">✅ 现存有效链接</div>
+      <table class="table table-hover">
+        <thead><tr><th>链接地址</th><th>操作</th></tr></thead>
+        <tbody id="validLinksTable"></tbody>
+      </table>
+
+      <div class="link-section-title">❌ 失效链接</div>
+      <table class="table table-hover">
+        <thead><tr><th>链接地址</th></tr></thead>
+        <tbody id="expiredLinksTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 脚本 -->
+  <script>
+    function loadValidLinks(path) {
+      const tbody = document.getElementById('validLinksTable');
+      if (!path) {
+        tbody.innerHTML = '<tr><td colspan="2" style="color:#999;">尚未选择沙箱</td></tr>';
+        return;
+      }
+      tbody.innerHTML = `
+        <tr>
+          <td><div style="overflow-x:auto; white-space:nowrap;">${path}</div></td>
+          <td><button class="btn-copy" onclick="copyLink('${path}')">复制链接</button></td>
+        </tr>
+      `;
+    }
+
+    function copyLink(link) {
+      const tmp = document.createElement('input');
+      document.body.appendChild(tmp);
+      tmp.value = link;
+      tmp.select();
+      document.execCommand('copy');
+      document.body.removeChild(tmp);
+      alert('✅ 链接已复制到剪贴板');
+    }
+
+    window.onload = () => {
+      const path = sessionStorage.getItem('currentSandboxPath') || '';
+      document.getElementById('sandboxPath').value = path;
+      loadValidLinks(path);
+    };
+  </script>
+</body>
+</html>
