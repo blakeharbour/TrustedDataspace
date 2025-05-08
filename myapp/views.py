@@ -1863,13 +1863,15 @@ def delete_project(request):
         dataDemand = request.POST.get('dataDemand')
         dataOwner = request.POST.get('dataOwner')
         dataAsset = request.POST.get('dataAsset')
+        id = request.POST.get('id')  # 获取 ID 参数
 
-        if projectName and dataDemand and dataOwner and dataAsset:
+        if projectName and dataDemand and dataOwner and dataAsset and id:
+            # 构建删除条件时添加 ID
             updatstr = "isDeleted = 'Y'"
-            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}'"
+            constr = f"projectName = '{projectName}' and dataDemand = '{dataDemand}' and dataOwner = '{dataOwner}' and dataAsset = '{dataAsset}' and ID = '{id}'"
             result = updatetable('pb8_ProjectAdd', updatstr, constr)
             if result == 1:
-                # 获取项目相关信息
+                # 获取项目相关信息，查询条件同样添加 ID
                 fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
                 order = 'ID DESC'
                 project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=constr, order=order, limit=1)
@@ -1908,22 +1910,22 @@ def delete_project(request):
                             inserttable(pro_js, tablename="project_notarization",
                                         con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
 
-                            return JsonResponse({'status': '0','message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
+                            return JsonResponse({'status': '0', 'message': '删除成功，区块链接口调用成功，数据已存入项目存证表'})
                         else:
                             print("区块链接口调用失败:", response.text)
-                            return JsonResponse({'status': '1','message': '删除成功，但区块链接口调用失败，请稍后重试'})
+                            return JsonResponse({'status': '1', 'message': '删除成功，但区块链接口调用失败，请稍后重试'})
                     except requests.RequestException as e:
                         print("请求异常:", e)
-                        return JsonResponse({'status': '1','message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
+                        return JsonResponse({'status': '1', 'message': '删除成功，但请求区块链接口时发生异常，请稍后重试'})
                 else:
                     print("数据库查询无结果")
-                    return JsonResponse({'status': '1','message': '删除成功，但数据库查询无结果'})
+                    return JsonResponse({'status': '1', 'message': '删除成功，但数据库查询无结果'})
             else:
-                return JsonResponse({'status': '1','message': '删除失败'})
+                return JsonResponse({'status': '1', 'message': '删除失败'})
         else:
-            return JsonResponse({'status': '1','message': '缺少必要的参数'})
+            return JsonResponse({'status': '1', 'message': '缺少必要的参数'})
     else:
-        return JsonResponse({'status': '1','message': '请求方法错误，仅支持POST请求'})
+        return JsonResponse({'status': '1', 'message': '请求方法错误，仅支持POST请求'})
 
 
 def update_project(request):
