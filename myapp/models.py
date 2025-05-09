@@ -110,3 +110,16 @@ class AssetRecord(models.Model):
         db_table = 'asset_record'
         verbose_name = "资产记录"  # 在 Django Admin 中显示的名称
         verbose_name_plural = "资产记录"  # 复数形式
+
+###
+# myapp/models.py
+from django.db import models
+
+class SandboxIPLog(models.Model):
+    address   = models.CharField(max_length=255)               # 对应表里的 address 列
+    ip        = models.GenericIPAddressField()                 # 对应表里的 ip 列
+    timestamp = models.DateTimeField(auto_now_add=False)       # 或者 auto_now_add=True 取决于表结构
+
+    class Meta:
+        db_table = 'sandboxiplog'      # 指定已存在的数据库表名
+        managed  = False               # 如果你不想让 Django 管理（迁移）这张表，就设为 False

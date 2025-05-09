@@ -112,9 +112,13 @@ def sjtzadd(request):
 
 def shaxiangip(request):
     return render(request, 'shaxiangip.html', {
-        'current_user': request.user  # 传递用户对象到模板shaxiangip
+        'current_user': request.user  # 传递用户对象到模板
     })
 
+def shaxiangipbox(request):
+    return render(request, 'shaxiangipbox.html', {
+        'current_user': request.user  # 传递用户对象到模板
+    })
 def upload_to_sandbox(request):
     return render(request, 'upload_to_sandbox.html', {
         'current_user': request.user  # 传递用户对象到模板
@@ -624,34 +628,62 @@ def createinterfacesx(request):
 
 
 
-#createip
+#数据IP追踪模块
 def createip(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
-    # confirmman = projs["confirmman"]
-    # confirmtime = projs["confirmtime"]
-    # saveurl = projs["saveurl"]
-    # zichanname = projs["zichanname"]
-    # staytime = projs["staytime"]
-    # jiamipro = projs["jiamipro"]
-    # autoscope = projs["autoscope"]
-    # delchannle = projs["delchannle"]
-
     address = projs["address"]
     ip = projs["ip"]
-
 
     pro_js = (
         "'" + address + "','" + ip + "'"
     )
-
     inserttable(
         pro_js,
         tablename="sandboxip",
         con1="address,ip"
     )
-
     print("xinzengchenggong")
     return JsonResponse({'status': 0})
+
+
+
+########
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+from myapp.models import SandboxIPLog
+import logging
+logger = logging.getLogger(__name__)
+
+@require_POST
+def createipbox(request):
+    """
+    接收 { address }，只查询 sandboxiplog 表中对应 address 的所有 ip，
+    返回 { success, data: [{ ip }, …] }。
+    """
+    try:
+        payload = json.loads(request.body.decode('utf-8'))
+        address = payload.get('address', '').strip()
+        if not address:
+            return JsonResponse({'success': False, 'error': 'address 不能为空'}, status=400)
+
+        # —— 只查询 ip 列 ——
+        qs = (SandboxIPLog.objects
+              .filter(address=address)
+              .values('ip'))
+
+        data = [{'ip': rec['ip']} for rec in qs]
+
+        return JsonResponse({'success': True, 'data': data})
+    except Exception as e:
+        logger.error("[createipbox] 查询出错", exc_info=True)
+        return JsonResponse({'success': False, 'error': '服务器内部错误'}, status=500)
+
+#######
+
+
+
+
 
 def createsandbox(request):
     projs = json.loads(request.body)  # 是 dict，不是 list

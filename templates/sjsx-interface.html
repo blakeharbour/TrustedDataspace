@@ -167,8 +167,8 @@
                 <i class="Hui-iconfont">&#xe600;</i> 限制沙箱IP
               </a>
                 </a>
-                <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
-                <i class="Hui-iconfont">&#xe645;</i> 查询沙箱IP追踪
+                <a href="javascript:;" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                <i class="Hui-iconfont">&#xe645;</i> 沙箱对应IP追踪
               </a>
               <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
                 <a href="javascript:;" onclick="checklinkforxq()" class="btn btn-primary radius">
@@ -462,8 +462,8 @@ function checklinkforxq() {
 
     
   location.href = "http://127.0.0.1:8000/xqflist_open/";
-
 }
+
 
 
  // 监听单选按钮变化（事件委托）
@@ -501,7 +501,9 @@ function uploadDataIP() {
   location.href = "http://127.0.0.1:8000/shaxiangip/";
 }
 
-
+function boxloadDataIP() {
+  location.href = "http://127.0.0.1:8000/shaxiangipbox/";
+}
 
 
 function destroyData(id) {
