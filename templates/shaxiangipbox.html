@@ -141,7 +141,7 @@
         </div>
       </div>
         <div class="row clearfix">
-        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>合法IP：</label>
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>创建人：</label>
         <div class="form-controls col-xs-8 col-sm-9">
           <input type="text" class="input-text" id="ip" name="ip" placeholder="请输入合法IP">
         </div>
@@ -200,22 +200,29 @@ function submitSandbox() {
   });
 }
 
+
 function renderLogTable(logs) {
   if (!logs || logs.length === 0) {
     $("#ip-log-results").html('<p class="c-gray">暂无访问记录。</p>');
     return;
   }
+  // —— 表头多加一列“结果” ——
   let html = `
     <table class="table table-border table-bordered table-hover">
       <thead>
-        <tr class="text-c"><th>访问 IP</th></tr>
+        <tr class="text-c">
+          <th>访问 IP</th>
+          <th>结果</th>
+        </tr>
       </thead>
       <tbody>
   `;
+  // —— 每行也多输出 item.jieguo ——
   logs.forEach(item => {
     html += `
       <tr class="text-c">
         <td>${item.ip}</td>
+        <td>${item.jieguo}</td>
       </tr>`;
   });
   html += `

@@ -647,7 +647,7 @@ def createip(request):
 
 
 
-########
+#########数据IP追踪模块2
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
@@ -670,9 +670,12 @@ def createipbox(request):
         # —— 只查询 ip 列 ——
         qs = (SandboxIPLog.objects
               .filter(address=address)
-              .values('ip'))
+              .values('ip', 'jieguo'))
 
-        data = [{'ip': rec['ip']} for rec in qs]
+        data = [
+            {'ip': rec['ip'], 'jieguo': rec['jieguo']}
+            for rec in qs
+        ]
 
         return JsonResponse({'success': True, 'data': data})
     except Exception as e:
