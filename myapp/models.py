@@ -110,3 +110,80 @@ class AssetRecord(models.Model):
         db_table = 'asset_record'
         verbose_name = "资产记录"  # 在 Django Admin 中显示的名称
         verbose_name_plural = "资产记录"  # 复数形式
+
+#####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+class DataRights(models.Model):
+    # 基本信息
+    data_name = models.CharField(max_length=255, verbose_name="数据名称")
+    data_description = models.TextField(verbose_name="数据内容描述")
+
+    # 业务环节分类
+    BUSINESS_STAGE_CHOICES = [
+        ('货物申报数据', '货物申报数据'),
+        ('通关检验数据', '通关检验数据'),
+        ('物流运输数据', '物流运输数据'),
+        ('交接交付数据', '交接交付数据'),
+    ]
+    business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES, verbose_name="业务环节分类")
+
+    # 数据关系类型
+    RELATIONSHIP_TYPE_CHOICES = [
+        ('原始数据', '原始数据'),
+        ('衍生数据', '衍生数据'),
+    ]
+    relationship_type = models.CharField(max_length=50, choices=RELATIONSHIP_TYPE_CHOICES, verbose_name="数据关系类型")
+
+    # 数据来源信息
+    DATA_SOURCE_CHOICES = [
+        ('海关', '海关'),
+        ('港口', '港口'),
+        ('铁路', '铁路'),
+        ('哈方', '哈方'),
+    ]
+    data_source = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="数据来源方")
+    is_original_generator = models.BooleanField(default=True, verbose_name="是否为数据原始生成者")
+
+    # 衍生数据信息（仅当relationship_type为'衍生数据'时使用）
+    original_provider = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, null=True, blank=True,
+                                         verbose_name="原始数据提供方")
+
+    PROCESSING_LEVEL_CHOICES = [
+        ('轻度加工', '轻度加工（简单整理、格式转换）'),
+        ('深度加工', '深度加工（算法分析、模型应用）'),
+        ('创造性加工', '创造性加工（生成新指标或见解）'),
+    ]
+    processing_level = models.CharField(max_length=50, choices=PROCESSING_LEVEL_CHOICES, null=True, blank=True,
+                                        verbose_name="加工程度")
+
+    # 数据格式
+    DATA_FORMAT_CHOICES = [
+        ('CSV文件', 'CSV文件'),
+        ('Excel表格', 'Excel表格'),
+        ('数据库表', '数据库表'),
+        ('JSON数据', 'JSON数据'),
+        ('XML文档', 'XML文档'),
+        ('其他', '其他'),
+    ]
+    data_format = models.CharField(max_length=50, choices=DATA_FORMAT_CHOICES, verbose_name="数据格式")
+
+    # 时间覆盖范围
+    time_range_start = models.DateField(verbose_name="时间范围起始")
+    time_range_end = models.DateField(null=True, blank=True, verbose_name="时间范围结束")
+    is_present = models.BooleanField(default=False, verbose_name="时间范围延续至今")
+
+    # 确权结果
+    resource_holding_right = models.BooleanField(default=False, verbose_name="数据资源持有权")
+    processing_use_right = models.BooleanField(default=False, verbose_name="数据加工使用权")
+    right_source = models.CharField(max_length=255, verbose_name="权限依据")
+
+    # 记录创建时间
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
+    def __str__(self):
+        return self.data_name
+
+    class Meta:
+        db_table = 'data_rights'
+        verbose_name = "数据确权"
+        verbose_name_plural = "数据确权"
+#####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
