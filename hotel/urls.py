@@ -223,6 +223,9 @@ path('xqflist_open/', views.xqflist_open),
     path('multmodel-list/', viewsmult.multmodel_list),
     path('multupload/', viewsmult.upload_multmodelapply),
     path('multmodeltest/', viewsmult.multmodel_test),  # 测试
+    #数据确权
+    path('data-confirmation/', views.data_confirmation, name='data_confirmation'),
+    path('data-confirmation-add/', views.data_confirmation_add, name='data_confirmation_add'),
     # 数据管理
     path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确
     path('data_asset_add/', views.add_data_asset, name='data_asset_add'),
@@ -287,3 +290,4 @@ path('xqflist_open/', views.xqflist_open),
     path('get_data/', get_data, name='get_data'),  # 让主界面直接访问 /get_data/
 
 ]
+

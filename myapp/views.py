@@ -2370,3 +2370,78 @@ def show_latest_ip(request):
 
 def data_model(request):
     return render(request, 'data_view1.html')
+
+
+# 数据确权相关视图函数AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+@login_required(login_url='/login/')
+def data_confirmation(request):
+    """数据确权记录列表页面"""
+    try:
+        # 获取所有数据确权记录
+        from .models import DataRights
+        data_rights_records = DataRights.objects.all().order_by('-created_at')
+
+        return render(request, 'data-confirmation.html', {
+            'records': data_rights_records,
+            'current_user': request.user
+        })
+    except Exception as e:
+        return render(request, 'data-confirmation.html', {
+            'error': f'获取数据确权记录失败: {str(e)}',
+            'current_user': request.user
+        })
+
+
+@login_required(login_url='/login/')
+def data_confirmation_add(request):
+    """数据确权添加页面"""
+    if request.method == 'POST':
+        # 处理表单提交
+        try:
+            data = {
+                'data_name': request.POST.get('data_name'),
+                'data_description': request.POST.get('data_description'),
+                'business_stage': request.POST.get('business_stage'),
+                'relationship_type': request.POST.get('relationship_type'),
+                'data_source': request.POST.get('data_source'),
+                'is_original_generator': request.POST.get('relationship_type') == '原始数据',
+                'data_format': request.POST.get('data_format'),
+                'time_range_start': request.POST.get('time_range_start'),
+                'time_range_end': request.POST.get('time_range_end') if request.POST.get('time_range_end') else None,
+                'is_present': request.POST.get('is_present') == 'on',
+            }
+
+            # 如果是衍生数据，获取原始数据提供方和加工程度
+            if data['relationship_type'] == '衍生数据':
+                data['original_provider'] = request.POST.get('original_provider')
+                data['processing_level'] = request.POST.get('processing_level')
+
+            # 根据数据关系类型自动设置权限
+            if data['relationship_type'] == '原始数据':
+                data['resource_holding_right'] = True
+                data['processing_use_right'] = True
+                data['right_source'] = '作为原始数据生成者，拥有完整权限'
+            else:
+                data['resource_holding_right'] = False
+                data['processing_use_right'] = True
+                data['right_source'] = '作为衍生数据生成者，拥有加工使用权'
+
+            # 创建数据确权记录
+            from .models import DataRights
+            data_rights = DataRights.objects.create(**data)
+
+            # 重定向到数据确权记录列表页面
+            return redirect('data_confirmation')
+
+        except Exception as e:
+            # 处理错误
+            return render(request, 'data-confirmation-add.html', {
+                'error': f'数据确权保存失败: {str(e)}',
+                'form_data': request.POST,
+                'current_user': request.user
+            })
+
+    # GET请求，显示表单页面
+    return render(request, 'data-confirmation-add.html', {
+        'current_user': request.user
+    })
