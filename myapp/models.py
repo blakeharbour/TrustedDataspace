@@ -140,7 +140,7 @@ class DataRights(models.Model):
         ('铁路', '铁路'),
         ('哈方', '哈方'),
     ]
-    data_source = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="数据来源方")
+    data_source = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="当前数据持有方")
     is_original_generator = models.BooleanField(default=True, verbose_name="是否为数据原始生成者")
 
     # 衍生数据信息（仅当relationship_type为'衍生数据'时使用）

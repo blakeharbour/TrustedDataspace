@@ -70,6 +70,12 @@
             padding: 15px;
             border-radius: 5px;
         }
+
+        /* 为表格上方的页面长度菜单添加样式 */
+        .table-top-length {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -182,6 +188,9 @@
                             </span>
                         </div>
 
+                        <!-- 添加自定义容器用于放置页面长度选择器 -->
+                        <div id="table-length-menu" class="table-top-length"></div>
+
                         {% if error %}
                         <div class="alert alert-danger">{{ error }}</div>
                         {% endif %}
@@ -195,7 +204,7 @@
                                         <th width="80">业务环节</th>
                                         <th width="80">数据格式</th>
                                         <th width="100">数据关系类型</th>
-                                        <th width="80">数据来源方</th>
+                                        <th width="80">当前数据持有方</th>
                                         <th width="80">原始数据提供方</th>
                                         <th width="80">加工程度</th>
                                         <th width="60">资源持有权</th>
@@ -273,6 +282,7 @@ $(function(){
         "aoColumnDefs": [
             {"orderable": false, "aTargets": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} // 不参与排序的列
         ],
+        "dom": 'rtip', // 移除默认搜索框和长度选择框
         "language": {
             "sProcessing": "处理中...",
             "sLengthMenu": "显示 _MENU_ 项结果",
@@ -281,7 +291,6 @@ $(function(){
             "sInfoEmpty": "显示第 0 至 0 项结果，共 0 项",
             "sInfoFiltered": "(由 _MAX_ 项结果过滤)",
             "sInfoPostFix": "",
-            "sSearch": "搜索:",
             "sUrl": "",
             "sEmptyTable": "表中数据为空",
             "sLoadingRecords": "载入中...",
@@ -294,6 +303,21 @@ $(function(){
             }
         }
     }).api();
+
+    // 将长度选择器移动到表格上方的自定义位置
+    $('#table-length-menu').html('<div class="dataTables_length">' +
+                                 '<label>显示 ' +
+                                 '<select name="table-sort_length" aria-controls="table-sort" class="form-control input-sm">' +
+                                 '<option value="10">10</option>' +
+                                 '<option value="25">25</option>' +
+                                 '<option value="50">50</option>' +
+                                 '<option value="100">100</option>' +
+                                 '</select> 项结果</label></div>');
+
+    // 监听长度选择器变化
+    $('select[name="table-sort_length"]').on('change', function() {
+        table.page.len($(this).val()).draw();
+    });
 
     // 多条件搜索
     $('#search-btn').click(function(){
