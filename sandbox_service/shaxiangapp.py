@@ -51,12 +51,17 @@ def create_sandbox():
             if c.name == container_name:
                 return jsonify(success=False, message=f"容器名 {container_name} 已存在，请先销毁"), 409
 
-        # ✅ 拉取镜像（建议提前 pull 或缓存）
+        # ✅ 修改后的镜像检查与使用逻辑
         image = "python:3.10-slim"
         try:
-            client.images.pull(image)
-        except Exception as e:
-            return jsonify(success=False, message=f"拉取镜像失败：{str(e)}"), 500
+            # 检查本地是否已有该镜像
+            client.images.get(image)
+        except docker.errors.ImageNotFound:
+            try:
+                # 若未找到，尝试拉取（如你确实允许联网）
+                client.images.pull(image)
+            except Exception as e:
+                return jsonify(success=False, message=f"拉取镜像失败：{str(e)}"), 500
 
         # # ✅ 创建容器
         # container = client.containers.run(
