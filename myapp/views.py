@@ -1,8 +1,12 @@
 import torch
 # -*- coding:utf-8 -*-
 import json
+import socket
 import subprocess
-
+import traceback
+import json
+import datetime
+from django.http import JsonResponse
 import corsheaders
 from django.db import transaction
 from django.http import HttpResponse
@@ -337,6 +341,61 @@ def searchonelogin(request):
     print('查找成功')
     return JsonResponse({'status': 0, 'data': userlist, 'msg': 'success'})
 
+def check_sandbox_ip(request):
+    try:
+        proobj = request.body
+        projs = json.loads(proobj)
+
+        address = projs.get("address", "").strip()
+        if not address:
+            return JsonResponse({'allowed': False, 'message': '缺少沙箱路径'}, status=400)
+        print("[前端传来地址]:", address)
+
+        # 自动获取客户端 IP
+        client_ip = get_local_ip()
+        print(client_ip)
+
+        # 查询 IP 白名单
+        fiterstr = f"address = '{address}'"
+        iplist = selecttable("sandboxip", "ip", fiterstr, '', '', '')
+        print("[IP白名单]:", iplist)
+
+        if not iplist:
+            iplist = []
+
+        allowed_ip_set = set(row[0] for row in iplist)
+        is_allowed = client_ip in allowed_ip_set
+        jieguo = '成功' if is_allowed else '失败'
+
+        print("[即将插入日志]：", f"'{address}', '{client_ip}', '{jieguo}'")
+
+
+        inserttable(f"'{address}', '{client_ip}', '{jieguo}'", "sandboxiplog", "address, ip, jieguo")
+
+        return JsonResponse({
+            'allowed': is_allowed,
+            'message': 'IP 验证通过' if is_allowed else '当前 IP 未被授权访问'
+        })
+
+    except Exception as e:
+        traceback.print_exc()
+        return JsonResponse({
+            'allowed': False,
+            'message': f"请求处理异常: {str(e)}"
+        }, status=500)
+
+
+def get_local_ip():
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        return local_ip
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        return x_forwarded_for.split(',')[0].strip()
+    return request.META.get('REMOTE_ADDR', '')
+
 from datetime import datetime
 def editguest(guestlist):
     # userid=None
@@ -531,6 +590,7 @@ def createinterface(request):
 def createinterfacesx(request):
 
     zcname = request.POST.get("zcname")  # 从前端拿 zcname
+    print(zcname)
 
     select_js = "assetName = '" + zcname + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID", select_js, '',

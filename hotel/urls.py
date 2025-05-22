@@ -58,6 +58,8 @@ urlpatterns = [
     path('deletelogin/', views.deletelogin),
     path('searchonelogin/', views.searchonelogin),
 
+    path('api/check_sandbox_ip/', views.check_sandbox_ip),
+
     #数据接口界面
     path('wb-interface/', views.wb_interface),
     path('searchinterface/', views.searchinterface),
