@@ -111,11 +111,6 @@
 						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
-                <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/get_data/" title="IP追踪">IP追踪</a></li>
-					</ul>
-				</dd>
 			</dl>
 		</div>
 	</aside>
@@ -163,18 +158,11 @@
               <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius">
                 创建所需规格数据沙箱
               </a>
-                <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
-                <i class="Hui-iconfont">&#xe600;</i> 限制沙箱IP
-              </a>
-                </a>
-                <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
-                <i class="Hui-iconfont">&#xe645;</i> 查询沙箱IP追踪
-              </a>
-              <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
-                <a href="javascript:;" onclick="checklinkforxq()" class="btn btn-primary radius">
+              <span class="label label-success radius"></span>
+                <a href="javascript:;" onclick="checklinkforxq() " class="btn btn-primary radius">
                 可查看沙箱链接【需求方】
               </a>
-                <span class="label label-success radius">安全链路已就绪</span>
+                <span class="label label-success radius"></span>
             </span>
           </div>
 <div class="panel mt-20">
@@ -438,32 +426,65 @@ function interface_add() {
 
 }
 
+
+function getCsrfToken() {
+  const match = document.cookie.match(/csrftoken=([^;]+)/);
+  return match ? match[1] : '';
+}
+
 function checklinkforxq() {
-    const selectedRow = document.querySelector('input[name="selected_interface"]:checked');
-    if (!selectedRow) {
-        layer.msg("请先选择一条沙箱", { icon: 2 });
-        return;
+  const selectedRow = document.querySelector('input[name="selected_interface"]:checked');
+  if (!selectedRow) {
+    layer.msg("请先选择一条沙箱", { icon: 2 });
+    return;
+  }
+
+  const row = selectedRow.closest('tr');
+  const sandboxPath = row.children[3]?.innerText.trim() || '';
+  const zcname      = row.children[4]?.innerText.trim() || '';
+  const yxq         = row.children[5]?.innerText.trim() || '';
+
+  if (!sandboxPath) {
+    layer.msg("无法获取沙箱路径", { icon: 2 });
+    return;
+  }
+
+  fetch('/api/check_sandbox_ip/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken()
+    },
+    body: JSON.stringify({ address: sandboxPath })
+  })
+  .then(res => {
+    if (!res.ok) {
+      throw new Error(`服务器返回状态码 ${res.status}`);
+    }
+    return res.json();
+  })
+  .then(data => {
+    if (!data || typeof data.allowed === 'undefined') {
+      throw new Error("后端返回格式异常");
     }
 
-    const row = selectedRow.closest('tr');
-    const sandboxPath = row.children[3]?.innerText.trim(); // 数据访问路径
-    const zcname = row.children[4]?.innerText.trim(); // 数据资产项
-    const yxq = row.children[5]?.innerText.trim();
-    // 检查是否在已创建沙箱中
-    if (!activeSandboxPaths.has(sandboxPath)) {
-        layer.msg("该沙箱尚未创建，无法添加数据", { icon: 2 });
-        return;
-    }
+    layer.msg(data.message, { icon: data.allowed ? 1 : 2 });
 
-    // 存入 sessionStorage
     sessionStorage.setItem("currentSandboxPath", sandboxPath);
     sessionStorage.setItem("currentzcname", zcname);
     sessionStorage.setItem("currentyxq", yxq);
 
-    
-  location.href = "http://127.0.0.1:8000/xqflist_open/";
-
+    if (data.allowed) {
+      location.href = "http://127.0.0.1:8000/xqflist_open/";
+    }
+  })
+  .catch(err => {
+    console.error('请求错误:', err);
+    layer.msg("IP 校验请求失败：" + err.message, { icon: 2 });
+  });
 }
+
+
 
 
  // 监听单选按钮变化（事件委托）
@@ -548,10 +569,11 @@ $(function() {
 });
 
 */
-  document.addEventListener('DOMContentLoaded', function () {
+ document.addEventListener('DOMContentLoaded', function () {
     loadSandboxStatus();
 });
-   
+
+
 </script>
 </body>
 </html>
