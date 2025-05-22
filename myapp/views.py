@@ -352,8 +352,9 @@ def check_sandbox_ip(request):
         print("[前端传来地址]:", address)
 
         # 自动获取客户端 IP
-        client_ip = get_local_ip()
+        client_ip = get_client_ip1()
         print(client_ip)
+
 
         # 查询 IP 白名单
         fiterstr = f"address = '{address}'"
@@ -389,6 +390,17 @@ def get_local_ip():
         hostname = socket.gethostname()
         local_ip = socket.gethostbyname(hostname)
         return local_ip
+
+def get_client_ip1():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception as e:
+        print(f"Failed to get client IP: {e}")
+        return None
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
