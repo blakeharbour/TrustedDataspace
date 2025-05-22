@@ -187,3 +187,20 @@ class DataRights(models.Model):
         verbose_name = "数据确权"
         verbose_name_plural = "数据确权"
 #####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+###
+# myapp/models.py
+from django.db import models
+
+class SandboxIPLog(models.Model):
+    # 已有字段
+    address   = models.CharField(max_length=255)
+    ip        = models.GenericIPAddressField()
+    timestamp = models.DateTimeField(auto_now_add=False)  # 或根据实际情况设 auto_now_add=True
+
+    # 新增这一行，映射你表里的 jieguo 列
+    jieguo    = models.CharField(max_length=255)          # max_length 根据表结构调整
+
+    class Meta:
+        db_table = 'sandboxiplog'
+        managed  = False   # 如果你不希望 Django 管理迁移，就保持 False
