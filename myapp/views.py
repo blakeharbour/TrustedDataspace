@@ -2373,75 +2373,317 @@ def data_model(request):
 
 
 # 数据确权相关视图函数AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, Http404
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.utils import timezone
+from datetime import datetime, date
+import json
+
+from .models import (
+    DataRightApplication,
+    DataRightRecord,
+    DataRightApplicationHistory,
+    DATA_SOURCE_CHOICES,
+    BUSINESS_STAGE_CHOICES
+)
+
+
 @login_required(login_url='/login/')
-def data_confirmation(request):
-    """数据确权记录列表页面"""
-    try:
-        # 获取所有数据确权记录
-        from .models import DataRights
-        data_rights_records = DataRights.objects.all().order_by('-created_at')
-
-        return render(request, 'data-confirmation.html', {
-            'records': data_rights_records,
-            'current_user': request.user
-        })
-    except Exception as e:
-        return render(request, 'data-confirmation.html', {
-            'error': f'获取数据确权记录失败: {str(e)}',
-            'current_user': request.user
-        })
-
-
-@login_required(login_url='/login/')
-def data_confirmation_add(request):
-    """数据确权添加页面"""
+def data_right_application_add(request):
+    """数据权利申请页面"""
     if request.method == 'POST':
-        # 处理表单提交
         try:
-            data = {
-                'data_name': request.POST.get('data_name'),
-                'data_description': request.POST.get('data_description'),
-                'business_stage': request.POST.get('business_stage'),
-                'relationship_type': request.POST.get('relationship_type'),
-                'data_source': request.POST.get('data_source'),
-                'is_original_generator': request.POST.get('relationship_type') == '原始数据',
-                'data_format': request.POST.get('data_format'),
-                'time_range_start': request.POST.get('time_range_start'),
-                'time_range_end': request.POST.get('time_range_end') if request.POST.get('time_range_end') else None,
-                'is_present': request.POST.get('is_present') == 'on',
-            }
+            with transaction.atomic():
+                # 创建申请记录
+                application = DataRightApplication(
+                    applicant=request.POST.get('applicant'),
+                    target_data_holder=request.POST.get('target_data_holder'),
+                    target_data_name=request.POST.get('target_data_name'),
+                    target_business_stage=request.POST.get('target_business_stage'),
 
-            # 如果是衍生数据，获取原始数据提供方和加工程度
-            if data['relationship_type'] == '衍生数据':
-                data['original_provider'] = request.POST.get('original_provider')
-                data['processing_level'] = request.POST.get('processing_level')
+                    # 申请的权利类型
+                    resource_holding_right='resource_holding_right' in request.POST,
+                    processing_use_right='processing_use_right' in request.POST,
+                    reauthorization_right='reauthorization_right' in request.POST,
+                    redistribution_right='redistribution_right' in request.POST,
+                    view_right='view_right' in request.POST,
 
-            # 根据数据关系类型自动设置权限
-            if data['relationship_type'] == '原始数据':
-                data['resource_holding_right'] = True
-                data['processing_use_right'] = True
-                data['right_source'] = '作为原始数据生成者，拥有完整权限'
-            else:
-                data['resource_holding_right'] = False
-                data['processing_use_right'] = True
-                data['right_source'] = '作为衍生数据生成者，拥有加工使用权'
+                    application_reason=request.POST.get('application_reason'),
+                    intended_use=request.POST.get('intended_use'),
+                    intended_duration_start=request.POST.get('intended_duration_start'),
+                    intended_duration_end=request.POST.get('intended_duration_end') if request.POST.get(
+                        'intended_duration_end') else None,
+                    is_permanent='is_permanent' in request.POST,
 
-            # 创建数据确权记录
-            from .models import DataRights
-            data_rights = DataRights.objects.create(**data)
+                    contact_person=request.POST.get('contact_person'),
+                    contact_phone=request.POST.get('contact_phone'),
+                    contact_email=request.POST.get('contact_email'),
+                )
+                application.save()
 
-            # 重定向到数据确权记录列表页面
-            return redirect('data_confirmation')
+                # 记录申请历史
+                DataRightApplicationHistory.objects.create(
+                    application=application,
+                    action_type='submit',
+                    action_user=request.user.username if hasattr(request.user, 'username') else '系统用户',
+                    action_comments='提交申请'
+                )
+
+                messages.success(request, f'申请提交成功！申请编号：{application.application_id}')
+                return redirect('data_confirmation_list')
 
         except Exception as e:
-            # 处理错误
-            return render(request, 'data-confirmation-add.html', {
-                'error': f'数据确权保存失败: {str(e)}',
-                'form_data': request.POST,
-                'current_user': request.user
-            })
+            messages.error(request, f'申请提交失败：{str(e)}')
 
-    # GET请求，显示表单页面
-    return render(request, 'data-confirmation-add.html', {
-        'current_user': request.user
-    })
+    context = {
+        'data_source_choices': DATA_SOURCE_CHOICES,
+        'business_stage_choices': BUSINESS_STAGE_CHOICES,
+        'current_time': timezone.now(),
+    }
+    return render(request, 'data-confirmation-add.html', context)
+
+
+@login_required(login_url='/login/')
+def data_right_application_review(request, application_id):
+    """数据权利申请审核页面"""
+    application = get_object_or_404(DataRightApplication, application_id=application_id)
+
+    # 获取审核历史记录
+    history_records = DataRightApplicationHistory.objects.filter(
+        application=application
+    ).exclude(action_type='submit')
+
+    if request.method == 'POST':
+        try:
+            with transaction.atomic():
+                review_decision = request.POST.get('review_decision')
+                review_comments = request.POST.get('review_comments')
+                reviewer = request.user.username if hasattr(request.user, 'username') else '系统用户'
+
+                # 更新申请状态
+                if review_decision == 'approve':
+                    application.status = 'approved'
+                elif review_decision == 'reject':
+                    application.status = 'rejected'
+                else:
+                    raise ValueError("无效的审核决定")
+
+                application.reviewer = reviewer
+                application.review_time = timezone.now()
+                application.review_comments = review_comments
+                application.save()
+
+                # 记录审核历史
+                DataRightApplicationHistory.objects.create(
+                    application=application,
+                    action_type='approve' if review_decision == 'approve' else 'reject',
+                    action_user=reviewer,
+                    action_comments=review_comments
+                )
+
+                # 如果审核通过，立即生成数据确权记录
+                if review_decision == 'approve':
+                    data_right_record = DataRightRecord(
+                        original_application=application,
+                        data_name=application.target_data_name,
+                        data_holder=application.target_data_holder,
+                        right_recipient=application.applicant,
+                        business_stage=application.target_business_stage,
+
+                        # 复制申请的权利到已获得权利
+                        granted_resource_holding_right=application.resource_holding_right,
+                        granted_processing_use_right=application.processing_use_right,
+                        granted_reauthorization_right=application.reauthorization_right,
+                        granted_redistribution_right=application.redistribution_right,
+                        granted_view_right=application.view_right,
+
+                        usage_start_date=application.intended_duration_start,
+                        usage_end_date=application.intended_duration_end,
+                        is_permanent_usage=application.is_permanent,
+
+                        approver=reviewer,
+                        approval_time=timezone.now(),
+                        approval_comments=review_comments,
+                    )
+                    data_right_record.save()
+
+                    messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
+                else:
+                    messages.success(request, '审核完成，申请已拒绝')
+
+                return redirect('data_confirmation_list')
+
+        except Exception as e:
+            messages.error(request, f'审核失败：{str(e)}')
+
+    # 将choices转换为字典
+    data_source_dict = dict(DATA_SOURCE_CHOICES)
+    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
+
+    context = {
+        'application': application,
+        'history_records': history_records,
+        'data_source_choices': DATA_SOURCE_CHOICES,
+        'business_stage_choices': BUSINESS_STAGE_CHOICES,
+        # 添加字典版本供模板使用
+        'data_source_dict': data_source_dict,
+        'business_stage_dict': business_stage_dict,
+        # 添加当前用户和时间信息
+        'current_user': request.user.username if hasattr(request.user, 'username') else '系统用户',
+        'current_time': timezone.now(),
+    }
+    return render(request, 'data-right-application-review.html', context)
+
+
+@login_required(login_url='/login/')
+def data_confirmation_list(request):
+    """数据确权记录列表页面"""
+    records = DataRightRecord.objects.all()
+
+    # 搜索功能
+    search_query = request.GET.get('search', '')
+    if search_query:
+        records = records.filter(data_name__icontains=search_query)
+
+    # 状态过滤
+    status_filter = request.GET.get('status', '')
+    if status_filter:
+        records = records.filter(status=status_filter)
+
+    # 数据持有方过滤
+    holder_filter = request.GET.get('holder', '')
+    if holder_filter:
+        records = records.filter(data_holder=holder_filter)
+
+    # 权利获得方过滤
+    recipient_filter = request.GET.get('recipient', '')
+    if recipient_filter:
+        records = records.filter(right_recipient=recipient_filter)
+
+    # 更新过期状态
+    for record in records:
+        if record.is_expired() and record.status == 'active':
+            record.status = 'expired'
+            record.save()
+
+    # 分页
+    paginator = Paginator(records, 10)  # 每页显示10条记录
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # 将choices转换为字典
+    data_source_dict = dict(DATA_SOURCE_CHOICES)
+    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
+    record_status_dict = dict(DataRightRecord.RECORD_STATUS_CHOICES)
+
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'holder_filter': holder_filter,
+        'recipient_filter': recipient_filter,
+        'data_source_choices': DATA_SOURCE_CHOICES,
+        'business_stage_choices': BUSINESS_STAGE_CHOICES,
+        'record_status_choices': DataRightRecord.RECORD_STATUS_CHOICES,
+        # 添加字典版本供模板使用
+        'data_source_dict': data_source_dict,
+        'business_stage_dict': business_stage_dict,
+        'record_status_dict': record_status_dict,
+    }
+    return render(request, 'data-confirmation.html', context)
+
+
+@login_required(login_url='/login/')
+def data_confirmation_detail(request, record_id):
+    """数据确权记录详情页面"""
+    record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+    # 获取原始申请的历史记录
+    application_history = DataRightApplicationHistory.objects.filter(
+        application=record.original_application
+    )
+
+    context = {
+        'record': record,
+        'application_history': application_history,
+        'data_source_choices': dict(DATA_SOURCE_CHOICES),
+        'business_stage_choices': dict(BUSINESS_STAGE_CHOICES),
+    }
+    return render(request, 'data-confirmation-detail.html', context)
+
+
+@login_required(login_url='/login/')
+def data_right_application_list(request):
+    """数据权利申请列表页面（用于审核人员查看待审核申请）"""
+    applications = DataRightApplication.objects.all()
+
+    # 状态过滤，默认显示待审核的申请
+    status_filter = request.GET.get('status', 'pending')
+    if status_filter:
+        applications = applications.filter(status=status_filter)
+
+    # 申请方过滤
+    applicant_filter = request.GET.get('applicant', '')
+    if applicant_filter:
+        applications = applications.filter(applicant=applicant_filter)
+
+    # 搜索功能
+    search_query = request.GET.get('search', '')
+    if search_query:
+        applications = applications.filter(target_data_name__icontains=search_query)
+
+    # 分页
+    paginator = Paginator(applications, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'applicant_filter': applicant_filter,
+        'data_source_choices': DATA_SOURCE_CHOICES,
+        'application_status_choices': DataRightApplication.APPLICATION_STATUS_CHOICES,
+    }
+    return render(request, 'data-right-application-list.html', context)
+
+
+# AJAX接口函数
+@login_required(login_url='/login/')
+def get_application_detail(request, application_id):
+    """获取申请详情的AJAX接口"""
+    try:
+        application = DataRightApplication.objects.get(application_id=application_id)
+
+        # 计算使用期限显示
+        if application.is_permanent:
+            usage_period = "永久使用"
+        elif application.intended_duration_end:
+            usage_period = f"{application.intended_duration_start} 至 {application.intended_duration_end}"
+        else:
+            usage_period = f"自 {application.intended_duration_start} 起"
+
+        data = {
+            'application_id': application.application_id,
+            'applicant': application.get_applicant_display(),
+            'target_data_holder': application.get_target_data_holder_display(),
+            'target_data_name': application.target_data_name,
+            'target_business_stage': application.get_target_business_stage_display(),
+            'applied_rights': application.get_applied_rights_display(),
+            'application_reason': application.application_reason,
+            'intended_use': application.intended_use,
+            'usage_period': usage_period,
+            'contact_person': application.contact_person,
+            'contact_phone': application.contact_phone,
+            'contact_email': application.contact_email,
+            'status': application.get_status_display(),
+            'created_at': application.created_at.strftime('%Y-%m-%d %H:%M'),
+        }
+        return JsonResponse({'success': True, 'data': data})
+    except DataRightApplication.DoesNotExist:
+        return JsonResponse({'success': False, 'message': '申请不存在'})
+# 数据确权相关视图函数AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

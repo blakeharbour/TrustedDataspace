@@ -112,78 +112,223 @@ class AssetRecord(models.Model):
         verbose_name_plural = "资产记录"  # 复数形式
 
 #####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-class DataRights(models.Model):
-    # 基本信息
-    data_name = models.CharField(max_length=255, verbose_name="数据名称")
-    data_description = models.TextField(verbose_name="数据内容描述")
+from django.db import models
+from django.utils import timezone
+import uuid
 
-    # 业务环节分类
-    BUSINESS_STAGE_CHOICES = [
-        ('货物申报数据', '货物申报数据'),
-        ('通关检验数据', '通关检验数据'),
-        ('物流运输数据', '物流运输数据'),
-        ('交接交付数据', '交接交付数据'),
+# 数据来源选择
+DATA_SOURCE_CHOICES = [
+    ('customs', '海关'),
+    ('port', '港口'),
+    ('railway', '铁路'),
+    ('kazakhstan', '哈方'),
+]
+
+# 业务环节选择
+BUSINESS_STAGE_CHOICES = [
+    ('cargo_declaration', '货物申报数据'),
+    ('customs_inspection', '通关检验数据'),
+    ('logistics_transport', '物流运输数据'),
+    ('handover_delivery', '交接交付数据'),
+]
+
+
+class DataRightApplication(models.Model):
+    """数据权利申请模型"""
+
+    # 申请基本信息
+    application_id = models.CharField(max_length=50, unique=True, verbose_name="申请编号")
+    applicant = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="申请方")
+    target_data_holder = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="目标数据持有方")
+
+    # 目标数据信息
+    target_data_name = models.CharField(max_length=255, verbose_name="目标数据名称")
+    target_business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES,
+                                             verbose_name="目标数据业务环节")
+
+    # 申请权利类型（多选）
+    resource_holding_right = models.BooleanField(default=False, verbose_name="申请资源持有权")
+    processing_use_right = models.BooleanField(default=False, verbose_name="申请加工使用权")
+    reauthorization_right = models.BooleanField(default=False, verbose_name="申请转授权权")
+    redistribution_right = models.BooleanField(default=False, verbose_name="申请再分发权")
+    view_right = models.BooleanField(default=False, verbose_name="申请查看权")
+
+    # 申请理由和用途
+    application_reason = models.TextField(verbose_name="申请理由")
+    intended_use = models.TextField(verbose_name="预期用途说明")
+
+    # 申请时间相关
+    intended_duration_start = models.DateField(verbose_name="预期使用开始时间")
+    intended_duration_end = models.DateField(null=True, blank=True, verbose_name="预期使用结束时间")
+    is_permanent = models.BooleanField(default=False, verbose_name="是否永久使用")
+
+    # 联系信息
+    contact_person = models.CharField(max_length=100, verbose_name="申请联系人")
+    contact_phone = models.CharField(max_length=20, verbose_name="联系电话")
+    contact_email = models.EmailField(verbose_name="联系邮箱")
+
+    # 申请状态
+    APPLICATION_STATUS_CHOICES = [
+        ('pending', '待审核'),
+        ('approved', '已同意'),
+        ('rejected', '已拒绝'),
+        ('withdrawn', '已撤回'),
     ]
-    business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES, verbose_name="业务环节分类")
+    status = models.CharField(max_length=20, choices=APPLICATION_STATUS_CHOICES, default='pending',
+                              verbose_name="申请状态")
 
-    # 数据关系类型
-    RELATIONSHIP_TYPE_CHOICES = [
-        ('原始数据', '原始数据'),
-        ('衍生数据', '衍生数据'),
-    ]
-    relationship_type = models.CharField(max_length=50, choices=RELATIONSHIP_TYPE_CHOICES, verbose_name="数据关系类型")
+    # 审核信息
+    reviewer = models.CharField(max_length=50, null=True, blank=True, verbose_name="审核人")
+    review_time = models.DateTimeField(null=True, blank=True, verbose_name="审核时间")
+    review_comments = models.TextField(null=True, blank=True, verbose_name="审核意见")
 
-    # 数据来源信息
-    DATA_SOURCE_CHOICES = [
-        ('海关', '海关'),
-        ('港口', '港口'),
-        ('铁路', '铁路'),
-        ('哈方', '哈方'),
-    ]
-    data_source = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="当前数据持有方")
-    is_original_generator = models.BooleanField(default=True, verbose_name="是否为数据原始生成者")
-
-    # 衍生数据信息（仅当relationship_type为'衍生数据'时使用）
-    original_provider = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, null=True, blank=True,
-                                         verbose_name="原始数据提供方")
-
-    PROCESSING_LEVEL_CHOICES = [
-        ('轻度加工', '轻度加工（简单整理、格式转换）'),
-        ('深度加工', '深度加工（算法分析、模型应用）'),
-        ('创造性加工', '创造性加工（生成新指标或见解）'),
-    ]
-    processing_level = models.CharField(max_length=50, choices=PROCESSING_LEVEL_CHOICES, null=True, blank=True,
-                                        verbose_name="加工程度")
-
-    # 数据格式
-    DATA_FORMAT_CHOICES = [
-        ('CSV文件', 'CSV文件'),
-        ('Excel表格', 'Excel表格'),
-        ('数据库表', '数据库表'),
-        ('JSON数据', 'JSON数据'),
-        ('XML文档', 'XML文档'),
-        ('其他', '其他'),
-    ]
-    data_format = models.CharField(max_length=50, choices=DATA_FORMAT_CHOICES, verbose_name="数据格式")
-
-    # 时间覆盖范围
-    time_range_start = models.DateField(verbose_name="时间范围起始")
-    time_range_end = models.DateField(null=True, blank=True, verbose_name="时间范围结束")
-    is_present = models.BooleanField(default=False, verbose_name="时间范围延续至今")
-
-    # 确权结果
-    resource_holding_right = models.BooleanField(default=False, verbose_name="数据资源持有权")
-    processing_use_right = models.BooleanField(default=False, verbose_name="数据加工使用权")
-    right_source = models.CharField(max_length=255, verbose_name="权限依据")
-
-    # 记录创建时间
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
-
-    def __str__(self):
-        return self.data_name
+    # 记录时间
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="申请时间")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
 
     class Meta:
-        db_table = 'data_rights'
-        verbose_name = "数据确权"
-        verbose_name_plural = "数据确权"
+        db_table = 'data_right_application'
+        verbose_name = '数据权利申请'
+        verbose_name_plural = '数据权利申请'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.application_id} - {self.target_data_name}"
+
+    def save(self, *args, **kwargs):
+        # 自动生成申请编号
+        if not self.application_id:
+            from datetime import datetime
+            date_str = datetime.now().strftime('%Y%m%d')
+            random_str = str(uuid.uuid4())[:8].upper()
+            self.application_id = f"DRA{date_str}{random_str}"
+        super().save(*args, **kwargs)
+
+    def get_applied_rights_display(self):
+        """获取申请权利的显示文本"""
+        rights = []
+        if self.resource_holding_right:
+            rights.append('资源持有权')
+        if self.processing_use_right:
+            rights.append('加工使用权')
+        if self.reauthorization_right:
+            rights.append('转授权权')
+        if self.redistribution_right:
+            rights.append('再分发权')
+        if self.view_right:
+            rights.append('查看权')
+        return '、'.join(rights) if rights else '无'
+
+
+class DataRightRecord(models.Model):
+    """数据确权记录模型"""
+
+    # 确权基本信息
+    record_id = models.CharField(max_length=50, unique=True, verbose_name="确权记录编号")
+    original_application = models.ForeignKey(DataRightApplication, on_delete=models.CASCADE, verbose_name="原始申请")
+
+    # 数据信息
+    data_name = models.CharField(max_length=255, verbose_name="数据名称")
+    data_holder = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="数据持有方")
+    right_recipient = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="权利获得方")
+    business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES, verbose_name="数据业务环节")
+
+    # 已获得权利
+    granted_resource_holding_right = models.BooleanField(default=False, verbose_name="已获得资源持有权")
+    granted_processing_use_right = models.BooleanField(default=False, verbose_name="已获得加工使用权")
+    granted_reauthorization_right = models.BooleanField(default=False, verbose_name="已获得转授权权")
+    granted_redistribution_right = models.BooleanField(default=False, verbose_name="已获得再分发权")
+    granted_view_right = models.BooleanField(default=False, verbose_name="已获得查看权")
+
+    # 使用期限
+    usage_start_date = models.DateField(verbose_name="使用开始时间")
+    usage_end_date = models.DateField(null=True, blank=True, verbose_name="使用结束时间")
+    is_permanent_usage = models.BooleanField(default=False, verbose_name="是否永久使用")
+
+    # 确权状态
+    RECORD_STATUS_CHOICES = [
+        ('active', '生效中'),
+        ('expired', '已过期'),
+        ('revoked', '已撤销'),
+    ]
+    status = models.CharField(max_length=20, choices=RECORD_STATUS_CHOICES, default='active', verbose_name="确权状态")
+
+    # 审核人信息
+    approver = models.CharField(max_length=50, verbose_name="审核人")
+    approval_time = models.DateTimeField(verbose_name="审核通过时间")
+    approval_comments = models.TextField(verbose_name="审核意见")
+
+    # 记录时间
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="确权时间")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+
+    class Meta:
+        db_table = 'data_right_record'
+        verbose_name = '数据确权记录'
+        verbose_name_plural = '数据确权记录'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.record_id} - {self.data_name}"
+
+    def save(self, *args, **kwargs):
+        # 自动生成确权记录编号
+        if not self.record_id:
+            from datetime import datetime
+            date_str = datetime.now().strftime('%Y%m%d')
+            random_str = str(uuid.uuid4())[:8].upper()
+            self.record_id = f"DCR{date_str}{random_str}"
+        super().save(*args, **kwargs)
+
+    def get_granted_rights_display(self):
+        """获取已获得权利的显示文本"""
+        rights = []
+        if self.granted_resource_holding_right:
+            rights.append('资源持有权')
+        if self.granted_processing_use_right:
+            rights.append('加工使用权')
+        if self.granted_reauthorization_right:
+            rights.append('转授权权')
+        if self.granted_redistribution_right:
+            rights.append('再分发权')
+        if self.granted_view_right:
+            rights.append('查看权')
+        return '、'.join(rights) if rights else '无'
+
+    def get_usage_period_display(self):
+        """获取使用期限的显示文本"""
+        if self.is_permanent_usage:
+            return "永久使用"
+        elif self.usage_end_date:
+            return f"{self.usage_start_date} 至 {self.usage_end_date}"
+        else:
+            return f"自 {self.usage_start_date} 起"
+
+    def is_expired(self):
+        """判断是否已过期"""
+        if self.is_permanent_usage:
+            return False
+        if self.usage_end_date:
+            from datetime import date
+            return date.today() > self.usage_end_date
+        return False
+
+
+class DataRightApplicationHistory(models.Model):
+    """数据权利申请历史记录模型"""
+
+    application = models.ForeignKey(DataRightApplication, on_delete=models.CASCADE, verbose_name="申请")
+    action_type = models.CharField(max_length=50, verbose_name="操作类型")  # submit, review, approve, reject
+    action_user = models.CharField(max_length=50, verbose_name="操作人")
+    action_time = models.DateTimeField(auto_now_add=True, verbose_name="操作时间")
+    action_comments = models.TextField(null=True, blank=True, verbose_name="操作说明")
+
+    class Meta:
+        db_table = 'data_right_application_history'
+        verbose_name = '申请历史记录'
+        verbose_name_plural = '申请历史记录'
+        ordering = ['-action_time']
+
+    def __str__(self):
+        return f"{self.application.application_id} - {self.action_type}"
 #####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
