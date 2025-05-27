@@ -788,6 +788,28 @@ def createsandbox(request):
     return JsonResponse({'status': 0})
 
 
+def delete_sandbox_info(request):
+    try:
+        projs = json.loads(request.body)  # 是 dict，不是 list
+
+        confirmman = projs.get("confirmman", "").strip()
+        saveurl = projs.get("saveurl", "").strip()
+
+        if not confirmman or not saveurl:
+            return JsonResponse({'success': False, 'message': '缺少必要参数'})
+
+        # 构造 SQL WHERE 条件
+        where = f"confirmman = '{confirmman}' AND saveurl = '{saveurl}'"
+
+        # ✅ 正确调用：注意参数顺序
+        deletetable(where, "webinsjsxterface")
+
+        print("shanchuchenggong")
+        return JsonResponse({'success': True, 'message': '删除成功'})
+
+    except Exception as e:
+        return JsonResponse({'success': False, 'message': str(e)})
+
 
 def deleteinterface(request):
     proobj = request.body

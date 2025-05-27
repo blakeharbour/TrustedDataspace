@@ -275,9 +275,10 @@
                             <a title="编辑" onclick="interface_edit(this,'${item[0]}')">
                               <i class="Hui-iconfont">&#xe6df;</i>编辑
                             </a>
-                            <a title="删除" onclick="interface_dele(this,'${item[0]}')">
-                              <i class="Hui-iconfont">&#xe6e2;</i>删除
+                            <a title="删除" onclick="interface_dele(this, '${item[0]}', '${item[2]}')">
+                                <i class="Hui-iconfont">&#xe6e2;</i>删除
                             </a>
+
                           </td>
                         </tr>`;
                 }
@@ -547,6 +548,39 @@ function interface_edit(obj,confirmman) {
 
         location.href = "http://127.0.0.1:8000/sjsxinterface-edit/";
 		}
+        
+function interface_dele(obj, confirmman, saveurl) {
+  layer.confirm(`是否确认删除沙箱信息：${confirmman}？`, function(index){
+    fetch('http://127.0.0.1:8000/delete_sandbox_info/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      body: JSON.stringify({
+        confirmman: confirmman,
+        saveurl: saveurl
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        $(obj).parents("tr").remove();
+        layer.msg('删除成功', { icon: 1 });
+      } else {
+        layer.msg('删除失败：' + data.message, { icon: 2 });
+      }
+    })
+    .catch(err => {
+      console.error("删除请求异常：", err);
+      layer.msg("请求失败：" + err.message, { icon: 2 });
+    });
+
+    layer.close(index);
+  });
+}
+       
+
 /*
 $(function() {
   const data = [{

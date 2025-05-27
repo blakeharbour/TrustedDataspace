@@ -88,6 +88,8 @@ path('shaxiangipbox/', views.shaxiangipbox),
     path('create-ipbox/', views.createipbox, name='createipbox'),
 
 path('sjsxinterface-edit/', views.sjsxinterface_edit),
+path('delete_sandbox_info/', views.delete_sandbox_info),
+
     path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
 path('sysxdeleteinterface/', views.sysxdeleteinterface),
 path('upload_to_sandbox/', views.upload_to_sandbox),
