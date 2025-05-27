@@ -248,7 +248,7 @@
           <div class="panel-body"发布>
             <div class="clearfix">
                 <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目申请</a>
-                <a href="javascript:;" onclick="project_right()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目所需数据资产权申请</a>
+                <a href="javascript:;" onclick="project_right()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目数据资产权申请</a>
                    <!-- 新增搜索区域 start -->
             <div class="search-container">
                     <label for="projectNameSearch">项目名称:</label>
@@ -571,6 +571,7 @@
 
               const selectedRow = $('input[name="selectedProject"]:checked').closest('tr');
               const data = {
+                projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
                 demand: selectedRow.find('td:eq(2)').text(),    // 数据需求方
                 owner: selectedRow.find('td:eq(3)').text(),     // 数据所有方
                 asset: selectedRow.find('td:eq(4)').text()      // 所需数据资产
