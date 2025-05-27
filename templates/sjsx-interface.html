@@ -273,9 +273,10 @@
                           <td>${item[6]}</td>
                           <td>${item[7]}</td>
                           <td>
-                            <a title="编辑" onclick="interface_edit(this,'${item[0]}')">
-                              <i class="Hui-iconfont">&#xe6df;</i>编辑
+                            <a title="编辑" onclick="interface_edit(this, '${item[0]}', '${item[2]}')">
+                                <i class="Hui-iconfont">&#xe6df;</i>编辑
                             </a>
+
                             <a title="删除" onclick="interface_dele(this, '${item[0]}', '${item[2]}')">
                                 <i class="Hui-iconfont">&#xe6e2;</i>删除
                             </a>
@@ -538,12 +539,13 @@ function destroyData(id) {
   });
 }
 
-function interface_edit(obj,confirmman) {
-        var confirmman=JSON.stringify(confirmman);
-        sessionStorage.setItem("confirmman",confirmman);
+function interface_edit(obj, confirmman, saveurl) {
+    // 存储两个关键字段，用于后续精确查找该记录
+    sessionStorage.setItem("edit_confirmman", confirmman);
+    sessionStorage.setItem("edit_saveurl", saveurl);
+    location.href = "http://127.0.0.1:8000/sjsxinterface-edit/";
+}
 
-        location.href = "http://127.0.0.1:8000/sjsxinterface-edit/";
-		}
         
 function interface_dele(obj, confirmman, saveurl) {
   layer.confirm(`是否确认删除沙箱信息：${confirmman}？`, function(index){

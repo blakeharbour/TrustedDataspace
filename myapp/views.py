@@ -5,6 +5,8 @@ import socket
 import subprocess
 import traceback
 import json
+from django.db import connection
+
 import datetime
 from django.http import JsonResponse
 import corsheaders
@@ -137,6 +139,12 @@ def interface_edit(request):
 @login_required(login_url='/login/')
 def sjsxinterface_edit(request):
     return render(request, 'sjsxinterface-edit.html')
+
+
+def dictfetchall(cursor):
+    "返回带字段名的字典形式结果"
+    columns = [col[0] for col in cursor.description]
+    return [dict(zip(columns, row)) for row in cursor.fetchall()]
 
 @login_required(login_url='/login/')
 # 发起训练
@@ -697,26 +705,26 @@ def createsandbox(request):
 
 def delete_sandbox_info(request):
     try:
-        projs = json.loads(request.body)  # 是 dict，不是 list
-
+        projs = json.loads(request.body)
         confirmman = projs.get("confirmman", "").strip()
         saveurl = projs.get("saveurl", "").strip()
 
         if not confirmman or not saveurl:
             return JsonResponse({'success': False, 'message': '缺少必要参数'})
 
-        # 构造 SQL WHERE 条件
-        where = f"confirmman = '{confirmman}' AND saveurl = '{saveurl}'"
+        cursor = connection.cursor()
+        sql = """
+            DELETE FROM webinsjsxterface
+            WHERE confirmman = %s AND saveurl = %s
+        """
+        cursor.execute(sql, [confirmman, saveurl])
+        connection.commit()  # 显式提交
 
-        # ✅ 正确调用：注意参数顺序
-        deletetable(where, "webinsjsxterface")
-
-        print("shanchuchenggong")
+        print("✅ shanchuchenggong，删除条数：", cursor.rowcount)
         return JsonResponse({'success': True, 'message': '删除成功'})
 
     except Exception as e:
         return JsonResponse({'success': False, 'message': str(e)})
-
 
 def deleteinterface(request):
     proobj = request.body
@@ -733,18 +741,28 @@ def deleteinterface(request):
     return JsonResponse({'status': 0})
 
 def sysxdeleteinterface(request):
-    proobj = request.body
-    print(proobj)
-    projs = json.loads(proobj)
-    print(projs)
-    id = projs["id"]
-    # userid = request.POST.get('userid')
-    # userid = "2"
-    print(id)
-    fiterstr="id = "+id
-    deletetable("webinterface", fiterstr)
-    print('删除成功')
-    return JsonResponse({'status': 0})
+    try:
+        proobj = request.body
+        print(proobj)
+        projs = json.loads(proobj)
+        print(projs)
+
+        confirmman = projs.get("confirmman", "").strip()
+        saveurl = projs.get("saveurl", "").strip()
+
+        if not confirmman or not saveurl:
+            return JsonResponse({'status': 1, 'message': '参数不完整'})
+
+        fiterstr = f"confirmman = '{confirmman}' AND saveurl = '{saveurl}'"
+        deletetable("webinsjsxterface", fiterstr)
+
+        print('✅ 删除成功')
+        return JsonResponse({'status': 0})
+
+    except Exception as e:
+        print("❌ 删除失败：", str(e))
+        return JsonResponse({'status': 1, 'message': str(e)})
+
 
 def searchoneinterface(request):
     proobj = request.body
@@ -760,27 +778,21 @@ def searchoneinterface(request):
 
 
 def sysxsearchoneinterface(request):
-    proobj = request.body
+    projs = json.loads(request.body)
+    confirmman = projs.get("confirmman", "").strip()
+    saveurl = projs.get("saveurl", "").strip()
 
-    projs = json.loads(proobj)
-    print(projs)
-    confirmman = projs["confirmman"]
-    print(confirmman)
-    fiterstr = "confirmman = " + confirmman
+    cursor = connection.cursor()
+    cursor.execute(f"""
+        SELECT confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle
+        FROM webinsjsxterface
+        WHERE confirmman = %s AND saveurl = %s
+    """, [confirmman, saveurl])
 
+    data = dictfetchall(cursor)
 
+    return JsonResponse({'status': 0, 'data': data})
 
-
-
-    interfacelist = selecttable(
-            "webinsjsxterface",
-            "confirmman, confirmtime, saveurl, zichanname, staytime, jiamipro, autoscope, delchannle",
-            fiterstr,
-            '', '', ''
-        )
-
-    print('查找成功')
-    return JsonResponse({'status': 0, 'data': interfacelist, 'msg': 'success'})
 
 
 
