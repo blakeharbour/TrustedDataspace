@@ -1,333 +1,870 @@
-<!--_meta 作为公共模版分离出去-->
-<!DOCTYPE HTML>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <title>申请数据确权</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <link rel="Bookmark" href="favicon.ico" >
-    <link rel="Shortcut Icon" href="favicon.ico" />
-    <!--[if lt IE 9]>
-    <script type="text/javascript" src="/static/lib/html5.js"></script>
-    <script type="text/javascript" src="/static/lib/respond.min.js"></script>
-    <![endif]-->
-    <link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
-    <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
-    <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
-    <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
-    <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
-    <!--[if IE 6]>
-    <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
-    <script>DD_belatedPNG.fix('*');</script>
-    <![endif]-->
-    <!--/meta 作为公共模版分离出去-->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
 
-    <title>添加数据确权</title>
-    <meta name="keywords" content="数据确权,数据资源权">
-    <meta name="description" content="数据确权申请表单">
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
 </head>
 <body>
-    <!--_menu 作为公共模版分离出去-->
-    <aside class="Hui-admin-aside-wrapper">
-        <div class="Hui-admin-logo-wrapper">
-            <a class="logo navbar-logo" href="/aboutHui.shtml">
-                <i class="va-m iconpic global-logo"></i>
-                <span class="va-m">可信数据空间</span>
-            </a>
-        </div>
-        <div class="Hui-admin-menu-dropdown bk_2">
+ <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    /* 修复按钮文字垂直居中问题 */
+    .btn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        line-height: 1 !important;
+        vertical-align: middle !important;
+    }
+
+    .btn-lg {
+        padding: 12px 30px !important;
+        font-size: 16px !important;
+        min-height: 44px !important;
+    }
+
+    .btn i {
+        vertical-align: baseline !important;
+        margin-right: 4px !important;
+    }
+    </style>
+<!-- 在<body>标签内的顶部添加 -->
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
             <dl id="menu-guest" class="Hui-menu">
-                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-                <dd class="Hui-menu-item">
-                    <ul>
-                        <li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
-                    </ul>
-                </dd>
-            </dl>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
             <dl id="menu-data-confirmation" class="Hui-menu">
-              <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
               <dd class="Hui-menu-item" style="display:block">
                 <ul>
                   <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
                 </ul>
               </dd>
             </dl>
+
             <dl id="menu-guest" class="Hui-menu">
-                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-                <dd class="Hui-menu-item">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
                     <ul>
-                        <li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
                     </ul>
                 </dd>
             </dl>
-            <!-- 其他菜单项保持不变 -->
-        </div>
-    </aside>
-    <!--/_menu 作为公共模版分离出去-->
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/guest-list/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+    <div class="Hui-admin-aside-mask"></div>
 
-    <div class="Hui-admin-dislpayArrow">
-        <a href="javascript:void(0);" onClick="displaynavbar(this)">
-            <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
-            <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
-        </a>
-    </div>
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+	<section class="Hui-admin-article-wrapper">
+		<!--_header 作为公共模版分离出去-->
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
+              <li class="dropDown dropDown_hover">
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+							{% comment %}<li>超级管理员</li>{% endcomment %}
 
-    <section class="Hui-admin-article-wrapper">
-        <!--_header 作为公共模版分离出去-->
-        <header class="Hui-navbar">
-            <div class="navbar">
-                <div class="container-fluid clearfix">
-                    <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
-                        <ul class="clearfix">
-                            <li>{{ current_user.account }}</li>
-                            <li id="Hui-skin" class="dropDown dropDown_hover right">
-                                <a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
-                                <ul class="dropDown-menu menu radius box-shadow">
-                                    <li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
-                                    <li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
-                                    <li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
-                                    <li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
-                                    <li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
-                                    <li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </header>
-        <!--/_header 作为公共模版分离出去-->
-
-        <div class="Hui-admin-article">
-            <nav class="breadcrumb">
-                <i class="Hui-iconfont">&#xe67f;</i> 首页
-                <span class="c-gray en">&gt;</span> 数据确权
-                <span class="c-gray en">&gt;</span> 添加数据确权
-                <a class="btn btn-success radius r" href="javascript:location.replace(location.href);" title="刷新" >
-                    <i class="Hui-iconfont">&#xe68f;</i>
-                </a>
+</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<!--/_header 作为公共模版分离出去-->
+        <!-- 以下是申请数据确权页面内容 -->
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+                首页
+                <span class="c-gray en">/</span>
+                数据确权
+                <span class="c-gray en">/</span>
+                <a href="{% url 'data_confirmation_list' %}">数据确权记录</a>
+                <span class="c-gray en">/</span>
+                申请数据确权
             </nav>
 
-            <article class="Hui-admin-content clearfix">
-                <div class="panel">
-                    <div class="panel-body">
-                        {% if error %}
-                        <div class="alert alert-danger">{{ error }}</div>
-                        {% endif %}
+			<div class="pd-20">
+				<!-- 页面标题 -->
+				<div class="text-c mb-20">
+					<div class="f-l">
+						<h2 class="h2-title">申请数据确权</h2>
+					</div>
+					<div class="f-r">
+						<a href="{% url 'data_confirmation_list' %}" class="btn btn-default">
+							<i class="Hui-iconfont">&#xe6d4;</i> 返回列表
+						</a>
+					</div>
+					<div class="cl"></div>
+				</div>
 
-                        <form class="form form-horizontal" id="form-data-rights-add" method="post">
-                            {% csrf_token %}
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">数据名称：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="text" class="input-text" name="data_name" id="data_name" value="{{ form_data.data_name }}" required>
-                                </div>
-                            </div>
+				<!-- 申请表单 -->
+				<form class="Hui-form" method="post" id="applicationForm">
+					{% csrf_token %}
 
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">数据内容描述：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <textarea class="textarea" name="data_description" id="data_description" placeholder="详细描述该数据的内容、范围、格式等信息">{{ form_data.data_description }}</textarea>
-                                </div>
-                            </div>
+					<!-- 页面基本信息区 -->
+					<div class="panel panel-default mb-20">
+						<div class="panel-header">
+							<h4 class="panel-title">
+								<i class="Hui-iconfont">&#xe60c;</i> 申请基本信息
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="row cl">
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>申请方：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<span class="select-box">
+												<select class="select" name="applicant" required>
+													<option value="">请选择申请方</option>
+													{% for source_code, source_name in data_source_choices %}
+														<option value="{{ source_code }}">{{ source_name }}</option>
+													{% endfor %}
+												</select>
+											</span>
+										</div>
+									</div>
+								</div>
 
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">业务环节分类：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <select name="business_stage" id="business_stage" class="select-box">
-                                        <option value="货物申报数据" {% if form_data.business_stage == '货物申报数据' %}selected{% endif %}>货物申报数据</option>
-                                        <option value="通关检验数据" {% if form_data.business_stage == '通关检验数据' %}selected{% endif %}>通关检验数据</option>
-                                        <option value="物流运输数据" {% if form_data.business_stage == '物流运输数据' %}selected{% endif %}>物流运输数据</option>
-                                        <option value="交接交付数据" {% if form_data.business_stage == '交接交付数据' %}selected{% endif %}>交接交付数据</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">数据关系类型：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <select name="relationship_type" id="relationship_type" class="select-box" onchange="toggleDerivedFields()">
-                                        <option value="原始数据" {% if form_data.relationship_type == '原始数据' %}selected{% endif %}>原始数据（独立生成的数据）</option>
-                                        <option value="衍生数据" {% if form_data.relationship_type == '衍生数据' %}selected{% endif %}>衍生数据（基于其他数据加工生成）</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">当前数据持有方：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <select name="data_source" id="data_source" class="select-box">
-                                        <option value="海关" {% if form_data.data_source == '海关' %}selected{% endif %}>海关</option>
-                                        <option value="港口" {% if form_data.data_source == '港口' %}selected{% endif %}>港口</option>
-                                        <option value="铁路" {% if form_data.data_source == '铁路' %}selected{% endif %}>铁路</option>
-                                        <option value="哈方" {% if form_data.data_source == '哈方' %}selected{% endif %}>哈方</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!-- 衍生数据专属字段 -->
-                            <div id="derived-data-fields" style="display: none;">
-                                <div class="row cl">
-                                    <label class="form-label col-xs-4 col-sm-2">原始数据提供方：</label>
-                                    <div class="formControls col-xs-8 col-sm-9">
-                                        <select name="original_provider" id="original_provider" class="select-box">
-                                            <option value="海关" {% if form_data.original_provider == '海关' %}selected{% endif %}>海关</option>
-                                            <option value="港口" {% if form_data.original_provider == '港口' %}selected{% endif %}>港口</option>
-                                            <option value="铁路" {% if form_data.original_provider == '铁路' %}selected{% endif %}>铁路</option>
-                                            <option value="哈方" {% if form_data.original_provider == '哈方' %}selected{% endif %}>哈方</option>
-                                        </select>
+                                <div class="col-xs-12 col-sm-6 col-md-4">
+                                    <div class="row cl">
+                                        <label class="form-label col-xs-4 col-sm-3">申请时间：</label>
+                                        <div class="formControls col-xs-8 col-sm-9">
+                                            <input type="text" class="input-text" id="currentBeijingTime" readonly>
+                                        </div>
                                     </div>
                                 </div>
+                                <script>
+                                    // 获取北京时间的函数
+                                    function updateBeijingTime() {
+                                    const now = new Date();
+                                    // 方法1：使用toLocaleString获取北京时间
+                                        const beijingTime = now.toLocaleString('zh-CN', {
+                                            timeZone: 'Asia/Shanghai',
+                                            year: 'numeric',
+                                            month: '2-digit',
+                                            day: '2-digit',
+                                            hour: '2-digit',
+                                            minute: '2-digit'
+                                        });
+                                        // 格式化为 YYYY-MM-DD HH:mm 格式
+                                        const formattedTime = beijingTime.replace(/\//g, '-').replace(/,/, '');
+                                        document.getElementById('currentBeijingTime').value = formattedTime;
+                                    }
+                                    // 页面加载时更新时间
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        updateBeijingTime();
+                                        // 每分钟更新一次时间
+                                        setInterval(updateBeijingTime, 60000);
+                                    });
+                                </script>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3">申请编号：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<input type="text" class="input-text" value="系统自动生成" readonly>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                                <div class="row cl">
-                                    <label class="form-label col-xs-4 col-sm-2">加工程度：</label>
-                                    <div class="formControls col-xs-8 col-sm-9">
-                                        <select name="processing_level" id="processing_level" class="select-box">
-                                            <option value="轻度加工" {% if form_data.processing_level == '轻度加工' %}selected{% endif %}>轻度加工（简单整理、格式转换）</option>
-                                            <option value="深度加工" {% if form_data.processing_level == '深度加工' %}selected{% endif %}>深度加工（算法分析、模型应用）</option>
-                                            <option value="创造性加工" {% if form_data.processing_level == '创造性加工' %}selected{% endif %}>创造性加工（生成新指标或见解）</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
+					<!-- 目标数据信息区 -->
+					<div class="panel panel-default mb-20">
+						<div class="panel-header">
+							<h4 class="panel-title">
+								<i class="Hui-iconfont">&#xe62d;</i> 目标数据信息
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="row cl">
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据持有方：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<span class="select-box">
+												<select class="select" name="target_data_holder" required>
+													<option value="">请选择数据持有方</option>
+													{% for source_code, source_name in data_source_choices %}
+														<option value="{{ source_code }}">{{ source_name }}</option>
+													{% endfor %}
+												</select>
+											</span>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>目标数据名称：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<input type="text" class="input-text" name="target_data_name" placeholder="请输入目标数据名称" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据业务环节：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<span class="select-box">
+												<select class="select" name="target_business_stage" required>
+													<option value="">请选择业务环节</option>
+													{% for stage_code, stage_name in business_stage_choices %}
+														<option value="{{ stage_code }}">{{ stage_name }}</option>
+													{% endfor %}
+												</select>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">数据格式：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <select name="data_format" id="data_format" class="select-box">
-                                        <option value="CSV文件" {% if form_data.data_format == 'CSV文件' %}selected{% endif %}>CSV文件</option>
-                                        <option value="Excel表格" {% if form_data.data_format == 'Excel表格' %}selected{% endif %}>Excel表格</option>
-                                        <option value="数据库表" {% if form_data.data_format == '数据库表' %}selected{% endif %}>数据库表</option>
-                                        <option value="JSON数据" {% if form_data.data_format == 'JSON数据' %}selected{% endif %}>JSON数据</option>
-                                        <option value="XML文档" {% if form_data.data_format == 'XML文档' %}selected{% endif %}>XML文档</option>
-                                        <option value="其他" {% if form_data.data_format == '其他' %}selected{% endif %}>其他</option>
-                                    </select>
-                                </div>
-                            </div>
+					<!-- 申请权利类型区 -->
+					<div class="panel panel-default mb-20">
+						<div class="panel-header">
+							<h4 class="panel-title">
+								<i class="Hui-iconfont">&#xe6df;</i> 申请权利类型
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="rights-selection">
+								<div class="right-option mb-15">
+									<label class="right-checkbox">
+										<input type="checkbox" name="resource_holding_right" id="resource_holding_right" value="1">
+										<span class="right-title">资源持有权</span>
+									</label>
+									<div class="right-description">
+										同样持有该数据的副本，拥有最高权限，自动包含下方所有权利
+									</div>
+								</div>
 
-                            <div class="row cl">
-                                <label class="form-label col-xs-4 col-sm-2">时间覆盖范围：</label>
-                                <div class="formControls col-xs-8 col-sm-9">
-                                    <input type="date" class="input-text Wdate" id="time_range_start" name="time_range_start" value="{{ form_data.time_range_start|date:'Y-m-d' }}" required style="width: 120px">
-                                    至
-                                    <input type="date" class="input-text Wdate" id="time_range_end" name="time_range_end" value="{{ form_data.time_range_end|date:'Y-m-d' }}" style="width: 120px">
-                                    <label>
-                                        <input type="checkbox" id="is_present" name="is_present" {% if form_data.is_present %}checked{% endif %} onclick="toggleEndDate()">
-                                        至今
-                                    </label>
-                                </div>
-                            </div>
+								<div class="right-option mb-15">
+									<label class="right-checkbox">
+										<input type="checkbox" name="processing_use_right" id="processing_use_right" value="1">
+										<span class="right-title">加工使用权</span>
+									</label>
+									<div class="right-description">
+										可以基于该数据进行分析、处理或融合，自动包含查看权
+									</div>
+								</div>
 
-                            <div class="row cl">
-                                <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-                                    <button type="submit" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe632;</i> 提交</button>
-                                    <button type="button" class="btn btn-default radius" onclick="window.location.href='/data-confirmation/'">取消</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </article>
+								<div class="right-option mb-15">
+									<label class="right-checkbox">
+										<input type="checkbox" name="reauthorization_right" id="reauthorization_right" value="1">
+										<span class="right-title">转授权权</span>
+									</label>
+									<div class="right-description">
+										有权将该数据再次授权给其他方使用（需要加工使用权或资源持有权）
+									</div>
+								</div>
 
-            <footer class="footer Hui-admin-footer">
-                <p>感谢jQuery、layer、laypage、Validform、UEditor、iconfont、Datatables、WebUploaded、icheck、highcharts、bootstrap-Switch<br> Copyright &copy;2015 h-ui.admin.pro v1.0 All Rights Reserved.<br> 本后台系统由<a href="http://www.h-ui.net/" target="_blank" title="H-ui前端框架">H-ui前端框架</a>提供前端技术支持</p>
-            </footer>
-        </div>
-    </section>
+								<div class="right-option mb-15">
+									<label class="right-checkbox">
+										<input type="checkbox" name="redistribution_right" id="redistribution_right" value="1">
+										<span class="right-title">再分发权</span>
+									</label>
+									<div class="right-description">
+										允许将加工或原始数据发布到第三方系统如API、数据市场（需要加工使用权或资源持有权）
+									</div>
+								</div>
 
-<!--_footer 作为公共模版分离出去-->
+								<div class="right-option mb-15">
+									<label class="right-checkbox">
+										<input type="checkbox" name="view_right" id="view_right" value="1">
+										<span class="right-title">查看权</span>
+									</label>
+									<div class="right-description">
+										仅能阅览数据内容，不可进行其他操作
+									</div>
+								</div>
+							</div>
+							<div class="mt-10">
+								<small class="c-999">
+									<i class="Hui-iconfont">&#xe6df;</i>
+									请至少选择一种权利。资源持有权包含所有其他权利；转授权权和再分发权需要加工使用权或资源持有权作为前提。
+								</small>
+							</div>
+						</div>
+					</div>
+
+					<!-- 申请详情区 -->
+					<div class="panel panel-default mb-20">
+						<div class="panel-header">
+							<h4 class="panel-title">
+								<i class="Hui-iconfont">&#xe6e1;</i> 申请详情
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="row cl mb-15">
+								<div class="col-xs-12">
+									<div class="row cl">
+										<label class="form-label col-xs-2"><span class="c-red">*</span>申请理由：</label>
+										<div class="formControls col-xs-10">
+											<textarea name="application_reason" class="textarea" placeholder="请详细说明申请数据权利的理由和必要性" rows="4" required></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row cl mb-15">
+								<div class="col-xs-12">
+									<div class="row cl">
+										<label class="form-label col-xs-2"><span class="c-red">*</span>预期用途说明：</label>
+										<div class="formControls col-xs-10">
+											<textarea name="intended_use" class="textarea" placeholder="请详细说明获得权利后的具体用途和使用方式" rows="4" required></textarea>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row cl mb-15">
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-6"><span class="c-red">*</span>使用开始时间：</label>
+										<div class="formControls col-xs-8 col-sm-6">
+											<input type="date" class="input-text" name="intended_duration_start" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-6">使用结束时间：</label>
+										<div class="formControls col-xs-8 col-sm-6">
+											<input type="date" class="input-text" name="intended_duration_end" id="end_date">
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<div class="formControls col-xs-12">
+											<label class="checkbox-wrap">
+												<input type="checkbox" name="is_permanent" id="is_permanent" value="1">
+												<span class="checkmark"></span>
+												永久使用
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row cl">
+								<div class="col-xs-12">
+									<div class="row cl">
+										<div class="formControls col-xs-12">
+											<label class="checkbox-wrap required-checkbox">
+												<input type="checkbox" name="data_security_commitment" required>
+												<span class="checkmark"></span>
+												<span class="c-red">*</span> 我承诺严格按照相关规定使用数据，确保数据安全
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 联系信息区 -->
+					<div class="panel panel-default mb-20">
+						<div class="panel-header">
+							<h4 class="panel-title">
+								<i class="Hui-iconfont">&#xe60d;</i> 联系信息
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="row cl">
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>申请联系人：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<input type="text" class="input-text" name="contact_person" placeholder="请输入联系人姓名" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>联系电话：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<input type="tel" class="input-text" name="contact_phone" placeholder="请输入联系电话" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-4">
+									<div class="row cl">
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>联系邮箱：</label>
+										<div class="formControls col-xs-8 col-sm-9">
+											<input type="email" class="input-text" name="contact_email" placeholder="请输入联系邮箱" required>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 操作按钮 -->
+					<div class="text-c mt-30 mb-20">
+						<button type="submit" class="btn btn-primary btn-lg mr-20">
+							<i class="Hui-iconfont">&#xe600;</i> 提交申请
+						</button>
+						<button type="reset" class="btn btn-default btn-lg mr-20">
+							<i class="Hui-iconfont">&#xe68f;</i> 重置表单
+						</button>
+						<a href="{% url 'data_confirmation_list' %}" class="btn btn-secondary btn-lg">
+							<i class="Hui-iconfont">&#xe6d4;</i> 返回列表
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+</section>
+
+<!-- JavaScript 和 CSS 样式 -->
+<style>
+	.h2-title {
+		color: #333;
+		font-weight: 500;
+		margin: 0;
+	}
+
+	.panel {
+		border: 1px solid #e5e5e5;
+		border-radius: 4px;
+		box-shadow: 0 1px 1px rgba(0,0,0,.05);
+	}
+
+	.panel-header {
+		padding: 10px 15px;
+		border-bottom: 1px solid #e5e5e5;
+		background-color: #f5f5f5;
+	}
+
+	.panel-title {
+		margin: 0;
+		font-size: 16px;
+		color: #333;
+	}
+
+	.panel-body {
+		padding: 15px;
+	}
+
+	.rights-selection {
+		background-color: #f9f9f9;
+		padding: 15px;
+		border-radius: 4px;
+		border: 1px solid #e5e5e5;
+	}
+
+	.right-option {
+		padding: 12px;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+		background-color: #fff;
+		transition: all 0.3s ease;
+	}
+
+	.right-option:hover {
+		border-color: #5cb85c;
+		box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+	}
+
+	.right-option.selected {
+		border-color: #5cb85c;
+		background-color: #dff0d8;
+	}
+
+	.right-checkbox {
+		display: flex;
+		align-items: flex-start;
+		cursor: pointer;
+		margin: 0;
+	}
+
+	.right-checkbox input[type="checkbox"] {
+		margin-right: 10px;
+		margin-top: 2px;
+	}
+
+	.right-title {
+		font-weight: 500;
+		color: #333;
+		font-size: 14px;
+		margin-bottom: 5px;
+		display: block;
+	}
+
+	.right-description {
+		color: #666;
+		font-size: 12px;
+		line-height: 1.5;
+		margin-left: 25px;
+	}
+
+	.checkbox-wrap {
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		margin: 0;
+	}
+
+	.checkbox-wrap input[type="checkbox"] {
+		margin-right: 8px;
+	}
+
+	.required-checkbox {
+		background-color: #fff9c4;
+		padding: 10px;
+		border-radius: 4px;
+		border: 1px solid #f0ad4e;
+	}
+
+	.form-label {
+		font-weight: 500;
+		color: #333;
+	}
+
+	.c-red {
+		color: #d9534f;
+	}
+
+	.c-999 {
+		color: #999;
+	}
+
+	.input-text, .select, .textarea {
+		border: 1px solid #ddd;
+		border-radius: 3px;
+		padding: 8px 12px;
+	}
+
+	.input-text:focus, .select:focus, .textarea:focus {
+		border-color: #5cb85c;
+		outline: none;
+		box-shadow: 0 0 5px rgba(92, 184, 92, 0.3);
+	}
+
+	.btn-lg {
+		padding: 12px 30px;
+		font-size: 16px;
+	}
+
+	.disabled-input {
+		background-color: #f5f5f5;
+		color: #999;
+		cursor: not-allowed;
+	}
+
+	.right-option.disabled {
+		background-color: #f5f5f5;
+		border-color: #ddd;
+		opacity: 0.6;
+	}
+
+	.right-option.disabled .right-checkbox {
+		cursor: not-allowed;
+	}
+
+	.validation-error {
+		color: #d9534f;
+		font-size: 12px;
+		margin-top: 5px;
+		display: none;
+	}
+
+	@media (max-width: 768px) {
+		.rights-selection {
+			padding: 10px;
+		}
+
+		.right-option {
+			margin-bottom: 10px;
+		}
+	}
+</style>
+
 <script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
 <script type="text/javascript" src="/static/static/h-ui/js/H-ui.js"></script>
-<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.js"></script>
-<!--/_footer /作为公共模版分离出去-->
+<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
 
-<!--请在下方写此页面业务相关的脚本-->
-<script type="text/javascript" src="/static/lib/My97DatePicker/4.8/WdatePicker.js"></script>
-<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/jquery.validate.js"></script>
-<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/validate-methods.js"></script>
-<script type="text/javascript" src="/static/lib/jquery.validation/1.14.0/messages_zh.js"></script>
 <script type="text/javascript">
-// 根据数据关系类型显示/隐藏衍生数据字段
-function toggleDerivedFields() {
-    var relationType = $("#relationship_type").val();
-    if (relationType === "衍生数据") {
-        $("#derived-data-fields").show();
-        // 使相关字段成为必填项
-        $("#original_provider").attr("required", "required");
-        $("#processing_level").attr("required", "required");
-    } else {
-        $("#derived-data-fields").hide();
-        // 移除必填属性
-        $("#original_provider").removeAttr("required");
-        $("#processing_level").removeAttr("required");
-    }
-}
+	$(document).ready(function(){
+		// 初始化
+		initRightsLogic();
+		initDateLogic();
+		initFormValidation();
 
-// 根据"至今"复选框状态启用/禁用结束日期输入
-function toggleEndDate() {
-    if ($("#is_present").prop("checked")) {
-        $("#time_range_end").prop("disabled", true);
-        $("#time_range_end").val("");
-    } else {
-        $("#time_range_end").prop("disabled", false);
-    }
-}
+		// 高亮当前菜单项 - 数据确权页面
+            $('#menu-data-confirmation').addClass('selected');
+            $('#menu-data-confirmation .Hui-menu-item a[href*="data-confirmation"]').parent().addClass('current');
 
-$(function(){
-    // 初始化表单显示
-    toggleDerivedFields();
-    toggleEndDate();
+            // 确保其他菜单项不被高亮
+            $('#menu-guest').removeClass('selected');
+            $('#menu-guest .Hui-menu-item li').removeClass('current');
+	});
 
-    // 绑定数据关系类型下拉框的变化事件
-    $('#relationship_type').change(function() {
-        toggleDerivedFields();
-    });
+	// 权利选择逻辑
+	function initRightsLogic() {
+		// 资源持有权变化
+		$('#resource_holding_right').change(function() {
+			if ($(this).is(':checked')) {
+				// 选中所有其他权利并禁用
+				$('#processing_use_right, #reauthorization_right, #redistribution_right, #view_right').prop('checked', true).prop('disabled', true);
+				$('.right-option').addClass('selected');
+				$('#processing_use_right, #reauthorization_right, #redistribution_right, #view_right').closest('.right-option').addClass('disabled');
+			} else {
+				// 解除其他权利的禁用状态
+				$('#processing_use_right, #reauthorization_right, #redistribution_right, #view_right').prop('disabled', false);
+				$('.right-option').removeClass('disabled selected');
+				updateRightOptionStyles();
+			}
+		});
 
-    // 绑定"至今"复选框的点击事件
-    $('#is_present').click(function() {
-        toggleEndDate();
-    });
+		// 加工使用权变化
+		$('#processing_use_right').change(function() {
+			if ($(this).is(':checked')) {
+				// 自动选中查看权
+				$('#view_right').prop('checked', true);
+			}
+			updateRightOptionStyles();
+		});
 
-    // 表单验证
-    $("#form-data-rights-add").validate({
-        rules: {
-            data_name: {
-                required: true,
-                minlength: 2,
-                maxlength: 100
-            },
-            data_description: {
-                required: true,
-                minlength: 10
-            },
-            time_range_start: {
-                required: true,
-                date: true
-            }
-        },
-        messages: {
-            data_name: {
-                required: "请输入数据名称",
-                minlength: "数据名称不能少于2个字符",
-                maxlength: "数据名称不能超过100个字符"
-            },
-            data_description: {
-                required: "请输入数据内容描述",
-                minlength: "描述不能少于10个字符"
-            },
-            time_range_start: {
-                required: "请选择时间范围起始日期",
-                date: "请输入有效的日期"
-            }
-        },
-        onkeyup: false,
-        focusCleanup: true,
-        success: "valid"
-    });
-});
+		// 转授权权和再分发权变化
+		$('#reauthorization_right, #redistribution_right').change(function() {
+			validateAdvancedRights();
+			updateRightOptionStyles();
+		});
+
+		// 查看权变化
+		$('#view_right').change(function() {
+			updateRightOptionStyles();
+		});
+
+		// 初始更新样式
+		updateRightOptionStyles();
+	}
+
+	// 验证高级权利
+	function validateAdvancedRights() {
+		var hasProcessingOrResource = $('#processing_use_right').is(':checked') || $('#resource_holding_right').is(':checked');
+		var needsAdvancedRights = $('#reauthorization_right').is(':checked') || $('#redistribution_right').is(':checked');
+
+		if (needsAdvancedRights && !hasProcessingOrResource) {
+			alert('申请转授权权或再分发权时，必须同时申请加工使用权或资源持有权');
+			$('#reauthorization_right, #redistribution_right').prop('checked', false);
+		}
+	}
+
+	// 更新权利选项样式
+	function updateRightOptionStyles() {
+		$('input[type="checkbox"][id$="_right"]').each(function() {
+			var $option = $(this).closest('.right-option');
+			if ($(this).is(':checked')) {
+				$option.addClass('selected');
+			} else {
+				$option.removeClass('selected');
+			}
+		});
+	}
+
+	// 日期逻辑
+	function initDateLogic() {
+		// 永久使用复选框变化
+		$('#is_permanent').change(function() {
+			if ($(this).is(':checked')) {
+				$('#end_date').prop('disabled', true).addClass('disabled-input');
+			} else {
+				$('#end_date').prop('disabled', false).removeClass('disabled-input');
+			}
+		});
+	}
+
+	// 表单验证
+	function initFormValidation() {
+		$('#applicationForm').submit(function(e) {
+			// 验证至少选择一种权利
+			var hasRights = $('input[type="checkbox"][id$="_right"]:checked').length > 0;
+			if (!hasRights) {
+				alert('请至少选择一种申请权利');
+				e.preventDefault();
+				return false;
+			}
+
+			// 验证日期范围
+			var startDate = $('input[name="intended_duration_start"]').val();
+			var endDate = $('input[name="intended_duration_end"]').val();
+			var isPermanent = $('#is_permanent').is(':checked');
+
+			if (!isPermanent && endDate && startDate >= endDate) {
+				alert('结束时间必须晚于开始时间');
+				e.preventDefault();
+				return false;
+			}
+
+			// 验证申请方和数据持有方不能相同
+			var applicant = $('select[name="applicant"]').val();
+			var holder = $('select[name="target_data_holder"]').val();
+			if (applicant && holder && applicant === holder) {
+				alert('申请方和数据持有方不能为同一机构');
+				e.preventDefault();
+				return false;
+			}
+
+			// 验证必填项
+			var requiredFields = ['applicant', 'target_data_holder', 'target_data_name', 'target_business_stage', 'application_reason', 'intended_use', 'intended_duration_start', 'contact_person', 'contact_phone', 'contact_email'];
+
+			for (var i = 0; i < requiredFields.length; i++) {
+				var field = $('[name="' + requiredFields[i] + '"]');
+				if (!field.val().trim()) {
+					alert('请填写所有必填项');
+					field.focus();
+					e.preventDefault();
+					return false;
+				}
+			}
+
+			// 验证数据安全承诺
+			if (!$('input[name="data_security_commitment"]').is(':checked')) {
+				alert('请确认数据安全承诺');
+				e.preventDefault();
+				return false;
+			}
+
+			// 提交确认
+			if (!confirm('确认提交申请？提交后将进入审核流程。')) {
+				e.preventDefault();
+				return false;
+			}
+
+			return true;
+		});
+	}
+
+	// 导航栏显示隐藏
+	function displaynavbar(obj){
+		if($(".Hui-admin-aside-wrapper").hasClass("aside-hide")){
+			$(".Hui-admin-aside-wrapper").removeClass("aside-hide");
+			$(obj).find("i").removeClass("Hui-iconfont-right").addClass("Hui-iconfont-left");
+		} else {
+			$(".Hui-admin-aside-wrapper").addClass("aside-hide");
+			$(obj).find("i").removeClass("Hui-iconfont-left").addClass("Hui-iconfont-right");
+		}
+	}
 </script>
-</body>
-</html>

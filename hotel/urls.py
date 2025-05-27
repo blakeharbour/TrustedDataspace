@@ -228,9 +228,23 @@ path('xqflist_open/', views.xqflist_open),
     path('multmodel-list/', viewsmult.multmodel_list),
     path('multupload/', viewsmult.upload_multmodelapply),
     path('multmodeltest/', viewsmult.multmodel_test),  # 测试
-    #数据确权
-    path('data-confirmation/', views.data_confirmation, name='data_confirmation'),
-    path('data-confirmation-add/', views.data_confirmation_add, name='data_confirmation_add'),
+    # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    path('data-confirmation/', views.data_confirmation_list, name='data_confirmation_list'),
+    path('data-confirmation/detail/<str:record_id>/', views.data_confirmation_detail, name='data_confirmation_detail'),
+
+    # 申请数据确权相关URL
+    path('data-confirmation/apply/', views.data_right_application_add, name='data_right_application_add'),
+
+    # 审核数据确权相关URL
+    path('data-confirmation/review/', views.data_right_application_list, name='data_right_application_list'),
+    path('data-confirmation/review/<str:application_id>/', views.data_right_application_review,
+         name='data_right_application_review'),
+
+    # AJAX接口URL
+    path('api/data-confirmation/application/<str:application_id>/', views.get_application_detail,
+         name='get_application_detail'),
+
+    # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     # 数据管理
     path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确
     path('data_asset_add/', views.add_data_asset, name='data_asset_add'),
