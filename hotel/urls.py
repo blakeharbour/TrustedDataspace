@@ -230,6 +230,8 @@ path('xqflist_open/', views.xqflist_open),
     path('multmodel-list/', viewsmult.multmodel_list),
     path('multupload/', viewsmult.upload_multmodelapply),
     path('multmodeltest/', viewsmult.multmodel_test),  # 测试
+
+
     # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     path('data-confirmation/', views.data_confirmation_list, name='data_confirmation_list'),
     path('data-confirmation/detail/<str:record_id>/', views.data_confirmation_detail, name='data_confirmation_detail'),
