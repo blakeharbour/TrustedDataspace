@@ -2962,7 +2962,7 @@ def batch_delete_data_confirmation_records(request):
                     'success': False,
                     'message': '您只能删除自己相关的记录'
                 }, status=403)
-
+#略
         # 检查是否只有被拒绝的记录
         non_rejected_records = records.exclude(status='rejected')
         if non_rejected_records.exists():

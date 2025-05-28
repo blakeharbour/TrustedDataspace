@@ -147,7 +147,7 @@ DATA_SOURCE_CHOICES = [
 
 class DataRightApplication(models.Model):
     """数据权利申请模型"""
-
+    # 略
     # 申请基本信息
     application_id = models.CharField(max_length=50, unique=True, verbose_name="申请编号")
     applicant = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="申请方")

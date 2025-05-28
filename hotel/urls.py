@@ -243,7 +243,7 @@ path('xqflist_open/', views.xqflist_open),
     path('data-confirmation/review/', views.data_right_application_list, name='data_right_application_list'),
     path('data-confirmation/review/<str:application_id>/', views.data_right_application_review,
          name='data_right_application_review'),
-
+#略
     path('data-confirmation/delete/<str:record_id>/', views.delete_data_confirmation_record, name='delete_data_confirmation_record'),
     path('data-confirmation/batch-delete/', views.batch_delete_data_confirmation_records, name='batch_delete_data_confirmation_records'),
     # AJAX接口URL
