@@ -13,7 +13,18 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, Http404
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from datetime import datetime, date
+import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 # from huggingface_hub.utils import parse_datetime
@@ -2511,19 +2522,47 @@ from django.db import transaction
 from django.utils import timezone
 from datetime import datetime, date
 import json
+from django.db import models
 
 from .models import (
     DataRightApplication,
     DataRightRecord,
     DataRightApplicationHistory,
     DATA_SOURCE_CHOICES,
-    BUSINESS_STAGE_CHOICES
+    #BUSINESS_STAGE_CHOICES
 )
+
+
+
+def get_company_code_from_name(company_name):
+    """
+    将中文公司名称转换为英文代码
+    """
+    # 创建反向映射字典：中文名称 -> 英文代码
+    name_to_code_mapping = {
+        name: code for code, name in DATA_SOURCE_CHOICES
+    }
+
+    # 查找对应的英文代码
+    company_code = name_to_code_mapping.get(company_name)
+    return company_code
+
+
+def get_user_company_code(user):
+    """
+    获取用户对应的公司英文代码
+    """
+    if not hasattr(user, 'com') or not user.com:
+        return None
+
+    company_code = get_company_code_from_name(user.com)
+    return company_code
 
 
 @login_required(login_url='/login/')
 def data_right_application_add(request):
     """数据权利申请页面"""
+
     if request.method == 'POST':
         try:
             with transaction.atomic():
@@ -2532,7 +2571,7 @@ def data_right_application_add(request):
                     applicant=request.POST.get('applicant'),
                     target_data_holder=request.POST.get('target_data_holder'),
                     target_data_name=request.POST.get('target_data_name'),
-                    target_business_stage=request.POST.get('target_business_stage'),
+                    target_business_stage=request.POST.get('target_business_stage'),  # 改回原字段名
 
                     # 申请的权利类型
                     resource_holding_right='resource_holding_right' in request.POST,
@@ -2570,7 +2609,6 @@ def data_right_application_add(request):
 
     context = {
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
         'current_time': timezone.now(),
     }
     return render(request, 'data-confirmation-add.html', context)
@@ -2581,19 +2619,33 @@ def data_right_application_review(request, application_id):
     """数据权利申请审核页面"""
     application = get_object_or_404(DataRightApplication, application_id=application_id)
 
+    # 权限检查：普通用户只能审核向自己申请的记录或查看自己的申请
+    if not request.user.is_superuser:
+        user_company_code = get_user_company_code(request.user)
+        if user_company_code and (
+                application.target_data_holder != user_company_code and application.applicant != user_company_code):
+            raise Http404("您没有权限查看此申请")
+        elif not user_company_code:
+            raise Http404("用户公司信息异常")
+
     # 获取审核历史记录
     history_records = DataRightApplicationHistory.objects.filter(
         application=application
     ).exclude(action_type='submit')
 
     if request.method == 'POST':
+        # 只有数据持有方或超级用户才能审核
+        user_company_code = get_user_company_code(request.user)
+        if not request.user.is_superuser and application.target_data_holder != user_company_code:
+            messages.error(request, '您没有权限审核此申请')
+            return redirect('data_right_application_list')
+
         try:
             with transaction.atomic():
                 review_decision = request.POST.get('review_decision')
                 review_comments = request.POST.get('review_comments')
                 reviewer = request.user.username if hasattr(request.user, 'username') else '系统用户'
 
-                # 更新申请状态
                 if review_decision == 'approve':
                     application.status = 'approved'
                 elif review_decision == 'reject':
@@ -2606,7 +2658,6 @@ def data_right_application_review(request, application_id):
                 application.review_comments = review_comments
                 application.save()
 
-                # 记录审核历史
                 DataRightApplicationHistory.objects.create(
                     application=application,
                     action_type='approve' if review_decision == 'approve' else 'reject',
@@ -2614,35 +2665,36 @@ def data_right_application_review(request, application_id):
                     action_comments=review_comments
                 )
 
-                # 如果审核通过，立即生成数据确权记录
+                record_status = 'active' if review_decision == 'approve' else 'rejected'
+
+                data_right_record = DataRightRecord(
+                    original_application=application,
+                    data_name=application.target_data_name,
+                    data_holder=application.target_data_holder,
+                    right_recipient=application.applicant,
+                    business_stage=application.target_business_stage,
+
+                    granted_resource_holding_right=application.resource_holding_right if review_decision == 'approve' else False,
+                    granted_processing_use_right=application.processing_use_right if review_decision == 'approve' else False,
+                    granted_reauthorization_right=application.reauthorization_right if review_decision == 'approve' else False,
+                    granted_redistribution_right=application.redistribution_right if review_decision == 'approve' else False,
+                    granted_view_right=application.view_right if review_decision == 'approve' else False,
+
+                    usage_start_date=application.intended_duration_start,
+                    usage_end_date=application.intended_duration_end,
+                    is_permanent_usage=application.is_permanent,
+
+                    status=record_status,
+                    approver=reviewer,
+                    approval_time=timezone.now(),
+                    approval_comments=review_comments,
+                )
+                data_right_record.save()
+
                 if review_decision == 'approve':
-                    data_right_record = DataRightRecord(
-                        original_application=application,
-                        data_name=application.target_data_name,
-                        data_holder=application.target_data_holder,
-                        right_recipient=application.applicant,
-                        business_stage=application.target_business_stage,
-
-                        # 复制申请的权利到已获得权利
-                        granted_resource_holding_right=application.resource_holding_right,
-                        granted_processing_use_right=application.processing_use_right,
-                        granted_reauthorization_right=application.reauthorization_right,
-                        granted_redistribution_right=application.redistribution_right,
-                        granted_view_right=application.view_right,
-
-                        usage_start_date=application.intended_duration_start,
-                        usage_end_date=application.intended_duration_end,
-                        is_permanent_usage=application.is_permanent,
-
-                        approver=reviewer,
-                        approval_time=timezone.now(),
-                        approval_comments=review_comments,
-                    )
-                    data_right_record.save()
-
                     messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
                 else:
-                    messages.success(request, '审核完成，申请已拒绝')
+                    messages.success(request, f'审核已拒绝！已生成拒绝记录：{data_right_record.record_id}')
 
                 return redirect('data_confirmation_list')
 
@@ -2651,27 +2703,39 @@ def data_right_application_review(request, application_id):
 
     # 将choices转换为字典
     data_source_dict = dict(DATA_SOURCE_CHOICES)
-    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
 
     context = {
         'application': application,
         'history_records': history_records,
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
-        # 添加字典版本供模板使用
         'data_source_dict': data_source_dict,
-        'business_stage_dict': business_stage_dict,
-        # 添加当前用户和时间信息
         'current_user': request.user.username if hasattr(request.user, 'username') else '系统用户',
         'current_time': timezone.now(),
+        'is_superuser': request.user.is_superuser,
+        'can_review': request.user.is_superuser or application.target_data_holder == get_user_company_code(
+            request.user),
     }
     return render(request, 'data-right-application-review.html', context)
-
 
 @login_required(login_url='/login/')
 def data_confirmation_list(request):
     """数据确权记录列表页面"""
-    records = DataRightRecord.objects.all()
+
+    # 根据用户权限获取记录
+    if request.user.is_superuser:
+        # 超级用户可以看到所有记录
+        records = DataRightRecord.objects.all()
+    else:
+        # 普通用户只能看到自己相关的记录
+        user_company_code = get_user_company_code(request.user)
+
+        if user_company_code:
+            from django.db.models import Q
+            records = DataRightRecord.objects.filter(
+                Q(right_recipient=user_company_code) | Q(data_holder=user_company_code)
+            )
+        else:
+            records = DataRightRecord.objects.none()
 
     # 搜索功能
     search_query = request.GET.get('search', '')
@@ -2706,7 +2770,7 @@ def data_confirmation_list(request):
 
     # 将choices转换为字典
     data_source_dict = dict(DATA_SOURCE_CHOICES)
-    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
+    #business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
     record_status_dict = dict(DataRightRecord.RECORD_STATUS_CHOICES)
 
     context = {
@@ -2716,20 +2780,31 @@ def data_confirmation_list(request):
         'holder_filter': holder_filter,
         'recipient_filter': recipient_filter,
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
+        #'business_stage_choices': BUSINESS_STAGE_CHOICES,
         'record_status_choices': DataRightRecord.RECORD_STATUS_CHOICES,
         # 添加字典版本供模板使用
         'data_source_dict': data_source_dict,
-        'business_stage_dict': business_stage_dict,
+        #'business_stage_dict': business_stage_dict,
         'record_status_dict': record_status_dict,
+        # 添加用户权限信息
+        'is_superuser': request.user.is_superuser,
+        'current_user': request.user,
     }
     return render(request, 'data-confirmation.html', context)
-
 
 @login_required(login_url='/login/')
 def data_confirmation_detail(request, record_id):
     """数据确权记录详情页面"""
     record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+    # 权限检查：普通用户只能查看自己相关的记录
+    if not request.user.is_superuser:
+        user_company_code = get_user_company_code(request.user)
+        if user_company_code and (
+                record.right_recipient != user_company_code and record.data_holder != user_company_code):
+            raise Http404("您没有权限查看此记录")
+        elif not user_company_code:
+            raise Http404("用户公司信息异常")
 
     # 获取原始申请的历史记录
     application_history = DataRightApplicationHistory.objects.filter(
@@ -2740,7 +2815,9 @@ def data_confirmation_detail(request, record_id):
         'record': record,
         'application_history': application_history,
         'data_source_choices': dict(DATA_SOURCE_CHOICES),
-        'business_stage_choices': dict(BUSINESS_STAGE_CHOICES),
+        #'business_stage_choices': dict(BUSINESS_STAGE_CHOICES),
+        'current_user': request.user,
+        'is_superuser': request.user.is_superuser,
     }
     return render(request, 'data-confirmation-detail.html', context)
 
@@ -2748,7 +2825,23 @@ def data_confirmation_detail(request, record_id):
 @login_required(login_url='/login/')
 def data_right_application_list(request):
     """数据权利申请列表页面（用于审核人员查看待审核申请）"""
-    applications = DataRightApplication.objects.all()
+
+    # 根据用户权限获取申请记录
+    if request.user.is_superuser:
+        # 超级用户可以看到所有申请
+        applications = DataRightApplication.objects.all()
+    else:
+        # 普通用户只能看到相关的申请
+        user_company_code = get_user_company_code(request.user)
+
+        if user_company_code:
+            from django.db.models import Q
+            applications = DataRightApplication.objects.filter(
+                Q(target_data_holder=user_company_code) |  # 向自己申请的（需要审核的）
+                Q(applicant=user_company_code)  # 自己提交的申请
+            )
+        else:
+            applications = DataRightApplication.objects.none()
 
     # 状态过滤，默认显示待审核的申请
     status_filter = request.GET.get('status', 'pending')
@@ -2777,9 +2870,121 @@ def data_right_application_list(request):
         'applicant_filter': applicant_filter,
         'data_source_choices': DATA_SOURCE_CHOICES,
         'application_status_choices': DataRightApplication.APPLICATION_STATUS_CHOICES,
+        # 添加用户权限信息
+        'is_superuser': request.user.is_superuser,
+        'current_user': request.user,
     }
     return render(request, 'data-right-application-list.html', context)
 
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def delete_data_confirmation_record(request, record_id):
+    """删除数据确权记录"""
+    try:
+        record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+        # 权限检查：普通用户只能删除自己相关的记录
+        if not request.user.is_superuser:
+            user_company_code = get_user_company_code(request.user)
+            if not user_company_code:
+                return JsonResponse({
+                    'success': False,
+                    'message': '用户公司信息异常'
+                }, status=403)
+
+            if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+                return JsonResponse({
+                    'success': False,
+                    'message': '您没有权限删除此记录'
+                }, status=403)
+
+        # 只允许删除被拒绝的记录
+        if record.status != 'rejected':
+            return JsonResponse({
+                'success': False,
+                'message': '只能删除被拒绝的确权记录'
+            }, status=400)
+
+        # 记录被删除的信息用于日志
+        record_info = f"{record.record_id} - {record.data_name}"
+
+        # 删除记录
+        record.delete()
+
+        messages.success(request, f'已成功删除确权记录：{record_info}')
+        return JsonResponse({
+            'success': True,
+            'message': '删除成功'
+        })
+
+    except DataRightRecord.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': '记录不存在'
+        }, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'删除失败：{str(e)}'
+        }, status=500)
+
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def batch_delete_data_confirmation_records(request):
+    """批量删除数据确权记录"""
+    try:
+        record_ids = request.POST.getlist('selected_records')
+        if not record_ids:
+            return JsonResponse({
+                'success': False,
+                'message': '请选择要删除的记录'
+            }, status=400)
+
+        # 获取要删除的记录
+        records = DataRightRecord.objects.filter(record_id__in=record_ids)
+
+        # 权限检查：普通用户只能删除自己相关的记录
+        if not request.user.is_superuser:
+            user_company_code = get_user_company_code(request.user)
+            if not user_company_code:
+                return JsonResponse({
+                    'success': False,
+                    'message': '用户公司信息异常'
+                }, status=403)
+
+            from django.db.models import Q
+            user_records = records.filter(
+                Q(right_recipient=user_company_code) | Q(data_holder=user_company_code)
+            )
+            if user_records.count() != records.count():
+                return JsonResponse({
+                    'success': False,
+                    'message': '您只能删除自己相关的记录'
+                }, status=403)
+
+        # 检查是否只有被拒绝的记录
+        non_rejected_records = records.exclude(status='rejected')
+        if non_rejected_records.exists():
+            return JsonResponse({
+                'success': False,
+                'message': '只能删除被拒绝的确权记录'
+            }, status=400)
+
+        deleted_count = records.count()
+        records.delete()
+
+        messages.success(request, f'已成功删除 {deleted_count} 条确权记录')
+        return JsonResponse({
+            'success': True,
+            'message': f'成功删除 {deleted_count} 条记录'
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'批量删除失败：{str(e)}'
+        }, status=500)
 
 # AJAX接口函数
 @login_required(login_url='/login/')

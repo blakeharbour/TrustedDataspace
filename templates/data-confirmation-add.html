@@ -232,11 +232,11 @@
 							<div class="row cl">
 								<div class="col-xs-12 col-sm-6 col-md-4">
 									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>申请方：</label>
+										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据需求方：</label>
 										<div class="formControls col-xs-8 col-sm-9">
 											<span class="select-box">
 												<select class="select" name="applicant" required>
-													<option value="">请选择申请方</option>
+													<option value="">请选择数据需求方</option>
 													{% for source_code, source_name in data_source_choices %}
 														<option value="{{ source_code }}">{{ source_name }}</option>
 													{% endfor %}
@@ -291,55 +291,48 @@
 					</div>
 
 					<!-- 目标数据信息区 -->
-					<div class="panel panel-default mb-20">
-						<div class="panel-header">
-							<h4 class="panel-title">
-								<i class="Hui-iconfont">&#xe62d;</i> 目标数据信息
-							</h4>
-						</div>
-						<div class="panel-body">
-							<div class="row cl">
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据持有方：</label>
-										<div class="formControls col-xs-8 col-sm-9">
-											<span class="select-box">
-												<select class="select" name="target_data_holder" required>
-													<option value="">请选择数据持有方</option>
-													{% for source_code, source_name in data_source_choices %}
-														<option value="{{ source_code }}">{{ source_name }}</option>
-													{% endfor %}
-												</select>
-											</span>
-										</div>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>目标数据名称：</label>
-										<div class="formControls col-xs-8 col-sm-9">
-											<input type="text" class="input-text" name="target_data_name" placeholder="请输入目标数据名称" required>
-										</div>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据业务环节：</label>
-										<div class="formControls col-xs-8 col-sm-9">
-											<span class="select-box">
-												<select class="select" name="target_business_stage" required>
-													<option value="">请选择业务环节</option>
-													{% for stage_code, stage_name in business_stage_choices %}
-														<option value="{{ stage_code }}">{{ stage_name }}</option>
-													{% endfor %}
-												</select>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+<div class="panel panel-default mb-20">
+    <div class="panel-header">
+        <h4 class="panel-title">
+            <i class="Hui-iconfont">&#xe62d;</i> 目标数据信息
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div class="row cl">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="row cl">
+                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>数据持有方：</label>
+                    <div class="formControls col-xs-7 col-sm-8">
+                        <span class="select-box">
+                            <select class="select" name="target_data_holder" required>
+                                <option value="">请选择数据持有方</option>
+                                {% for source_code, source_name in data_source_choices %}
+                                    <option value="{{ source_code }}">{{ source_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="row cl">
+                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>所需数据资产：</label>
+                    <div class="formControls col-xs-7 col-sm-8">
+                        <input type="text" class="input-text" name="target_data_name" placeholder="请输入所需数据资产名称" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="row cl">
+                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>项目名称：</label>
+                    <div class="formControls col-xs-7 col-sm-8">
+                        <input type="text" class="input-text" name="target_business_stage" placeholder="请输入项目名称" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 					<!-- 申请权利类型区 -->
 					<div class="panel panel-default mb-20">

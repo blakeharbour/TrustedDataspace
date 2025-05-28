@@ -216,50 +216,51 @@
 
 
 				<!-- 搜索和过滤区域 -->
-				<div class="text-c mb-20">
-					<form method="get" class="Hui-form text-l search-form">
-						<div class="row cl">
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">数据名称：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<input type="text" class="input-text" name="search" value="{{ search_query }}" placeholder="请输入数据名称">
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">申请状态：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<span class="select-box">
-										<select class="select" name="status">
-											<option value="">全部状态</option>
-											{% for status_code, status_name in application_status_choices %}
-												<option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>{{ status_name }}</option>
-											{% endfor %}
-										</select>
-									</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">申请方：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<span class="select-box">
-										<select class="select" name="applicant">
-											<option value="">全部机构</option>
-											{% for source_code, source_name in data_source_choices %}
-												<option value="{{ source_code }}" {% if applicant_filter == source_code %}selected{% endif %}>{{ source_name }}</option>
-											{% endfor %}
-										</select>
-									</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<div class="formControls">
-									<button type="submit" class="btn btn-primary">搜索</button>
-									<a href="{% url 'data_right_application_list' %}" class="btn btn-default ml-10">重置</a>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
+				<!-- 修改搜索表单的栅格布局，给标签更多空间 -->
+<div class="text-c mb-20">
+    <form method="get" class="Hui-form text-l search-form">
+        <div class="row cl">
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">数据名称：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <input type="text" class="input-text" name="search" value="{{ search_query }}" placeholder="请输入数据名称">
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">申请状态：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <span class="select-box">
+                        <select class="select" name="status">
+                            <option value="">全部状态</option>
+                            {% for status_code, status_name in application_status_choices %}
+                                <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>{{ status_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">申请方：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <span class="select-box">
+                        <select class="select" name="applicant">
+                            <option value="">全部机构</option>
+                            {% for source_code, source_name in data_source_choices %}
+                                <option value="{{ source_code }}" {% if applicant_filter == source_code %}selected{% endif %}>{{ source_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="formControls">
+                    <button type="submit" class="btn btn-primary">搜索</button>
+                    <a href="{% url 'data_right_application_list' %}" class="btn btn-default ml-10">重置</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
 				<!-- 申请列表 -->
 				<div class="mt-20">
@@ -571,6 +572,18 @@
 <script type="text/javascript">
 	let currentApplicationId = '';
 	let currentAction = '';
+
+    // 获取当前登录用户信息 - 新增代码开始
+    var currentUser = {
+        id: "{{current_user.id}}",
+        account: "{{current_user.account}}",
+        com: "{{current_user.com}}",
+        comid: "{{current_user.comid}}"
+    };
+
+    // 调试输出用户信息
+    console.log('当前用户:', currentUser);
+    console.log('用户公司:', currentUser.com);
 
 	// 跳转到审核详情页面
 	function goToReview(applicationId) {

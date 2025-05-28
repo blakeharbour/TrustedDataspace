@@ -242,41 +242,41 @@
 					</div>
 
 					<!-- 数据基本信息区 -->
-					<div class="panel panel-default mb-20">
-						<div class="panel-header">
-							<h4 class="panel-title">
-								<i class="fa fa-database"></i> 数据基本信息
-							</h4>
-						</div>
-						<div class="panel-body">
-							<div class="row cl">
-								<div class="col-xs-12 col-sm-6 col-md-3">
-									<div class="info-item">
-										<label class="info-label">数据名称：</label>
-										<span class="info-value">{{ record.data_name }}</span>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-3">
-									<div class="info-item">
-										<label class="info-label">数据持有方：</label>
-										<span class="info-value">{{ record.get_data_holder_display }}</span>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-3">
-									<div class="info-item">
-										<label class="info-label">权利获得方：</label>
-										<span class="info-value">{{ record.get_right_recipient_display }}</span>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-3">
-									<div class="info-item">
-										<label class="info-label">数据业务环节：</label>
-										<span class="info-value">{{ record.get_business_stage_display }}</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+<div class="panel panel-default mb-20">
+    <div class="panel-header">
+        <h4 class="panel-title">
+            <i class="fa fa-database"></i> 数据基本信息
+        </h4>
+    </div>
+    <div class="panel-body">
+        <div class="row cl">
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="info-item">
+                    <label class="info-label">所需数据资产名称：</label>
+                    <span class="info-value">{{ record.data_name }}</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="info-item">
+                    <label class="info-label">数据持有方：</label>
+                    <span class="info-value">{{ record.get_data_holder_display }}</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="info-item">
+                    <label class="info-label">权利获得方：</label>
+                    <span class="info-value">{{ record.get_right_recipient_display }}</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="info-item">
+                    <label class="info-label">项目名称：</label>
+                    <span class="info-value">{{ record.business_stage }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 					<!-- 已获得权利区 - Font Awesome 4版本适配 -->
 					<div class="panel panel-default mb-20">
