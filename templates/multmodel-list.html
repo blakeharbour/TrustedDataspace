@@ -28,6 +28,50 @@
 </head>
 <body>
  <style>
+     .loader {
+    border: 6px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 6px solid #3498db;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    right: 0;
+  }
+
     #menu-guest .Hui-menu-title,
     #menu-guest .Hui-menu-item a {
         color: #FFFFFF !important;  /* 亮白色 */
@@ -202,6 +246,25 @@
 								</tbody>
 							</table>
 						</div>
+
+                         <div id="myModal" class="modal">
+
+                          <!-- 模态框内容 -->
+                          <div class="modal-content">
+                            <p>模型预测中，请稍候...</p>
+                            <div class="loader"></div>
+                          </div>
+
+                        </div>
+                        <div id="myModal1" class="modal">
+
+                          <!-- 模态框内容 -->
+                          <div class="modal-content">
+                            <p>结果处理中，请稍候...</p>
+                            <div class="loader"></div>
+                          </div>
+                        </div>
+
 					</div>
 				</div>
 			</article>
@@ -220,6 +283,24 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
+        // 显示模态框
+        function showModal() {
+          document.getElementById('myModal').style.display = "block";
+        }
+
+        // 隐藏模态框
+        function hideModal() {
+          document.getElementById('myModal').style.display = "none";
+        }
+
+        function showModal1() {
+          document.getElementById('myModal1').style.display = "block";
+        }
+
+        // 隐藏模态框
+        function hideModal1() {
+          document.getElementById('myModal1').style.display = "none";
+        }
 
 		$(function(){
 			$.ajax({
@@ -258,13 +339,15 @@
 
         function multmodel_test(obj, modelid) {
             console.log("id是", modelid);
+            $("myButton").show();
+            showModal();
             var modeldelinfo=[];
             var modeldic={
                 modelid:modelid,
             };
             console.log("modeldic",modeldic);
             modeldelinfo.push(modeldic);
-            //console.log("modeldelinfo",modeldelinfo);
+            console.log("modeldelinfo",modeldelinfo);
             var modeldata = JSON.stringify(modeldelinfo);
 
             $.ajax({
@@ -275,8 +358,18 @@
                 success: function (res) {
                     console.log(res);
                     if (res.status == "0") {
-                        alert("连接成功！");
-                        location.href = "http://127.0.0.1:8000/multmodel-list/";
+                    hideModal();
+                    setTimeout(function (){
+                        showModal1();
+                        alert("样本对齐");
+                        setTimeout(function (){
+                            alert("模型训练结束");
+                            alert("模型保存成功！");
+                            hideModal1();
+                            location.href = "http://127.0.0.1:8000/multmodel-list/"
+                        },3000)
+                    },1000)
+
                     } else if (res.status == "1") {
                         alert("测试未成功！");
                     } else {

@@ -937,7 +937,7 @@ def ping_view(request):
 
 #查找模型
 def searchmodel(request):
-    modellist = selecttable("model_list", "id,guest,model,goal,status,Learning_Rate,Weight_Decay,Batch_Size,preci,recall1,error1,val_loss,modelurl,preci_url,recall1_url,error1_url,val_loss_url", '', '', '', '')
+    modellist = selecttable("model_list", "id,guest,model,goal,status,Learning_Rate,Weight_Decay,Batch_Size,preci,recall1,error1,val_loss,preci_url,recall1_url,error1_url,val_loss_url,modelurl", '', '', '', '')
     print('查找成功')
     print(modellist)
     return JsonResponse({'status': 0, 'data': modellist, 'msg': 'success'})
