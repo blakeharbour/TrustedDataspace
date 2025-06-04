@@ -248,6 +248,7 @@
           <div class="panel-body"发布>
             <div class="clearfix">
                 <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目申请</a>
+                <a href="javascript:;" onclick="project_right()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目数据资产权申请</a>
                    <!-- 新增搜索区域 start -->
             <div class="search-container">
                     <label for="projectNameSearch">项目名称:</label>
@@ -288,6 +289,7 @@
               <table class="table table-border table-bordered table-hover table-bg table-sort">
                 <thead>
                   <tr class="text-c">
+                    <th width="40">选择</th>
                     <th width="80">项目名称</th>
                     <th width="100">数据需求方</th>
                     <th width="90">数据所有方</th>
@@ -410,8 +412,18 @@
                 default:
                   statusText = "未知状态";
               }
+
+
               var row = $('<tr class="text-c"></tr>');
               console.log("获取的id:", item.ID);
+
+              // 添加单选列（所有radio使用相同的name实现单选）
+              row.append(
+                '<td>' +
+                '<input type="radio" name="selectedProject">' +
+                '</td>'
+              );
+
               row.append('<td>' + item.projectName + '</td>');
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
@@ -480,6 +492,14 @@
               }
               var row = $('<tr class="text-c"></tr>');
               console.log("获取的id:", item.ID);
+
+              // 添加单选列（所有radio使用相同的name实现单选）
+              row.append(
+                '<td>' +
+                '<input type="radio" name="selectedProject">' +
+                '</td>'
+              );
+
               row.append('<td>' + item.projectName + '</td>');
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
@@ -540,6 +560,24 @@
 
         function project_add() {
             location.href = "http://127.0.0.1:8000/project_add/";
+        }
+
+         function project_right() {
+            const selectedId = $('input[name="selectedProject"]:checked').val();
+              if (!selectedId) {
+                alert('请先选择项目');
+                return;
+              }
+
+              const selectedRow = $('input[name="selectedProject"]:checked').closest('tr');
+              const data = {
+                projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
+                demand: selectedRow.find('td:eq(2)').text(),    // 数据需求方
+                owner: selectedRow.find('td:eq(3)').text(),     // 数据所有方
+                asset: selectedRow.find('td:eq(4)').text()      // 所需数据资产
+              };
+              sessionStorage.setItem('selectedData', JSON.stringify(data));
+              location.href = "http://127.0.0.1:8000/data-confirmation/apply/";
         }
        // 删除操作函数
     function project_delete(projectName, dataDemand, dataOwner, dataAsset, id) {
