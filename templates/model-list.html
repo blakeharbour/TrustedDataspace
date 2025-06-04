@@ -131,7 +131,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+						<li ><a href="/guest-list/" title="参与者列表">参与者列表</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -139,13 +139,13 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+						<li class="current"><a href="/model-list/" title="模型列表">模型列表</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+						<li ><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+						<li ><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
 					</ul>
                 </dd>
 			</dl>
@@ -153,13 +153,13 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+						<li> <a href="/application_model-main/" title="模型使用">模型使用</a></li>
 					</ul>
 					<ul>
-						<li><a href="http://127.0.0.1:8000/model-application/" title="数据申请情况查看">数据申请情况查看</a></li>
+						<li><a href="/model-application/" title="数据申请情况查看">数据申请情况查看</a></li>
 					</ul>
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+						<li><a href="/application_result/" title="模型应用结果">模型应用结果</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -322,7 +322,7 @@
 
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/searchmodel/",
+				url:"/searchmodel/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -331,7 +331,7 @@
 						var Result=res.data;
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
-                            var link="http://127.0.0.1:8000/application_result_shappng/"+Result[j][0];
+                            var link="/application_result_shappng/"+Result[j][0];
                             str+='<tr class="text-c">'+
                              '<td><a onclick="modeldel_list(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont"></i>'+Result[j][0]+'</a></td>'+
                             '<td>'+Result[j][1]+'</td>'+
@@ -371,7 +371,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: "http://127.0.0.1:8000/modeltest/",
+                url: "/modeltest/",
                 dataType:'json',
                 data: modeldata,
                 success: function (res) {
@@ -385,7 +385,7 @@
                             alert("模型训练结束");
                             alert("模型保存成功！");
                             hideModal1();
-                            location.href = "http://127.0.0.1:8000/model-list/"
+                            location.href = "/model-list/"
                         },3000)
                     },1000)
 
@@ -408,13 +408,13 @@
             var userdata = JSON.stringify(userinfo);
             $.ajax({
                 type: 'POST',
-                url: "http://127.0.0.1:8000/open_file_manager1/",
+                url: "/open_file_manager1/",
                 dataType:'json',
                 data: userdata,
                 success: function (res) {
                     console.log(res);
                     if (res.status == "success") {
-                        location.href = "http://127.0.0.1:8000/model-list/";
+                        location.href = "/model-list/";
                     } else {
                         alert("打开失败！");
                     }
@@ -427,18 +427,18 @@
         }
 
        function modeldel_list(obj,modelid) {
-			location.href = "http://127.0.0.1:8000/modeldel-list/"+modelid+"/";
+			location.href = "/modeldel-list/"+modelid+"/";
 		}
 
 		function member_edit(obj,userid) {
 			var id=JSON.stringify(userid);
 			sessionStorage.setItem("userid",id);
 
-			location.href = "http://127.0.0.1:8000/member-edit/";
+			location.href = "/member-edit/";
 		}
 
 		function model_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/model-add/";
+			location.href = "/model-add/";
 		}
 		
 		function model_dele(obj,id) {
@@ -452,7 +452,7 @@
 			layer.confirm('确认要删除吗？', function (index) {
 				$.ajax({
 					type: 'post',
-					url: 'http://127.0.0.1:8000/deletemodel/',
+					url: '/deletemodel/',
 					dataType: 'json',
 					data: userdata,
 					success: function (data) {
@@ -468,7 +468,7 @@
 
         function trainModelresultshow() {
 
-            location.href = "http://127.0.0.1:6006/";
+            location.href = "http://0.0.0.0:6006/";
 
 
         }

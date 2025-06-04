@@ -31,7 +31,7 @@
 <!--_menu 作为公共模版分离出去-->
 <aside class="Hui-admin-aside-wrapper">
     <div class="Hui-admin-logo-wrapper">
-        <a class="logo navbar-logo" href="http://127.0.0.1:8000/index/">
+        <a class="logo navbar-logo" href="/index/">
             <i class="va-m iconpic global-logo"></i>
             <span class="va-m">铁路隐私计算平台</span>
         </a>
@@ -43,7 +43,7 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>
+                    <li><a href="/multguest-list/" title="参与者列表">外部合作者列表</a></li>
                 </ul>
             </dd>
         </dl>
@@ -52,17 +52,17 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>
+                    <li><a href="/multmodel-list/" title="模型列表">模型列表</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                    <li><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                    <li><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
                 </ul>
             </dd>
         </dl>
@@ -71,13 +71,13 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li class="current"><a href="http://127.0.0.1:8000/multapplication_model-main/"
+                    <li class="current"><a href="/multapplication_model-main/"
                                            title="模型使用">模型使用</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
+                    <li><a href="/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
                 </ul>
             </dd>
 
@@ -216,7 +216,7 @@
     $(function () {
         $.ajax({
             type: "post",
-            url: "http://127.0.0.1:8000/multmodel_apply_list/",
+            url: "/multmodel_apply_list/",
             dataType: 'json',
             success: function (res) {
                 console.log("res", res);
@@ -247,14 +247,14 @@
         {#var id=JSON.stringify(id);#}
         $.ajax({
             type: 'GET',
-            url: 'http://127.0.0.1:8000/multmodel_application_status_modify/',
+            url: '/multmodel_application_status_modify/',
             dataType: 'json',
             data: {mid: mid},
             success: function (res) {
                 console.log("res", res);
                 if (res.status == "1") {
                     alert("提供成功");
-                    location.href = "http://127.0.0.1:8000/multmodel-application"
+                    location.href = "/multmodel-application"
                 } else {
                     alert("出现错误")
                 }
@@ -263,14 +263,14 @@
     }
 
     function apply_add(obj, userid) {
-        location.href = "http://127.0.0.1:8000/multmodel-apply-add/";
+        location.href = "/multmodel-apply-add/";
     }
 
     function apply_delete(obj, userid) {
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8000/multmodel-apply-delete/',
+                url: '/multmodel-apply-delete/',
                 dataType: 'json',
                 data: userdata,
                 success: function (data) {

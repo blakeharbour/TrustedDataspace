@@ -55,7 +55,7 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li class="current"><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>
+                    <li class="current"><a href="/multguest-list/" title="参与者列表">外部合作者列表</a></li>
                 </ul>
             </dd>
         </dl>
@@ -64,17 +64,17 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>
+                    <li><a href="/multmodel-list/" title="模型列表">模型列表</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                    <li><a href="/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                    <li><a href="/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>
                 </ul>
             </dd>
         </dl>
@@ -83,13 +83,13 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_model-main/"
+                    <li><a href="/multapplication_model-main/"
                                            title="模型使用">模型使用</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
+                    <li><a href="/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
                 </ul>
             </dd>
 
@@ -220,7 +220,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: "http://127.0.0.1:8000/getagreement/",
+                url: "/getagreement/",
                 dataType:'json',
                 data: ipdata,
                 success: function (res) {
@@ -229,7 +229,7 @@
                 }
             });
 
-            {#location.href = "http://127.0.0.1:8000/multguest-add/";#}
+            {#location.href = "/multguest-add/";#}
         }
 		function submit_order() {
 			var guest1=$("#guest").val();
@@ -256,14 +256,14 @@
 			var guestdata = JSON.stringify(guestinfo)
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/createmultguest/",
+				url:"/createmultguest/",
 				data:guestdata,
 				dataType:"json",
 				success:function (res) {
 					console.log("res",res)
 					if(res.status=="0"){
 						alert("新增成功");
-						location.href="http://127.0.0.1:8000/multguest-list/"
+						location.href="/multguest-list/"
 					}else{
 						alert("出现错误")
 					}

@@ -124,13 +124,13 @@
     }
     $.ajax({
       type: 'post',
-      url: 'http://127.0.0.1:8000/createinterface/',
+      url: '/createinterface/',
       data: JSON.stringify([payload]),
       contentType: 'application/json',
       success: function(res) {
         if (res.status === "0") {
           alert("新增成功,已通过区块链存证");
-          location.href = "http://127.0.0.1:8000/wb-interface/";
+          location.href = "/wb-interface/";
         } else {
           alert("出现错误");
         }

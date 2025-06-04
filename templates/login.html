@@ -85,14 +85,14 @@
           var userdata = JSON.stringify(userinfo);
           $.ajax({
               type: "post",
-              url: "http://127.0.0.1:8000/jxclogin/",
+              url: "/jxclogin/",
               data: userdata,
               dataType: "json",
               success: function (res) {
                   console.log(res);
                   if (res.status == "0") {
                       alert("登录成功！");
-                      location.href = "http://127.0.0.1:8000/tdindex/"
+                      location.href = "/tdindex/"
                   } else {
                       alert("登录失败，请重新登录！")
                   }
@@ -103,7 +103,7 @@
 
    function register() {
         // 使用 JavaScript 跳转到注册页面
-        location.href = "http://127.0.0.1:8000/registeruser/";
+        location.href = "/registeruser/";
     }
 
     function cancel(){

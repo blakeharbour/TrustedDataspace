@@ -89,14 +89,14 @@
         // 使用 AJAX 向后端发送请求
         $.ajax({
             type: "POST",
-            url: "http://127.0.0.1:8000/register/",  // 替换为实际的后端URL
+            url: "/register/",  // 替换为实际的后端URL
             data: userdata,
             dataType: "json",
             success: function(res) {
                 // 注册成功后的处理逻辑
                 if (res.status === "success") {
                     alert("注册成功！");
-                    window.location.href = "http://127.0.0.1:8000/login/";  // 跳转到登录页面
+                    window.location.href = "/login/";  // 跳转到登录页面
                 } else {
                     alert("注册失败，请重试！");
                 }

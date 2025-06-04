@@ -175,7 +175,7 @@
 		$(function(){
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/searchuser/",
+				url:"/searchuser/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -200,11 +200,11 @@
 		function member_edit(obj,userid) {
 			var id=JSON.stringify(userid);
 			sessionStorage.setItem("userid",id);
-			location.href = "http://127.0.0.1:8000/member-edit/";
+			location.href = "/member-edit/";
 		}
 
 		function member_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/member-add/";
+			location.href = "/member-add/";
 		}
 		
 		function member_dele(obj,id) {
@@ -218,7 +218,7 @@
 			layer.confirm('确认要删除吗？', function (index) {
 				$.ajax({
 					type: 'post',
-					url: 'http://127.0.0.1:8000/deleteuser/',
+					url: '/deleteuser/',
 					dataType: 'json',
 					data: userdata,
 					success: function (data) {

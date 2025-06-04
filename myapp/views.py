@@ -1215,7 +1215,7 @@ def upload_modelapply(request):
     updatemodeldel1(modeldel_json)
     updatemodel1(model_json)
     # upload_modelinfo(data)
-    #response = requests.post("http://127.0.0.1:8000/check_apply_re/", json=data_test)
+    #response = requests.post("/check_apply_re/", json=data_test)
     #需要传输的信息
     # 获取 IP 地址
     ip_address = socket.gethostbyname(socket.gethostname())
@@ -1279,7 +1279,7 @@ def upload_modelinfo(data):
     # 处理逻辑
     print("开始调用外部方法")
     data1= {"key": "value", "another_key": "another_value"}
-    response = requests.post("http://127.0.0.1:8000/model_self_insert/", json=data1)
+    response = requests.post("/model_self_insert/", json=data1)
     result = response.json()
     print(result)
 from myapp.fed_PU_sci1203 import main
@@ -2378,7 +2378,7 @@ from django.core.exceptions import PermissionDenied
 logging.basicConfig(level=logging.INFO)
 
 # 允许访问的 IP 列表
-ALLOWED_IPS = ['192.168.1.141', '10.61.222.249', '127.0.0.1']
+ALLOWED_IPS = ['192.168.1.141', '10.61.222.249', '0.0.0.0']
 
 # 存储 IP 地址的文件路径
 IP_HISTORY_FILE = 'ip_history.txt'
@@ -2469,8 +2469,8 @@ def get_data(request):
             # 加密数据
             encrypted_data = encrypt_data(data_str, key)
 
-            # 若客户端 IP 不是 127.0.0.1，则更新 IP 历史记录
-            if client_ip != '127.0.0.1':
+            # 若客户端 IP 不是 0.0.0.0，则更新 IP 历史记录
+            if client_ip != '0.0.0.0':
                 ip_history = read_ip_history()
                 if client_ip not in ip_history:
                     ip_history.append(client_ip)
@@ -2478,7 +2478,7 @@ def get_data(request):
 
             # 获取 IP 历史记录
             ip_history = read_ip_history()
-            # 取最新的非 127.0.0.1 的 IP 地址，如果没有则显示默认信息
+            # 取最新的非 0.0.0.0 的 IP 地址，如果没有则显示默认信息
             latest_non_local_ip = ip_history[-1] if ip_history else 'No recent non - local clients'
             print(ip_history)
             # 创建数据包

@@ -52,7 +52,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/member-list/" title="会员列表">用户列表</a></li>
+						<li class="current"><a href="/member-list/" title="会员列表">用户列表</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -183,14 +183,14 @@
 			var userdata = JSON.stringify(userinfo)
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/createuser/",
+				url:"/createuser/",
 				data:userdata,
 				dataType:"json",
 				success:function (res) {
 					console.log("res",res)
 					if(res.status=="0"){
 						alert("新增成功");
-						location.href="http://127.0.0.1:8000/member-list/"
+						location.href="/member-list/"
 					}else{
 						alert("出现错误")
 					}
