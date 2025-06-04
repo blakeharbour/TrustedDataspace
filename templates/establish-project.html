@@ -248,6 +248,7 @@
           <div class="panel-body"发布>
             <div class="clearfix">
                 <a href="javascript:;" onclick="project_add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目申请</a>
+                <a href="javascript:;" onclick="project_right()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 项目数据资产权申请</a>
                    <!-- 新增搜索区域 start -->
             <div class="search-container">
                     <label for="projectNameSearch">项目名称:</label>
@@ -288,6 +289,7 @@
               <table class="table table-border table-bordered table-hover table-bg table-sort">
                 <thead>
                   <tr class="text-c">
+                    <th width="40">选择</th>
                     <th width="80">项目名称</th>
                     <th width="100">数据需求方</th>
                     <th width="90">数据所有方</th>
@@ -410,8 +412,18 @@
                 default:
                   statusText = "未知状态";
               }
+
+
               var row = $('<tr class="text-c"></tr>');
               console.log("获取的id:", item.ID);
+
+              // 添加单选列（所有radio使用相同的name实现单选）
+              row.append(
+                '<td>' +
+                '<input type="radio" name="selectedProject">' +
+                '</td>'
+              );
+
               row.append('<td>' + item.projectName + '</td>');
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
@@ -480,6 +492,14 @@
               }
               var row = $('<tr class="text-c"></tr>');
               console.log("获取的id:", item.ID);
+
+              // 添加单选列（所有radio使用相同的name实现单选）
+              row.append(
+                '<td>' +
+                '<input type="radio" name="selectedProject">' +
+                '</td>'
+              );
+
               row.append('<td>' + item.projectName + '</td>');
               row.append('<td>' + item.dataDemand + '</td>');
               row.append('<td>' + item.dataOwner + '</td>');
@@ -491,11 +511,11 @@
               if (item.currentStatus!== '0' && item.currentStatus!== '1') {
                 disabledClass = " disabled";
               }
-              var actions = '<td>' +
-                '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
-                '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
-                '<a title="提交" onclick="project_submit(\'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe600;</i></a>' +
-                '</td>';
+             var actions = '<td>' +
+                 '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
+                 '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\', \'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
+                 '<a title="提交" onclick="project_submit(\'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe600;</i></a>' +
+                 '</td>';
               row.append(actions);
               tableBody.append(row);
             });
@@ -541,42 +561,61 @@
         function project_add() {
             location.href = "http://127.0.0.1:8000/project_add/";
         }
+
+         function project_right() {
+            const selectedId = $('input[name="selectedProject"]:checked').val();
+              if (!selectedId) {
+                alert('请先选择项目');
+                return;
+              }
+
+              const selectedRow = $('input[name="selectedProject"]:checked').closest('tr');
+              const data = {
+                projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
+                demand: selectedRow.find('td:eq(2)').text(),    // 数据需求方
+                owner: selectedRow.find('td:eq(3)').text(),     // 数据所有方
+                asset: selectedRow.find('td:eq(4)').text()      // 所需数据资产
+              };
+              sessionStorage.setItem('selectedData', JSON.stringify(data));
+              location.href = "http://127.0.0.1:8000/data-confirmation/apply/";
+        }
        // 删除操作函数
-    function project_delete(projectName, dataDemand, dataOwner, dataAsset) {
-      var btn = document.querySelector('a[onclick="project_delete(\'' + projectName + '\', \'' + dataDemand + '\', \'' + dataOwner + '\', \'' + dataAsset + '\')"]');
-      var disabled = btn.classList.contains('disabled');
-      if (disabled) {
+    function project_delete(projectName, dataDemand, dataOwner, dataAsset, id) {
+    var btn = document.querySelector('a[onclick="project_delete(\'' + projectName + '\', \'' + dataDemand + '\', \'' + dataOwner + '\', \'' + dataAsset + '\', \'' + id + '\')"]');
+    var disabled = btn.classList.contains('disabled');
+    if (disabled) {
         layer.msg('当前状态不允许删除', { icon: 2 });
         return;
-      }
-      layer.confirm('确认要删除吗？', function (index) {
+    }
+    layer.confirm('确认要删除吗？', function (index) {
         // 这里需要根据实际情况发送删除请求
         $.ajax({
-          type: 'POST',
-          url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
-          data: {
-            projectName: projectName,
-            dataDemand: dataDemand,
-            dataOwner: dataOwner,
-            dataAsset: dataAsset
-          },
-          success: function (res) {
-            if (res.status === '0') {
-              layer.msg('删除成功', { icon: 1 });
-              // 刷新页面或重新加载数据
-              location.reload();
-            } else {
-              layer.msg('删除失败：' + res.message, { icon: 2 });
+            type: 'POST',
+            url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
+            data: {
+                projectName: projectName,
+                dataDemand: dataDemand,
+                dataOwner: dataOwner,
+                dataAsset: dataAsset,
+                id: id // 添加ID参数
+            },
+            success: function (res) {
+                if (res.status === '0') {
+                    layer.msg('删除成功', { icon: 1 });
+                    // 刷新页面或重新加载数据
+                    location.reload();
+                } else {
+                    layer.msg('删除失败：' + res.message, { icon: 2 });
+                }
+            },
+            error: function (error) {
+                console.error("删除请求失败:", error.status, error.statusText, error.responseText);
+                layer.msg('删除请求失败，请稍后重试', { icon: 2 });
             }
-          },
-          error: function (error) {
-            console.error("删除请求失败:", error.status, error.statusText, error.responseText);
-            layer.msg('删除请求失败，请稍后重试', { icon: 2 });
-          }
         });
         layer.close(index);
-      });
-    }
+    });
+}
 
 // 提交操作函数
     function project_submit(id) {

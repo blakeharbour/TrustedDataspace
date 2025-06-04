@@ -62,6 +62,8 @@ urlpatterns = [
     path('deletelogin/', views.deletelogin),
     path('searchonelogin/', views.searchonelogin),
 
+    path('api/check_sandbox_ip/', views.check_sandbox_ip),
+
     #数据接口界面
     path('wb-interface/', views.wb_interface),
     path('searchinterface/', views.searchinterface),
@@ -86,6 +88,8 @@ path('shaxiangipbox/', views.shaxiangipbox),
     path('create-ipbox/', views.createipbox, name='createipbox'),
 
 path('sjsxinterface-edit/', views.sjsxinterface_edit),
+path('delete_sandbox_info/', views.delete_sandbox_info),
+
     path('sysxsearchoneinterface/', views.sysxsearchoneinterface),
 path('sysxdeleteinterface/', views.sysxdeleteinterface),
 path('upload_to_sandbox/', views.upload_to_sandbox),
@@ -226,6 +230,25 @@ path('xqflist_open/', views.xqflist_open),
     path('multmodel-list/', viewsmult.multmodel_list),
     path('multupload/', viewsmult.upload_multmodelapply),
     path('multmodeltest/', viewsmult.multmodel_test),  # 测试
+
+
+    # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    path('data-confirmation/', views.data_confirmation_list, name='data_confirmation_list'),
+    path('data-confirmation/detail/<str:record_id>/', views.data_confirmation_detail, name='data_confirmation_detail'),
+
+    # 申请数据确权相关URL
+    path('data-confirmation/apply/', views.data_right_application_add, name='data_right_application_add'),
+
+    # 审核数据确权相关URL
+    path('data-confirmation/review/', views.data_right_application_list, name='data_right_application_list'),
+    path('data-confirmation/review/<str:application_id>/', views.data_right_application_review,
+         name='data_right_application_review'),
+
+    # AJAX接口URL
+    path('api/data-confirmation/application/<str:application_id>/', views.get_application_detail,
+         name='get_application_detail'),
+
+    # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     # 数据管理
     path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确
     path('data_asset_add/', views.add_data_asset, name='data_asset_add'),
@@ -290,3 +313,4 @@ path('xqflist_open/', views.xqflist_open),
     path('get_data/', get_data, name='get_data'),  # 让主界面直接访问 /get_data/
 
 ]
+

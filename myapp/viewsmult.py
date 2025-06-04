@@ -527,13 +527,16 @@ def upload_mult_to_remote_server(request):
     ssh_client.close()
     print("结束传输文件")
     # return JsonResponse({'status': 0, 'msg': 'success'})
-def multmodel_test(request):
-    data_dict = json.loads(request.body)
 
-    print("数据是", data_dict)
-    id = data_dict[0].get("modelid")
+from myapp.fed_PU_sci1203 import maincf
+async def multmodel_test(request):
     print('开始执行')
-    maincf.main(id)
+    proobj = request.body
+    projs = json.loads(proobj)
+    print(projs)
+    modelid = projs[0]["modelid"]
+    await maincf.main(modelid)
+    # client_port.datapsi()
     print('执行成功')
     return JsonResponse({'status': 0, 'msg': 'success'})
 

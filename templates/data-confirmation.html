@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据确权记录</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+</head>
+<body>
+ <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+<!-- 在<body>标签内的顶部添加 -->
+{% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                       <li class="current"><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                    </ul>
+                </dd>
+            </dl>
+
+            <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+                    </ul>
+                 </dd>
+            </dl>
+
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/guest-list/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+    <div class="Hui-admin-aside-mask"></div>
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+	<!-- 修复后的关键部分结构 -->
+<section class="Hui-admin-article-wrapper">
+    <!--_header 作为公共模版分离出去-->
+    <header class="Hui-navbar">
+        <div class="navbar">
+            <div class="container-fluid clearfix">
+                <nav id="Hui-topNav" class="nav navbar-nav">
+                    <ul class="clearfix">
+                        <li class="dropDown dropDown_hover">
+                            <ul class="dropDown-menu menu radius box-shadow">
+                                <li class="">
+                                    <a href="#">二级导航</a>
+                                </li>
+                                <li class="">
+                                    <a href="#">二级导航</a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+                    <ul class="clearfix">
+                        <!-- 用户信息 -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <!--/_header 作为公共模版分离出去-->
+
+    <div class="Hui-admin-article">
+        <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+            首页
+            <span class="c-gray en">/</span>
+            数据确权
+            <span class="c-gray en">/</span>
+            数据确权记录
+        </nav>
+
+        <div class="pd-20">
+            <!-- 页面标题和操作按钮 -->
+            <div class="text-c mb-20">
+                <div class="f-l">
+                    <h2 class="h2-title">数据确权记录</h2>
+                </div>
+                <div class="f-r">
+                    <a href="{% url 'data_right_application_add' %}" class="btn btn-primary mr-10">
+                        <i class="Hui-iconfont">&#xe600;</i> 申请数据确权
+                    </a>
+                    <a href="{% url 'data_right_application_list' %}" class="btn btn-success">
+                        <i class="Hui-iconfont">&#xe6df;</i> 审核数据确权
+                    </a>
+                </div>
+                <div class="cl"></div>
+            </div>
+
+            <!-- 搜索和过滤区域 -->
+            <div class="text-c mb-20">
+                <form method="get" class="Hui-form text-l">
+                    <div class="row cl">
+                        <div class="col-xs-12 col-sm-6 col-md-3" style="display: flex; align-items: center; gap: 8px;">
+                            <label class="form-label" style="white-space: nowrap; flex-shrink: 0;">数据名称：</label>
+                            <div class="formControls" style="flex: 1;">
+                                <input type="text" class="input-text" name="search" value="{{ search_query }}" placeholder="请输入数据名称">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3" style="display: flex; align-items: center; gap: 8px;">
+                            <label class="form-label" style="white-space: nowrap; flex-shrink: 0;">确权状态：</label>
+                            <div class="formControls" style="flex: 1;">
+                                <span class="select-box">
+                                    <select class="select" name="status">
+                                        <option value="">全部状态</option>
+                                        {% for status_code, status_name in record_status_choices %}
+                                            <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>{{ status_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3" style="display: flex; align-items: center; gap: 8px;">
+                            <label class="form-label" style="white-space: nowrap; flex-shrink: 0;">数据持有方：</label>
+                            <div class="formControls" style="flex: 1;">
+                                <span class="select-box">
+                                    <select class="select" name="holder">
+                                        <option value="">全部机构</option>
+                                        {% for holder_code, holder_name in data_source_choices %}
+                                            <option value="{{ holder_code }}" {% if holder_filter == holder_code %}selected{% endif %}>{{ holder_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-3">
+                            <div class="formControls">
+                                <button type="submit" class="btn btn-primary">搜索</button>
+                                <a href="{% url 'data_confirmation_list' %}" class="btn btn-default ml-10">重置</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 数据确权记录列表 -->
+            <div class="mt-20">
+                {% if page_obj %}
+                    {% for record in page_obj %}
+                        <div class="data-record-card mb-15" onclick="goToDetail('{{ record.record_id }}')">
+                            <div class="pd-20 bg-1 radius-5 border-solid-1 border-color-ddd cursor-pointer hover-bg-light">
+                                <div class="row cl">
+                                    <div class="col-xs-12 col-sm-8">
+                                        <h4 class="text-primary mb-5">{{ record.data_name }}</h4>
+                                        <div class="c-666 mb-5">
+                                            <span class="mr-20"><strong>数据流向：</strong>{{ record.get_data_holder_display }} → {{ record.get_right_recipient_display }}</span>
+                                            <span class="mr-20"><strong>确权时间：</strong>{{ record.created_at|date:"Y-m-d H:i" }}</span>
+                                        </div>
+                                        <div class="c-666 mb-5">
+                                            <strong>权利类型：</strong>{{ record.get_granted_rights_display }}
+                                        </div>
+                                        <div class="c-666">
+                                            <strong>使用期限：</strong>{{ record.get_usage_period_display }}
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 text-r">
+                                        <div class="mt-10">
+                                            {% if record.status == 'active' %}
+                                                <span class="label label-success">生效中</span>
+                                            {% elif record.status == 'expired' %}
+                                                <span class="label label-warning">已过期</span>
+                                            {% elif record.status == 'revoked' %}
+                                                <span class="label label-danger">已撤销</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mt-10">
+                                            <small class="c-999">点击查看详情</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                    <!-- 分页 -->
+                    <div class="text-c mt-30">
+                        <div class="pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if holder_filter %}&holder={{ holder_filter }}{% endif %}{% if recipient_filter %}&recipient={{ recipient_filter }}{% endif %}" class="btn btn-default">首页</a>
+                                <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if holder_filter %}&holder={{ holder_filter }}{% endif %}{% if recipient_filter %}&recipient={{ recipient_filter }}{% endif %}" class="btn btn-default">上一页</a>
+                            {% endif %}
+
+                            <span class="btn btn-primary">第 {{ page_obj.number }} 页 / 共 {{ page_obj.paginator.num_pages }} 页</span>
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if holder_filter %}&holder={{ holder_filter }}{% endif %}{% if recipient_filter %}&recipient={{ recipient_filter }}{% endif %}" class="btn btn-default">下一页</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}{% if holder_filter %}&holder={{ holder_filter }}{% endif %}{% if recipient_filter %}&recipient={{ recipient_filter }}{% endif %}" class="btn btn-default">末页</a>
+                            {% endif %}
+                        </div>
+                        <div class="mt-10">
+                            <small class="c-666">共 {{ page_obj.paginator.count }} 条记录</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-c mt-50">
+                        <div class="empty-data">
+                            <i class="Hui-iconfont" style="font-size:48px;color:#ccc;">&#xe60c;</i>
+                            <p class="mt-10 c-999">暂无数据确权记录</p>
+                            <div class="mt-20">
+                                <a href="{% url 'data_right_application_add' %}" class="btn btn-primary">
+                                    <i class="Hui-iconfont">&#xe600;</i> 开始申请数据确权
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+	<!-- JavaScript 和 CSS 样式 -->
+	<style>
+		.data-record-card {
+			transition: all 0.3s ease;
+		}
+
+		.data-record-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+		}
+
+		.hover-bg-light:hover {
+			background-color: #f8f9fa !important;
+		}
+
+		.cursor-pointer {
+			cursor: pointer;
+		}
+
+		.h2-title {
+			color: #333;
+			font-weight: 500;
+			margin: 0;
+		}
+
+		.border-color-ddd {
+			border-color: #ddd;
+		}
+
+		.empty-data {
+			padding: 40px 20px;
+		}
+
+		.pagination {
+			display: inline-block;
+		}
+
+		.pagination a, .pagination span {
+			margin: 0 2px;
+		}
+
+		.label {
+			padding: 4px 8px;
+			font-size: 12px;
+			border-radius: 3px;
+		}
+
+		.label-success {
+			background-color: #5cb85c;
+			color: white;
+		}
+
+		.label-warning {
+			background-color: #f0ad4e;
+			color: white;
+		}
+
+		.label-danger {
+			background-color: #d9534f;
+			color: white;
+		}
+	</style>
+
+	<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui/js/H-ui.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+
+	<script type="text/javascript">
+		// 跳转到详情页面
+		function goToDetail(recordId) {
+			window.location.href = "{% url 'data_confirmation_detail' 'RECORD_ID' %}".replace('RECORD_ID', recordId);
+		}
+
+		// 页面加载完成后的初始化
+		$(document).ready(function(){
+			// 初始化下拉选择框
+			if(typeof $.Huifold != 'undefined') {
+				$.Huifold();
+			}
+
+			// 高亮当前菜单项 - 数据确权页面
+            $('#menu-data-confirmation').addClass('selected');
+            $('#menu-data-confirmation .Hui-menu-item a[href*="data-confirmation"]').parent().addClass('current');
+
+            // 确保其他菜单项不被高亮
+            $('#menu-guest').removeClass('selected');
+            $('#menu-guest .Hui-menu-item li').removeClass('current');
+		});
+
+		// 导航栏显示隐藏
+		function displaynavbar(obj){
+			if($(".Hui-admin-aside-wrapper").hasClass("aside-hide")){
+				$(".Hui-admin-aside-wrapper").removeClass("aside-hide");
+				$(obj).find("i").removeClass("Hui-iconfont-right").addClass("Hui-iconfont-left");
+			} else {
+				$(".Hui-admin-aside-wrapper").addClass("aside-hide");
+				$(obj).find("i").removeClass("Hui-iconfont-left").addClass("Hui-iconfont-right");
+			}
+		}
+	</script>
+</body>
+</html>
