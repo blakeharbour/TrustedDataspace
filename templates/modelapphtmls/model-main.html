@@ -185,10 +185,11 @@
 										<th width="80">模型ID</th>
 										<th width="100">参与者</th>
 										<th width="90">模型名称</th>
-										<th width="100">目的</th>
+										<th width="100">项目名称</th>
                                         <th width="100">是否可使用</th>
                                         <th width="100">应用申请</th>
                                         <th width="100">模型应用</th>
+                                        <th width="100">数据名称</th>
 									</tr>
 								</thead>
 								<tbody id="info">
@@ -272,6 +273,7 @@
                                 '<i class="Hui-iconfont"></i>数据申请情况</a>'+
                             '<br><a title="模型应用" onclick="model_test(this,\''+Result[j][0]+'\')" style="color: cornflowerblue;">' +
                                 '<i class="Hui-iconfont"></i>模型应用</a>' +{% endcomment %}
+                                '<td>'+Result[j][5]+'</td>'+
                             '</tr>'
 						}
 						$("#info").append(str)
@@ -310,6 +312,33 @@
                                 location.href = "/application_model-main/"
                             },3000)
                         },1000)
+
+                        var Result
+
+                        $.ajax({
+                        type:"post",
+                        url:"/application_model-main_search/",
+                        dataType:'json',
+                        success:function (res) {
+                            console.log("res", res);
+                            str = ''
+                            if (res.status == "0") {
+                                var Result = res.data;
+                                console.log(Result);
+                            }
+                        }
+                        })
+
+                        $.ajax({
+                            type:"post",
+                            url:"/useBlockchain/",
+                            data:webdata,
+                            dataType:'string',
+                            success:function (res) {
+                                console.log("res",res);
+                                alert("结果保存成功！");
+                            }
+                        })
 
                         } else if (res.status == "1") {
                             alert("测试未成功！");
