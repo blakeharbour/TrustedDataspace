@@ -701,22 +701,11 @@ def createinterfacesx(request):
 
 
 #数据IP追踪模块
-import socket
-def get_local_ip():
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
-    return local_ip
-
 def createip(request):
     projs = json.loads(request.body)  # 是 dict，不是 list
     address = projs["address"]
     ip = projs["ip"]
 
-    #
-    # 自动获取客户端 IP
-    ipbox= get_local_ip()
-    print(ipbox)
-    #
     pro_js = (
         "'" + address + "','" + ip + "'"
     )
