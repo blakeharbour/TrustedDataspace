@@ -4,6 +4,8 @@ import os
 import time
 import threading
 import os
+from gmssl.sm4 import CryptSM4, SM4_ENCRYPT
+
 from datetime import datetime
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -136,18 +138,20 @@ def upload_to_sandbox():
         print("🔐 检测到 CSV，开始加密...")
         df = pd.read_csv(file)
 
-        # ✅ AES 加密逻辑
-        key = b"1234567890abcdef"  # 固定 16 字节密钥
-        cipher = AES.new(key, AES.MODE_ECB)
+        # 修改为国密SM4
+        SM4_KEY = b'0123456789abcdef'
+        crypt_sm4 = CryptSM4()
+        crypt_sm4.set_key(SM4_KEY, SM4_ENCRYPT)
 
         encrypted_rows = []
         for _, row in df.iterrows():
             row_str = ','.join(map(str, row.values))
-            encrypted = cipher.encrypt(pad(row_str.encode('utf-8'), AES.block_size))
+            padded = pad(row_str.encode('utf-8'), 16)
+            encrypted = crypt_sm4.crypt_ecb(padded)
             encrypted_b64 = base64.b64encode(encrypted).decode('utf-8')
             encrypted_rows.append(encrypted_b64)
 
-        # ✅ 构造目标加密文件名
+        #  构造目标加密文件名
         suffix = container_name.split("/")[-1]
         encrypted_filename = f"encrypted_{secure_filename(suffix)}.csv"
         encrypted_path = os.path.join(sandbox_path, encrypted_filename)
