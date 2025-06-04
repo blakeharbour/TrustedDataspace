@@ -218,19 +218,39 @@ const ip = $("#ip").val();         // IP
  ip: $('#ip').val()
 };
 
+<!--$.ajax({-->
+<!--  type: "post",-->
+<!--  url: "http://127.0.0.1:8000/create-ip/",-->
+<!--  data: JSON.stringify(data),         // ✅ 一定要加 stringify-->
+<!--  contentType: "application/json",   // ✅ 确保告诉后端是 JSON 格式-->
+<!--  dataType: "json",-->
+<!--  success: function(res) {-->
+<!--    console.log("提交成功：", res);-->
+<!--  },-->
+<!--  error: function(err) {-->
+<!--    console.log("提交出错：", err);-->
+<!--  }-->
+<!--});-->
+
 $.ajax({
   type: "post",
   url: "http://127.0.0.1:8000/create-ip/",
-  data: JSON.stringify(data),         // ✅ 一定要加 stringify
-  contentType: "application/json",   // ✅ 确保告诉后端是 JSON 格式
+  data: JSON.stringify(data),
+  contentType: "application/json",
   dataType: "json",
   success: function(res) {
     console.log("提交成功：", res);
+    layer.msg('保存成功！', {icon: 1, time: 2000}); // ✅ 成功提示
+    // 可选：清空输入框
+    $('#address').val('');
+    $('#ip').val('');
   },
   error: function(err) {
     console.log("提交出错：", err);
+    layer.msg('保存失败，请稍后重试！', {icon: 2, time: 2000}); // ❌ 错误提示
   }
 });
+
 
 }
 
