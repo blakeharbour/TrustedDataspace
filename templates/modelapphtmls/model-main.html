@@ -182,6 +182,7 @@
 							<table class="table table-border table-bordered table-hover table-bg table-sort">
 								<thead>
 									<tr class="text-c">
+                                        <th width="30">选择</th>
 										<th width="80">模型ID</th>
 										<th width="100">参与者</th>
 										<th width="90">模型名称</th>
@@ -262,6 +263,11 @@
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
                             str+='<tr class="text-c">'+
+                                '<td>' +
+                                    '<input type="radio" name="selected_interface" ' +
+                                            'data-dataname="' + Result[j][5] + '" '+
+                                            'data-projectname="' + Result[j][3] + '" '+
+                                '</td>' +
                              '<td>'+Result[j][0]+'</td>'+
                             '<td>'+Result[j][1]+'</td>'+
                             '<td>'+Result[j][2]+'</td>'+
@@ -287,6 +293,22 @@
         }
 
         function model_test(obj, modelid) {
+                const selectedRadio = document.querySelector('input[name="selected_interface"]:checked');
+                if (!selectedRadio) {
+                    layer.msg('请先选择一条数据', {icon: 2});
+                    return;
+                }
+                const webName = selectedRadio.dataset.dataname;
+                const projectName = selectedRadio.dataset.projectname;
+                const webinfo=[];
+                const webdic={
+                    webName:webName,
+                    projectName:projectName,
+                    type:"2",
+                };
+                webinfo.push(webdic);
+                console.log(webinfo);
+                const webdata = JSON.stringify(webinfo)
                 $("myButton").show();
                 showModal();
                 {#setTimeout(hideModal, 8000); // 3秒后隐藏模态框#}
@@ -309,36 +331,26 @@
                                 alert("结果已合并");
                                 alert("结果保存成功！");
                                 hideModal1();
-                                location.href = "/application_model-main/"
+                                // 发送区块链请求，完成后跳转
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/useBlockchain/",
+                                    data: webdata,
+                                    contentType: 'application/json',  // 添加内容类型
+                                    dataType: 'json', // 修复数据类型
+                                    success: function (res) {
+                                        console.log("区块链响应:", res);
+                                        alert("区块链存证成功！");
+                                        location.href = "/application_model-main/";
+                                    },
+                                    error: function(xhr) {
+                                        console.error("区块链请求失败:", xhr.status, xhr.statusText);
+                                        alert("区块链存证失败，但操作将继续！");
+                                        location.href = "/application_model-main/";
+                                    }
+                                });
                             },3000)
                         },1000)
-
-                        var Result
-
-                        $.ajax({
-                        type:"post",
-                        url:"/application_model-main_search/",
-                        dataType:'json',
-                        success:function (res) {
-                            console.log("res", res);
-                            str = ''
-                            if (res.status == "0") {
-                                var Result = res.data;
-                                console.log(Result);
-                            }
-                        }
-                        })
-
-                        $.ajax({
-                            type:"post",
-                            url:"/useBlockchain/",
-                            data:webdata,
-                            dataType:'string',
-                            success:function (res) {
-                                console.log("res",res);
-                                alert("结果保存成功！");
-                            }
-                        })
 
                         } else if (res.status == "1") {
                             alert("测试未成功！");

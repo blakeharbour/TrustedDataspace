@@ -481,6 +481,7 @@ def useBlockchain(request):
     # webName = request.body.decode('utf-8')  # 转换为字符串
     webName = projs[0]["webName"]
     projectName = projs[0]["projectName"]
+    type =projs[0]["type"]
     select_js = "assetName = '" + webName + "'"
     selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
                              select_js, '',
@@ -549,11 +550,16 @@ def useBlockchain(request):
     shareWay = selectlist[0][5]
 
     # 在asset_record这个表里新建一条记录
-    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据传输','调用数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
-    inserttable(asset_js, tablename="asset_record",
+    if (type == "1") :
+        asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据传输','调用数据接口','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+        inserttable(asset_js, tablename="asset_record",
                 con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+    elif (type == "2"):
+        asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','未参与模型计算','已完成模型计算','模型计算','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+        inserttable(asset_js, tablename="asset_record",
+                    con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
 
-    # 在asset_record这个表里新建一条记录
+    # 在project_notarization这个表里新建一条记录
     pro_js = "'" + projectId + "','" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
     inserttable(pro_js, tablename="project_notarization",
                 con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
