@@ -149,25 +149,25 @@
         <div class="panel-body">
           <div class="clearfix">
             <span class="f-l">
-              <a href="javascript:;" onclick="uploadDataFeature()" class="btn btn-success radius" style="margin-right: 20px;">
+              <a href="javascript:;" id="interfaceAdd1" onclick="uploadDataFeature()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe645;</i> 上传新增沙箱
               </a>
-              <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
+              <a href="javascript:;" id="interfaceAdd2" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加数据到沙箱
               </a>
-              <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius" >
+              <a href="javascript:;" id="interfaceAdd3" onclick="downloadSelected()" class="btn btn-primary radius" >
                 创建所需规格数据沙箱
               </a>
 
               <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
-                <a href="javascript:;" onclick="checklinkforxq()" class="btn btn-primary radius">
+                <a href="javascript:;" id="interfaceAdd4" onclick="checklinkforxq()" class="btn btn-primary radius">
                 可查看沙箱链接【需求方】
               </a>
-                 <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                 <a href="javascript:;" id="interfaceAdd5" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 限制沙箱IP
               </a>
                 </a>
-                <a href="javascript:;" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                <a href="javascript:;" id="interfaceAdd6" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 沙箱对应IP追踪
               </a>
                 <span class="label label-success radius">安全链路已就绪</span>
@@ -240,6 +240,46 @@
             account: "{{ current_user.account }}",
         };
 
+         // 页面加载时检查 sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+          // 从 sessionStorage 读取值
+          const targetId = sessionStorage.getItem('target_id');
+          console.log(targetId)
+          // 根据值是否存在控制按钮显示
+          const btnAdd1 = document.getElementById('interfaceAdd1');
+          const btnAdd2 = document.getElementById('interfaceAdd2');
+           const btnAdd3 = document.getElementById('interfaceAdd3');
+            const btnAdd4 = document.getElementById('interfaceAdd4');
+             const btnAdd5 = document.getElementById('interfaceAdd5');
+              const btnAdd6 = document.getElementById('interfaceAdd6');
+             
+         
+          //数据所有方
+          if (parseInt(targetId) === 1) {
+            btnAdd1.style.display = 'inline-block';  // 显示按钮
+              btnAdd2.style.display = 'inline-block';  // 显示按钮
+              btnAdd3.style.display = 'inline-block';  // 显示按钮
+              btnAdd5.style.display = 'inline-block';  // 显示按钮
+              btnAdd6.style.display = 'inline-block';  // 显示按钮
+             
+              
+              
+              
+            btnAdd4.style.display = 'none';  // 隐藏按钮
+          }
+          //数据需求方
+          else if (parseInt(targetId) === 0){
+            btnAdd1.style.display = 'none';  // 隐藏按钮
+              btnAdd2.style.display = 'none';  // 隐藏按钮
+              btnAdd3.style.display = 'none';  // 隐藏按钮
+              btnAdd5.style.display = 'none';  // 隐藏按钮
+              btnAdd6.style.display = 'none';  // 隐藏按钮
+            btnAdd4.style.display = 'inline-block';  // 显示按钮
+          }
+
+          // 如果只需使用一次，可清除 sessionStorage
+          sessionStorage.removeItem('target_id');
+        });
 
    $(function() {
     console.log("当前用户ID:", currentUser.id);
@@ -502,25 +542,7 @@ function checklinkforxq() {
             console.log(selectedInterface.url);
         });
 
-        // 页面加载时检查 sessionStorage
-        document.addEventListener('DOMContentLoaded', function() {
-          // 从 sessionStorage 读取值
-          const targetId = sessionStorage.getItem('target_id');
-          console.log(targetId)
-          // 根据值是否存在控制按钮显示
-          const btn = document.getElementById('interfaceAdd');
-          //数据所有方
-          if (parseInt(targetId) === 1) {
-            btn.style.display = 'inline-block';  // 显示按钮
-          }
-          //数据需求方
-          else {
-            {#btn.style.display = 'none';  // 隐藏按钮#}
-          }
-
-          // 如果只需使用一次，可清除 sessionStorage
-          sessionStorage.removeItem('target_id');
-        });
+      
 
 
 function uploadDataFeature() {
