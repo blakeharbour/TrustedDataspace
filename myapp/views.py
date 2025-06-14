@@ -1834,7 +1834,7 @@ def create_project(request):
             dataSecurity = projs['dataSecurity']
             shareWay = projs['shareWay']
             isDeleted = 'N'
-            currentStatus = '0'
+            currentStatus = '1'
 
             print(projectName)
 
@@ -2522,6 +2522,7 @@ from django.db import transaction
 from django.utils import timezone
 from datetime import datetime, date
 import json
+from .myjob import selecttable, updatetable, inserttable
 from django.db import models
 
 from .models import (
@@ -2600,6 +2601,40 @@ def data_right_application_add(request):
                     action_user=request.user.username if hasattr(request.user, 'username') else '系统用户',
                     action_comments='提交申请'
                 )
+
+                # ========== 添加以下代码：创建项目记录 ==========
+                # 在pb8_ProjectAdd表中创建对应的项目记录，状态设为1（待审核）
+                try:
+                    project_name = application.target_business_stage  # 项目名称
+                    data_demand = application.applicant  # 申请方（数据需求方）
+                    data_owner = application.target_data_holder  # 数据持有方（数据所有方）
+                    data_asset = application.target_data_name  # 数据资产名称
+
+                    # 设置默认值
+                    data_security = '普通'  # 数据安全等级，可以根据需要调整
+                    share_way = '待确定'  # 共享方式，申请阶段可以先设为待确定
+                    is_deleted = 'N'  # 未删除
+                    current_status = '1'  # 关键：设置为1（待审核），而不是0（发起）
+
+                    # 构建插入数据
+                    pro_js = f"'{project_name}','{data_demand}','{data_owner}','{data_asset}','{data_security}','{share_way}','{is_deleted}','{current_status}'"
+
+                    # 插入项目记录
+                    insert_result = inserttable(
+                        pro_js,
+                        tablename="pb8_ProjectAdd",
+                        con1="projectName,dataDemand,dataOwner,dataAsset,dataSecurity,shareWay,isDeleted,currentStatus"
+                    )
+
+                    if insert_result:
+                        print(f"✓ 项目记录创建成功: {project_name}, 状态: 待审核")
+                    else:
+                        print(f"✗ 项目记录创建失败: {project_name}")
+
+                except Exception as e:
+                    print(f"❌ 创建项目记录时出错: {str(e)}")
+                    # 记录错误但不影响申请流程
+                # ============================================
 
                 messages.success(request, f'申请提交成功！申请编号：{application.application_id}')
                 return redirect('data_confirmation_list')
@@ -2691,6 +2726,81 @@ def data_right_application_review(request, application_id):
                 )
                 data_right_record.save()
 
+                # ========== 在messages之前添加状态同步代码 ==========
+                # 同步更新项目表中的状态
+                try:
+                    if review_decision == 'approve':
+                        project_status = '2'  # 审核通过
+                        status_text = '审核通过'
+                    elif review_decision == 'reject':
+                        project_status = '3'  # 审核不通过
+                        status_text = '审核不通过'
+                    else:
+                        project_status = None
+
+                    if project_status:
+                        # 使用项目名称和数据资产名称进行匹配
+                        project_name = application.target_business_stage  # 项目名称
+                        data_asset = application.target_data_name  # 数据资产名称
+
+                        print(f"=== 同步项目状态 ===")
+                        print(f"项目名称: '{project_name}'")
+                        print(f"数据资产: '{data_asset}'")
+                        print(f"目标状态: '{project_status}' ({status_text})")
+
+                        # 构建匹配条件：项目名称 + 数据资产名称 + 待审核状态
+                        query_str = f"projectName = '{project_name}' AND dataAsset = '{data_asset}' AND currentStatus = '1' AND isDeleted != 'Y'"
+                        print(f"查询条件: {query_str}")
+
+                        # 查询匹配的待审核项目
+                        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, currentStatus"
+                        result = selecttable("pb8_ProjectAdd", fields=fields, constr=query_str)
+
+                        if result:
+                            print(f"找到 {len(result)} 个匹配的待审核项目:")
+                            for i, row in enumerate(result):
+                                print(
+                                    f"  项目{i + 1}: ID={row[0]}, 项目名='{row[1]}', 申请方='{row[2]}', 持有方='{row[3]}', 资产='{row[4]}', 状态={row[5]}")
+
+                            # 更新项目状态
+                            update_str = f"currentStatus = '{project_status}'"
+                            update_result = updatetable("pb8_ProjectAdd", update_str, query_str)
+
+                            if update_result and update_result > 0:
+                                print(f"✓ 成功更新 {update_result} 个项目状态为: {status_text}")
+                            else:
+                                print(f"⚠️ 更新失败，返回值: {update_result}")
+
+                        else:
+                            print("❌ 没有找到匹配的待审核项目")
+
+                            # 显示相关的项目数据用于调试
+                            print(f"\n=== 查找相关项目（忽略状态） ===")
+                            debug_query = f"projectName = '{project_name}' AND dataAsset = '{data_asset}' AND isDeleted != 'Y'"
+                            debug_result = selecttable("pb8_ProjectAdd", fields=fields, constr=debug_query)
+
+                            if debug_result:
+                                print("找到相同项目名称和数据资产的项目:")
+                                for row in debug_result:
+                                    print(f"  ID={row[0]}, 状态={row[5]} (需要状态=1)")
+                            else:
+                                print("没有找到相同项目名称和数据资产的项目")
+
+                                # 显示最近的项目用于对比
+                                print(f"\n=== 最近的项目记录 ===")
+                                recent_result = selecttable("pb8_ProjectAdd",
+                                                            fields="ID, projectName, dataAsset, currentStatus",
+                                                            constr="isDeleted != 'Y' ORDER BY ID DESC LIMIT 5")
+                                if recent_result:
+                                    for row in recent_result:
+                                        print(f"  ID={row[0]}, 项目='{row[1]}', 资产='{row[2]}', 状态={row[3]}")
+
+                except Exception as e:
+                    print(f"❌ 同步项目状态失败: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
+                # =============================================
+
                 if review_decision == 'approve':
                     messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
                 else:
@@ -2716,6 +2826,8 @@ def data_right_application_review(request, application_id):
             request.user),
     }
     return render(request, 'data-right-application-review.html', context)
+
+
 
 @login_required(login_url='/login/')
 def data_confirmation_list(request):
@@ -2876,6 +2988,7 @@ def data_right_application_list(request):
     }
     return render(request, 'data-right-application-list.html', context)
 
+
 @login_required(login_url='/login/')
 @require_http_methods(["POST"])
 def delete_data_confirmation_record(request, record_id):
@@ -2898,23 +3011,27 @@ def delete_data_confirmation_record(request, record_id):
                     'message': '您没有权限删除此记录'
                 }, status=403)
 
-        # 只允许删除被拒绝的记录
-        if record.status != 'rejected':
-            return JsonResponse({
-                'success': False,
-                'message': '只能删除被拒绝的确权记录'
-            }, status=400)
+        # 移除状态限制 - 现在允许删除所有状态的记录
+        # 可选：根据不同状态给出不同的提示
+        status_messages = {
+            'active': '生效中的确权记录',
+            'expired': '已过期的确权记录',
+            'revoked': '已撤销的确权记录',
+            'rejected': '被拒绝的确权记录'
+        }
+
+        record_status_desc = status_messages.get(record.status, '确权记录')
 
         # 记录被删除的信息用于日志
-        record_info = f"{record.record_id} - {record.data_name}"
+        record_info = f"{record.record_id} - {record.data_name} ({record_status_desc})"
 
         # 删除记录
         record.delete()
 
-        messages.success(request, f'已成功删除确权记录：{record_info}')
+        messages.success(request, f'已成功删除{record_status_desc}：{record.data_name}')
         return JsonResponse({
             'success': True,
-            'message': '删除成功'
+            'message': f'成功删除{record_status_desc}'
         })
 
     except DataRightRecord.DoesNotExist:
@@ -2934,50 +3051,50 @@ def delete_data_confirmation_record(request, record_id):
 def batch_delete_data_confirmation_records(request):
     """批量删除数据确权记录"""
     try:
-        record_ids = request.POST.getlist('selected_records')
-        if not record_ids:
+        selected_records = request.POST.getlist('selected_records')
+        if not selected_records:
             return JsonResponse({
                 'success': False,
-                'message': '请选择要删除的记录'
+                'message': '未选择要删除的记录'
             }, status=400)
 
-        # 获取要删除的记录
-        records = DataRightRecord.objects.filter(record_id__in=record_ids)
+        user_company_code = get_user_company_code(request.user)
+        deleted_count = 0
+        failed_records = []
 
-        # 权限检查：普通用户只能删除自己相关的记录
-        if not request.user.is_superuser:
-            user_company_code = get_user_company_code(request.user)
-            if not user_company_code:
-                return JsonResponse({
-                    'success': False,
-                    'message': '用户公司信息异常'
-                }, status=403)
+        for record_id in selected_records:
+            try:
+                record = get_object_or_404(DataRightRecord, record_id=record_id)
 
-            from django.db.models import Q
-            user_records = records.filter(
-                Q(right_recipient=user_company_code) | Q(data_holder=user_company_code)
-            )
-            if user_records.count() != records.count():
-                return JsonResponse({
-                    'success': False,
-                    'message': '您只能删除自己相关的记录'
-                }, status=403)
-#略
-        # 检查是否只有被拒绝的记录
-        non_rejected_records = records.exclude(status='rejected')
-        if non_rejected_records.exists():
-            return JsonResponse({
-                'success': False,
-                'message': '只能删除被拒绝的确权记录'
-            }, status=400)
+                # 权限检查
+                if not request.user.is_superuser:
+                    if not user_company_code:
+                        failed_records.append(f"{record_id}(权限异常)")
+                        continue
 
-        deleted_count = records.count()
-        records.delete()
+                    if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+                        failed_records.append(f"{record_id}(无权限)")
+                        continue
 
-        messages.success(request, f'已成功删除 {deleted_count} 条确权记录')
+                # 删除记录（不再检查状态）
+                record.delete()
+                deleted_count += 1
+
+            except DataRightRecord.DoesNotExist:
+                failed_records.append(f"{record_id}(不存在)")
+            except Exception as e:
+                failed_records.append(f"{record_id}(删除失败)")
+
+        message = f'成功删除 {deleted_count} 条记录'
+        if failed_records:
+            message += f'，失败 {len(failed_records)} 条：{", ".join(failed_records)}'
+
+        messages.success(request, message)
         return JsonResponse({
             'success': True,
-            'message': f'成功删除 {deleted_count} 条记录'
+            'message': message,
+            'deleted_count': deleted_count,
+            'failed_count': len(failed_records)
         })
 
     except Exception as e:
