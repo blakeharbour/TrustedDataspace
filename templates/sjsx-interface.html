@@ -57,10 +57,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -77,7 +77,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -300,7 +300,7 @@
 
    let activeSandboxPaths = new Set(); // ← 全局变量
    function loadSandboxStatus() {
-  fetch('http://127.0.0.1:5001/api/listSandboxes')
+  fetch('http://192.168.1.132:5001/api/listSandboxes')
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -336,7 +336,7 @@
 
 function destroySandbox(containerName) {
     layer.confirm(`是否销毁沙箱容器：${containerName}？`, function(index){
-        fetch(`http://127.0.0.1:5001/api/destroySandbox/${containerName}`, {
+        fetch(`http://192.168.1.132:5001/api/destroySandbox/${containerName}`, {
             method: 'DELETE'
         })
         .then(res => res.json())
@@ -382,7 +382,7 @@ console.log('destroyStrategy', destroyStrategy);
 
     layer.msg('正在创建数据沙箱，请稍候...', { icon: 16, shade: 0.3, time: 0 });
 
-    fetch('http://127.0.0.1:5001/api/createSandbox', {
+    fetch('http://192.168.1.132:5001/api/createSandbox', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

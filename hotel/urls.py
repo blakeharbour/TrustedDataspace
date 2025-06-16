@@ -249,7 +249,7 @@ path('xqflist_open/', views.xqflist_open),
          name='get_application_detail'),
 
     # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-    # 数据管理
+    # 数据资产管理
     path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确
     path('data_asset_add/', views.add_data_asset, name='data_asset_add'),
     path('data_asset_edit/<int:asset_id>/', views.edit_data_asset),

@@ -258,7 +258,7 @@ def searchmultmodel(request):
 
 # 查找模型_appl
 def searchmultmodel_appl(request):
-    modellist = selecttable("multmodel_list", "id,guest,model,goal,applicationsta,agreement", '', '', '', '')
+    modellist = selecttable("multmodel_list", "id,guest,model,goal,applicationsta,agreement,dataName", '', '', '', '')
     print('查找成功')
     print(modellist)
     return JsonResponse({'status': 0, 'data': modellist, 'msg': 'success'})
@@ -675,7 +675,7 @@ def multimodel_predict(request):
         DATA_PATH = os.path.join("myapp", "fed_PU_sci1203", "dataset", "result_in_1123.csv")
         RESULT_ROOT = os.path.join("myapp", "fed_PU_sci1203", "result", "result_in_1123")
         COLUMNS_SET2 = ['JFLC', 'COST', 'TIME', 'DISCOUNT', 'FREIGHT_95306']
-        PORT_API_URL = "/model_predict_port/"
+        PORT_API_URL = "http://192.168.1.121:8000/model_predict_port/"
         DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # 2. 加载数据
