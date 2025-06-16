@@ -226,7 +226,7 @@
 						<div class="row cl">
 							<div class="col-xs-12 col-sm-6 col-md-4">
 								<div class="info-item">
-									<label class="info-label">申请方：</label>
+									<label class="info-label">数据需求方：</label>
 									<span class="info-value">{{ application.get_applicant_display }}</span>
 								</div>
 							</div>
@@ -247,35 +247,35 @@
 				</div>
 
 				<!-- 目标数据信息区（只读灰色背景） -->
-				<div class="panel panel-default mb-20">
-					<div class="panel-header">
-						<h4 class="panel-title">
-							<i class="fa fa-database"></i> 目标数据信息
-						</h4>
-					</div>
-					<div class="panel-body readonly-panel">
-						<div class="row cl">
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<div class="info-item">
-									<label class="info-label">数据持有方：</label>
-									<span class="info-value">{{ application.get_target_data_holder_display }}</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<div class="info-item">
-									<label class="info-label">目标数据名称：</label>
-									<span class="info-value">{{ application.target_data_name }}</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<div class="info-item">
-									<label class="info-label">数据业务环节：</label>
-									<span class="info-value">{{ application.get_target_business_stage_display }}</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+<div class="panel panel-default mb-20">
+    <div class="panel-header">
+        <h4 class="panel-title">
+            <i class="fa fa-database"></i> 目标数据信息
+        </h4>
+    </div>
+    <div class="panel-body readonly-panel">
+        <div class="row cl">
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="info-item">
+                    <label class="info-label">数据持有方：</label>
+                    <span class="info-value">{{ application.get_target_data_holder_display }}</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="info-item">
+                    <label class="info-label">所需数据资产名称：</label>
+                    <span class="info-value">{{ application.target_data_name }}</span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-4">
+                <div class="info-item">
+                    <label class="info-label">项目名称：</label>
+                    <span class="info-value">{{ application.target_business_stage }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 				<!-- 申请权利类型区（只读，用勾选框显示） -->
 				<div class="panel panel-default mb-20">
@@ -454,70 +454,88 @@
 				{% endif %}
 
 				<!-- 审核操作区（白色背景，突出显示） -->
-				{% if application.status == 'pending' %}
-				<div class="panel panel-primary mb-20">
-					<div class="panel-header">
-						<h4 class="panel-title">
-							<i class="fa fa-clipboard"></i> 审核操作
-						</h4>
-					</div>
-					<div class="panel-body review-panel">
-						<form method="post" id="reviewForm">
-							{% csrf_token %}
-							<div class="row cl mb-20">
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="info-item">
-										<label class="info-label">审核人：</label>
-										<span class="info-value">{{ current_user }}</span>
-									</div>
-								</div>
-								<div class="col-xs-12 col-sm-6 col-md-4">
-									<div class="info-item">
-										<label class="info-label">审核时间：</label>
-										<span class="info-value" id="current-time">{{ current_time|date:"Y-m-d H:i:s" }}</span>
-									</div>
-								</div>
-							</div>
-							<div class="row cl mb-20">
-								<div class="col-xs-12">
-									<div class="form-group">
-										<label class="form-label"><span class="c-red">*</span>审核意见：</label>
-										<textarea name="review_comments" class="form-control" rows="4"
-												  placeholder="请填写审核意见。如同意申请，请说明注意事项；如拒绝申请，请说明拒绝原因" required></textarea>
-									</div>
-								</div>
-							</div>
-							<div class="row cl mb-20">
-								<div class="col-xs-12">
-									<div class="form-group">
-										<label class="form-label"><span class="c-red">*</span>审核决定：</label>
-										<div class="review-decision mt-10">
-											<label class="radio-wrap mr-30">
-												<input type="radio" name="review_decision" value="approve" required>
-												<span class="radio-mark"></span>
-												<i class="fa fa-check-circle text-success"></i> 同意申请
-											</label>
-											<label class="radio-wrap">
-												<input type="radio" name="review_decision" value="reject" required>
-												<span class="radio-mark"></span>
-												<i class="fa fa-times-circle text-danger"></i> 拒绝申请
-											</label>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="text-center mt-30">
-								<button type="submit" class="btn btn-primary btn-lg mr-20">
-									<i class="fa fa-check"></i> 提交审核
-								</button>
-								<a href="{% url 'data_right_application_list' %}" class="btn btn-default btn-lg">
-									<i class="fa fa-arrow-left"></i> 返回列表
-								</a>
-							</div>
-						</form>
-					</div>
-				</div>
-				{% elif application.status == 'approved' or application.status == 'rejected' %}
+{% if application.status == 'pending' %}
+    {% if can_review %}
+    <div class="panel panel-primary mb-20">
+        <div class="panel-header">
+           <h4 class="panel-title">
+              <i class="fa fa-clipboard"></i> 审核操作
+           </h4>
+        </div>
+        <div class="panel-body review-panel">
+           <form method="post" id="reviewForm">
+              {% csrf_token %}
+              <div class="row cl mb-20">
+                 <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="info-item">
+                       <label class="info-label">审核人：</label>
+                       <span class="info-value">{{ current_user }}</span>
+                    </div>
+                 </div>
+                 <div class="col-xs-12 col-sm-6 col-md-4">
+                    <div class="info-item">
+                       <label class="info-label">审核时间：</label>
+                       <span class="info-value" id="current-time">{{ current_time|date:"Y-m-d H:i:s" }}</span>
+                    </div>
+                 </div>
+              </div>
+              <div class="row cl mb-20">
+                 <div class="col-xs-12">
+                    <div class="form-group">
+                       <label class="form-label"><span class="c-red">*</span>审核意见：</label>
+                       <textarea name="review_comments" class="form-control" rows="4"
+                               placeholder="请填写审核意见。如同意申请，请说明注意事项；如拒绝申请，请说明拒绝原因" required></textarea>
+                    </div>
+                 </div>
+              </div>
+              <div class="row cl mb-20">
+                 <div class="col-xs-12">
+                    <div class="form-group">
+                       <label class="form-label"><span class="c-red">*</span>审核决定：</label>
+                       <div class="review-decision mt-10">
+                          <label class="radio-wrap mr-30">
+                             <input type="radio" name="review_decision" value="approve" required>
+                             <span class="radio-mark"></span>
+                             <i class="fa fa-check-circle text-success"></i> 同意申请
+                          </label>
+                          <label class="radio-wrap">
+                             <input type="radio" name="review_decision" value="reject" required>
+                             <span class="radio-mark"></span>
+                             <i class="fa fa-times-circle text-danger"></i> 拒绝申请
+                          </label>
+                       </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="text-center mt-30">
+                 <button type="submit" class="btn btn-primary btn-lg mr-20">
+                    <i class="fa fa-check"></i> 提交审核
+                 </button>
+                 <a href="{% url 'data_right_application_list' %}" class="btn btn-default btn-lg">
+                    <i class="fa fa-arrow-left"></i> 返回列表
+                 </a>
+              </div>
+           </form>
+        </div>
+    </div>
+    {% else %}
+    <!-- 无审核权限时显示的信息 -->
+    <div class="panel panel-warning mb-20">
+        <div class="panel-header">
+           <h4 class="panel-title">
+              <i class="fa fa-exclamation-triangle"></i> 权限提示
+           </h4>
+        </div>
+        <div class="panel-body">
+           <p class="text-warning">
+              <i class="fa fa-info-circle"></i>
+              您没有审核权限。只有数据持有方（{{ application.get_target_data_holder_display }}）或系统管理员可以审核此申请。
+           </p>
+        </div>
+    </div>
+    {% endif %}
+#略
+                {% elif application.status == 'approved' or application.status == 'rejected' %}
 				<!-- 已审核状态显示 -->
 				<div class="panel panel-success mb-20">
 					<div class="panel-header">

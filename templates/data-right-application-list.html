@@ -216,51 +216,52 @@
 
 
 				<!-- 搜索和过滤区域 -->
-				<div class="text-c mb-20">
-					<form method="get" class="Hui-form text-l search-form">
-						<div class="row cl">
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">数据名称：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<input type="text" class="input-text" name="search" value="{{ search_query }}" placeholder="请输入数据名称">
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">申请状态：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<span class="select-box">
-										<select class="select" name="status">
-											<option value="">全部状态</option>
-											{% for status_code, status_name in application_status_choices %}
-												<option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>{{ status_name }}</option>
-											{% endfor %}
-										</select>
-									</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<label class="form-label col-xs-4 col-sm-3">申请方：</label>
-								<div class="formControls col-xs-8 col-sm-9">
-									<span class="select-box">
-										<select class="select" name="applicant">
-											<option value="">全部机构</option>
-											{% for source_code, source_name in data_source_choices %}
-												<option value="{{ source_code }}" {% if applicant_filter == source_code %}selected{% endif %}>{{ source_name }}</option>
-											{% endfor %}
-										</select>
-									</span>
-								</div>
-							</div>
-							<div class="col-xs-12 col-sm-6 col-md-3">
-								<div class="formControls">
-									<button type="submit" class="btn btn-primary">搜索</button>
-									<a href="{% url 'data_right_application_list' %}" class="btn btn-default ml-10">重置</a>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-
+				<!-- 修改搜索表单的栅格布局，给标签更多空间 -->
+<div class="text-c mb-20">
+    <form method="get" class="Hui-form text-l search-form">
+        <div class="row cl">
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">数据名称：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <input type="text" class="input-text" name="search" value="{{ search_query }}" placeholder="请输入数据名称">
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">申请状态：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <span class="select-box">
+                        <select class="select" name="status">
+                            <option value="">全部状态</option>
+                            {% for status_code, status_name in application_status_choices %}
+                                <option value="{{ status_code }}" {% if status_filter == status_code %}selected{% endif %}>{{ status_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <label class="form-label col-xs-5 col-sm-4">申请方：</label>
+                <div class="formControls col-xs-7 col-sm-8">
+                    <span class="select-box">
+                        <select class="select" name="applicant">
+                            <option value="">全部机构</option>
+                            {% for source_code, source_name in data_source_choices %}
+                                <option value="{{ source_code }}" {% if applicant_filter == source_code %}selected{% endif %}>{{ source_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-md-3">
+                <div class="formControls">
+                    <button type="submit" class="btn btn-primary">搜索</button>
+                    <a href="{% url 'data_right_application_list' %}" class="btn btn-default ml-10">重置</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+#略
 				<!-- 申请列表 -->
 				<div class="mt-20">
 					{% if page_obj %}
@@ -404,7 +405,70 @@
 		margin: 0;
 	}
 
+/* 添加到现有的 <style> 标签中0612/
 
+/* 添加到现有的 <style> 标签中 */
+
+.alert-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
+}
+
+.no-results-notice {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.no-results-notice i {
+    margin-right: 5px;
+}
+
+.no-results-notice small {
+    display: block;
+    margin-top: 5px;
+    opacity: 0.8;
+}
+
+.filter-notice {
+    background-color: #d9edf7;
+    border: 1px solid #bce8f1;
+    color: #31708f;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.filter-notice i {
+    margin-right: 5px;
+}
+
+.filter-notice a {
+    color: #31708f;
+    text-decoration: underline;
+}
+
+.filter-notice a:hover {
+    color: #245269;
+}
+
+.source-project-info {
+    border-left: 3px solid #5cb85c;
+    padding-left: 8px;
+    margin-bottom: 10px;
+}
+
+.alert {
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.alert-info {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+}
 
 	.application-card {
 		transition: all 0.3s ease;
@@ -572,6 +636,18 @@
 	let currentApplicationId = '';
 	let currentAction = '';
 
+    // 获取当前登录用户信息 - 新增代码开始
+    var currentUser = {
+        id: "{{current_user.id}}",
+        account: "{{current_user.account}}",
+        com: "{{current_user.com}}",
+        comid: "{{current_user.comid}}"
+    };
+
+    // 调试输出用户信息
+    console.log('当前用户:', currentUser);
+    console.log('用户公司:', currentUser.com);
+
 	// 跳转到审核详情页面
 	function goToReview(applicationId) {
 		window.location.href = "{% url 'data_right_application_review' 'APPLICATION_ID' %}".replace('APPLICATION_ID', applicationId);
@@ -638,6 +714,97 @@
 
 	// 页面加载完成后的初始化
 	$(document).ready(function(){
+
+        // 全局标记，确保只执行一次
+    if (window.autoFilterInitialized) {
+        return;
+    }
+    window.autoFilterInitialized = true;
+
+    // 自动筛选功能 - 根据URL参数进行筛选
+    function autoFilterByUrlParams() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search');
+
+        if (searchParam) {
+            console.log('检测到筛选参数:', searchParam);
+
+            // 移除所有可能存在的提示（防止重复）
+            $('.filter-notice, .no-results-notice, .source-project-info').remove();
+
+            // 自动填充搜索框（如果还没有填充的话）
+            if (!$('input[name="search"]').val()) {
+                $('input[name="search"]').val(searchParam);
+            }
+
+            // 添加筛选提示信息（使用唯一ID防止重复）
+            if (!$('#unique-filter-notice').length) {
+                $('.text-c.mb-20').after(
+                    '<div id="unique-filter-notice" class="alert alert-info filter-notice">' +
+                    '<i class="Hui-iconfont">&#xe6df;</i> ' +
+                    '已根据所选项目筛选数据资产：<strong>' + searchParam + '</strong> ' +
+                    '<a href="' + window.location.pathname + '" class="ml-10">清除筛选</a>' +
+                    '</div>'
+                );
+            }
+
+            // 延迟检查搜索结果
+            setTimeout(function() {
+                if ($('.application-card').length === 0 && !$('#unique-no-results').length) {
+                    // 如果没有结果，显示提示信息
+                    $('#unique-filter-notice').after(
+                        '<div id="unique-no-results" class="alert alert-warning no-results-notice">' +
+                        '<i class="Hui-iconfont">&#xe6df;</i> ' +
+                        '没有找到匹配 "' + searchParam + '" 的数据确权申请。' +
+                        '<br><small>可能该数据资产还没有相关的确权申请，或者数据名称不完全匹配。</small>' +
+                        '</div>'
+                    );
+                }
+            }, 800);
+        }
+    }
+
+    // 检查sessionStorage中的数据
+    function checkSessionData() {
+        const selectedData = sessionStorage.getItem('selectedData');
+        if (selectedData && !$('#unique-source-info').length) {
+            try {
+                const data = JSON.parse(selectedData);
+                console.log('来源项目信息:', data);
+
+                // 显示来源项目信息
+                $('.h2-title').after(
+                    '<div id="unique-source-info" class="source-project-info mt-5">' +
+                    '<small class="c-666">来源项目：' + data.projectName + ' | 需求方：' + data.demand + '</small>' +
+                    '</div>'
+                );
+            } catch (e) {
+                console.error('解析sessionStorage数据出错:', e);
+            }
+        }
+    }
+
+    // 清理函数 - 移除所有自动添加的提示
+    function cleanupAutoNotices() {
+        $('#unique-filter-notice, #unique-no-results, #unique-source-info').remove();
+    }
+
+    // 执行自动筛选
+    autoFilterByUrlParams();
+    checkSessionData();
+
+    // 监听页面上其他可能的刷新事件，清理重复提示
+    $(document).on('DOMNodeInserted', function(e) {
+        if ($(e.target).hasClass('filter-notice') && $(e.target).attr('id') !== 'unique-filter-notice') {
+            $(e.target).remove(); // 移除重复的提示
+        }
+        if ($(e.target).hasClass('no-results-notice') && $(e.target).attr('id') !== 'unique-no-results') {
+            $(e.target).remove(); // 移除重复的提示
+        }
+    });
+
+
+
 		// 初始化下拉选择框
 		if(typeof $.Huifold != 'undefined') {
 			$.Huifold();

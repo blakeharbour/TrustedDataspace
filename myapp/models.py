@@ -1,5 +1,8 @@
 from django.db import models
-
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -53,7 +56,22 @@ class LoginUser(AbstractBaseUser, PermissionsMixin):  # 关键！继承 Abstract
         verbose_name_plural = '用户'
 
     def __str__(self):
-        return self.account
+        #下一行改了
+        return f"{self.account} ({self.com})"
+
+        # 添加调试属性
+@property
+def debug_info(self):
+    return {
+        'id': self.id,
+        'account': self.account,
+        'com': self.com,
+        'comid': self.comid,
+        'is_active': self.is_active,
+        'is_staff': self.is_staff,
+        'is_superuser': self.is_superuser,
+        }
+
 
 class DataAsset(models.Model):
     assetID = models.AutoField(primary_key=True)
@@ -124,18 +142,12 @@ DATA_SOURCE_CHOICES = [
     ('kazakhstan', '哈方'),
 ]
 
-# 业务环节选择
-BUSINESS_STAGE_CHOICES = [
-    ('cargo_declaration', '货物申报数据'),
-    ('customs_inspection', '通关检验数据'),
-    ('logistics_transport', '物流运输数据'),
-    ('handover_delivery', '交接交付数据'),
-]
+
 
 
 class DataRightApplication(models.Model):
     """数据权利申请模型"""
-
+    # 略
     # 申请基本信息
     application_id = models.CharField(max_length=50, unique=True, verbose_name="申请编号")
     applicant = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="申请方")
@@ -143,8 +155,8 @@ class DataRightApplication(models.Model):
 
     # 目标数据信息
     target_data_name = models.CharField(max_length=255, verbose_name="目标数据名称")
-    target_business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES,
-                                             verbose_name="目标数据业务环节")
+    # 将project_name改回target_business_stage，但去掉choices限制，改为自由输入项目名称
+    target_business_stage = models.CharField(max_length=255, verbose_name="项目名称")
 
     # 申请权利类型（多选）
     resource_holding_right = models.BooleanField(default=False, verbose_name="申请资源持有权")
@@ -199,6 +211,7 @@ class DataRightApplication(models.Model):
         # 自动生成申请编号
         if not self.application_id:
             from datetime import datetime
+            import uuid
             date_str = datetime.now().strftime('%Y%m%d')
             random_str = str(uuid.uuid4())[:8].upper()
             self.application_id = f"DRA{date_str}{random_str}"
@@ -231,7 +244,8 @@ class DataRightRecord(models.Model):
     data_name = models.CharField(max_length=255, verbose_name="数据名称")
     data_holder = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="数据持有方")
     right_recipient = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="权利获得方")
-    business_stage = models.CharField(max_length=50, choices=BUSINESS_STAGE_CHOICES, verbose_name="数据业务环节")
+    # 将project_name改回business_stage，但去掉choices限制，改为自由输入项目名称
+    business_stage = models.CharField(max_length=255, verbose_name="项目名称")
 
     # 已获得权利
     granted_resource_holding_right = models.BooleanField(default=False, verbose_name="已获得资源持有权")
@@ -250,6 +264,7 @@ class DataRightRecord(models.Model):
         ('active', '生效中'),
         ('expired', '已过期'),
         ('revoked', '已撤销'),
+        ('rejected', '已拒绝'),
     ]
     status = models.CharField(max_length=20, choices=RECORD_STATUS_CHOICES, default='active', verbose_name="确权状态")
 
@@ -275,6 +290,7 @@ class DataRightRecord(models.Model):
         # 自动生成确权记录编号
         if not self.record_id:
             from datetime import datetime
+            import uuid
             date_str = datetime.now().strftime('%Y%m%d')
             random_str = str(uuid.uuid4())[:8].upper()
             self.record_id = f"DCR{date_str}{random_str}"
@@ -313,7 +329,6 @@ class DataRightRecord(models.Model):
             return date.today() > self.usage_end_date
         return False
 
-
 class DataRightApplicationHistory(models.Model):
     """数据权利申请历史记录模型"""
 
@@ -331,8 +346,7 @@ class DataRightApplicationHistory(models.Model):
 
     def __str__(self):
         return f"{self.application.application_id} - {self.action_type}"
-#####数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-
+##数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ###
 # myapp/models.py
 from django.db import models
