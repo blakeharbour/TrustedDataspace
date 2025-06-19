@@ -2521,7 +2521,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.utils import timezone
 from datetime import datetime, date
-import json
+import requests
 from .myjob import selecttable, updatetable, inserttable
 from django.db import models
 
@@ -2532,8 +2532,6 @@ from .models import (
     DATA_SOURCE_CHOICES,
     #BUSINESS_STAGE_CHOICES
 )
-
-
 
 def get_company_code_from_name(company_name):
     """
@@ -2768,6 +2766,45 @@ def data_right_application_review(request, application_id):
 
                             if update_result and update_result > 0:
                                 print(f"✓ 成功更新 {update_result} 个项目状态为: {status_text}")
+                                # =================== 在这里添加以下代码 ===================
+                                # 同步更新 project_notarization 表
+                                try:
+                                    print(f"=== 开始同步 project_notarization 表 ===")
+
+                                    # 构建 project_notarization 表的查询条件
+                                    notarization_query = f"projectName = '{project_name}' AND assetName = '{data_asset}'"
+                                    print(f"存证表查询条件: {notarization_query}")
+
+                                    # 更新存证表的状态
+                                    notarization_update_str = f"status = '{status_text}'"
+                                    notarization_result = updatetable("project_notarization", notarization_update_str,
+                                                                      notarization_query)
+
+                                    if notarization_result and notarization_result > 0:
+                                        print(f"✓ 成功更新 {notarization_result} 条存证记录状态为: {status_text}")
+                                    else:
+                                        print(f"⚠️ 存证表更新失败，返回值: {notarization_result}")
+
+                                        # 查询存证表中是否存在相关记录（用于调试）
+                                        notarization_fields = "id, projectName, assetName, status"
+                                        debug_notarization = selecttable("project_notarization",
+                                                                         fields=notarization_fields,
+                                                                         constr=f"projectName = '{project_name}' AND assetName = '{data_asset}'")
+
+                                        if debug_notarization:
+                                            print("找到相关存证记录:")
+                                            for record in debug_notarization:
+                                                print(
+                                                    f"  ID={record[0]}, 项目='{record[1]}', 资产='{record[2]}', 当前状态='{record[3]}'")
+                                        else:
+                                            print("❌ 未找到匹配的存证记录")
+
+                                except Exception as e:
+                                    print(f"❌ 同步存证表状态失败: {str(e)}")
+                                    import traceback
+                                    traceback.print_exc()
+                                # =================== 添加代码结束 ===================
+
                             else:
                                 print(f"⚠️ 更新失败，返回值: {update_result}")
 

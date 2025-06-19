@@ -309,14 +309,6 @@
 														<i class="Hui-iconfont">&#xe6df;</i> 待处理
 													</small>
 												</div>
-												<div>
-													<button type="button" class="btn btn-success btn-sm mr-5" onclick="quickReview('{{ application.application_id }}', 'approve', event)">
-														<i class="Hui-iconfont">&#xe6df;</i> 快速通过
-													</button>
-													<button type="button" class="btn btn-danger btn-sm" onclick="quickReview('{{ application.application_id }}', 'reject', event)">
-														<i class="Hui-iconfont">&#xe6de;</i> 快速拒绝
-													</button>
-												</div>
 											{% else %}
 												<div class="mb-10">
 													{% if application.reviewer %}
@@ -372,30 +364,6 @@
 			</div>
 		</div>
 </section>
-
-<!-- 快速审核弹窗 -->
-<div id="quickReviewModal" class="modal fade" tabindex="-1">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h4 class="modal-title">快速审核</h4>
-				<button type="button" class="close" onclick="closeModal()">&times;</button>
-			</div>
-			<div class="modal-body">
-				<form id="quickReviewForm">
-					<div class="form-group">
-						<label>审核意见：</label>
-						<textarea id="quickReviewComments" class="form-control" rows="3" placeholder="请输入审核意见" required></textarea>
-					</div>
-				</form>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" onclick="closeModal()">取消</button>
-				<button type="button" class="btn btn-primary" onclick="submitQuickReview()">确认</button>
-			</div>
-		</div>
-	</div>
-</div>
 
 <!-- JavaScript 和 CSS 样式 -->
 <style>
@@ -555,63 +523,6 @@
 		margin: 0 2px;
 	}
 
-	/* 模态框样式 */
-	.modal {
-		display: none;
-		position: fixed;
-		z-index: 1000;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0,0,0,0.5);
-	}
-
-	.modal.show {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.modal-dialog {
-		background-color: white;
-		border-radius: 8px;
-		width: 90%;
-		max-width: 500px;
-	}
-
-	.modal-header {
-		padding: 15px;
-		border-bottom: 1px solid #eee;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.modal-body {
-		padding: 15px;
-	}
-
-	.modal-footer {
-		padding: 15px;
-		border-top: 1px solid #eee;
-		text-align: right;
-	}
-
-	.form-control {
-		width: 100%;
-		padding: 8px;
-		border: 1px solid #ddd;
-		border-radius: 4px;
-	}
-
-	.close {
-		background: none;
-		border: none;
-		font-size: 24px;
-		cursor: pointer;
-	}
-
 	@media (max-width: 768px) {
 		.btn-sm {
 			margin-bottom: 5px;
@@ -633,10 +544,7 @@
 <script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
 
 <script type="text/javascript">
-	let currentApplicationId = '';
-	let currentAction = '';
-
-    // 获取当前登录用户信息 - 新增代码开始
+    // 获取当前登录用户信息
     var currentUser = {
         id: "{{current_user.id}}",
         account: "{{current_user.account}}",
@@ -651,65 +559,6 @@
 	// 跳转到审核详情页面
 	function goToReview(applicationId) {
 		window.location.href = "{% url 'data_right_application_review' 'APPLICATION_ID' %}".replace('APPLICATION_ID', applicationId);
-	}
-
-	// 快速审核
-	function quickReview(applicationId, action, event) {
-		event.stopPropagation(); // 阻止事件冒泡
-
-		currentApplicationId = applicationId;
-		currentAction = action;
-
-		const modalTitle = action === 'approve' ? '快速通过' : '快速拒绝';
-		$('#quickReviewModal .modal-title').text(modalTitle);
-
-		const placeholder = action === 'approve' ? '请输入通过理由和注意事项' : '请输入拒绝原因';
-		$('#quickReviewComments').attr('placeholder', placeholder);
-
-		showModal();
-	}
-
-	// 显示模态框
-	function showModal() {
-		$('#quickReviewModal').addClass('show');
-		$('#quickReviewComments').focus();
-	}
-
-	// 关闭模态框
-	function closeModal() {
-		$('#quickReviewModal').removeClass('show');
-		$('#quickReviewComments').val('');
-		currentApplicationId = '';
-		currentAction = '';
-	}
-
-	// 提交快速审核
-	function submitQuickReview() {
-		const comments = $('#quickReviewComments').val().trim();
-		if (!comments) {
-			alert('请输入审核意见');
-			return;
-		}
-
-		// 这里应该发送AJAX请求到后端
-		$.ajax({
-			url: "{% url 'data_right_application_review' 'APPLICATION_ID' %}".replace('APPLICATION_ID', currentApplicationId),
-			method: 'POST',
-			data: {
-				'review_decision': currentAction,
-				'review_comments': comments,
-				'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
-			},
-			success: function(response) {
-				alert(currentAction === 'approve' ? '审核通过成功' : '审核拒绝成功');
-				location.reload();
-			},
-			error: function() {
-				alert('操作失败，请重试');
-			}
-		});
-
-		closeModal();
 	}
 
 	// 页面加载完成后的初始化
@@ -803,8 +652,6 @@
         }
     });
 
-
-
 		// 初始化下拉选择框
 		if(typeof $.Huifold != 'undefined') {
 			$.Huifold();
@@ -817,20 +664,6 @@
             // 确保其他菜单项不被高亮
             $('#menu-guest').removeClass('selected');
             $('#menu-guest .Hui-menu-item li').removeClass('current');
-
-		// 模态框点击外部关闭
-		$('#quickReviewModal').click(function(e) {
-			if (e.target === this) {
-				closeModal();
-			}
-		});
-
-		// ESC键关闭模态框
-		$(document).keyup(function(e) {
-			if (e.keyCode === 27) {
-				closeModal();
-			}
-		});
 	});
 
 	// 导航栏显示隐藏
