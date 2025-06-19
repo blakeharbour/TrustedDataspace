@@ -1907,7 +1907,7 @@ def submit_project_toblockchain(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     # 解析区块链返回的 payload
@@ -2599,41 +2599,6 @@ def data_right_application_add(request):
                     action_user=request.user.username if hasattr(request.user, 'username') else '系统用户',
                     action_comments='提交申请'
                 )
-
-                # ========== 添加以下代码：创建项目记录 ==========
-                # 在pb8_ProjectAdd表中创建对应的项目记录，状态设为1（待审核）
-                try:
-                    project_name = application.target_business_stage  # 项目名称
-                    data_demand = application.applicant  # 申请方（数据需求方）
-                    data_owner = application.target_data_holder  # 数据持有方（数据所有方）
-                    data_asset = application.target_data_name  # 数据资产名称
-
-                    # 设置默认值
-                    data_security = '普通'  # 数据安全等级，可以根据需要调整
-                    share_way = '待确定'  # 共享方式，申请阶段可以先设为待确定
-                    is_deleted = 'N'  # 未删除
-                    current_status = '1'  # 关键：设置为1（待审核），而不是0（发起）
-
-                    # 构建插入数据
-                    pro_js = f"'{project_name}','{data_demand}','{data_owner}','{data_asset}','{data_security}','{share_way}','{is_deleted}','{current_status}'"
-
-                    # 插入项目记录
-                    insert_result = inserttable(
-                        pro_js,
-                        tablename="pb8_ProjectAdd",
-                        con1="projectName,dataDemand,dataOwner,dataAsset,dataSecurity,shareWay,isDeleted,currentStatus"
-                    )
-
-                    if insert_result:
-                        print(f"✓ 项目记录创建成功: {project_name}, 状态: 待审核")
-                    else:
-                        print(f"✗ 项目记录创建失败: {project_name}")
-
-                except Exception as e:
-                    print(f"❌ 创建项目记录时出错: {str(e)}")
-                    # 记录错误但不影响申请流程
-                # ============================================
-
                 messages.success(request, f'申请提交成功！申请编号：{application.application_id}')
                 return redirect('data_confirmation_list')
 
