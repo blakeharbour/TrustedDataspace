@@ -1925,7 +1925,7 @@ def submit_project_toblockchain(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     # 解析区块链返回的 payload
