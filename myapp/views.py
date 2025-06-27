@@ -2752,35 +2752,41 @@ def data_right_application_review(request, application_id):
                                 # =================== 在这里添加以下代码 ===================
                                 # 同步更新 project_notarization 表
                                 try:
-                                    print(f"=== 开始同步 project_notarization 表 ===")
 
-                                    # 构建 project_notarization 表的查询条件
-                                    notarization_query = f"projectName = '{project_name}' AND assetName = '{data_asset}'"
-                                    print(f"存证表查询条件: {notarization_query}")
+                                    # 获取项目相关信息
+                                    fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                                    order = 'ID DESC'
+                                    project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=query_str,
+                                                                 order=order, limit=1)
 
-                                    # 更新存证表的状态
-                                    notarization_update_str = f"status = '{status_text}'"
-                                    notarization_result = updatetable("project_notarization", notarization_update_str,
-                                                                      notarization_query)
+                                    if project_result:
+                                        ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
 
-                                    if notarization_result and notarization_result > 0:
-                                        print(f"✓ 成功更新 {notarization_result} 条存证记录状态为: {status_text}")
-                                    else:
-                                        print(f"⚠️ 存证表更新失败，返回值: {notarization_result}")
+                                    anydata = {
+                                        "data": "anydata"
+                                    }
 
-                                        # 查询存证表中是否存在相关记录（用于调试）
-                                        notarization_fields = "id, projectName, assetName, status"
-                                        debug_notarization = selecttable("project_notarization",
-                                                                         fields=notarization_fields,
-                                                                         constr=f"projectName = '{project_name}' AND assetName = '{data_asset}'")
+                                    response = requests.put('http://192.168.1.135:8080/datasharing/addRaw',
+                                                            data=json.dumps(anydata),
+                                                            headers={'Content-Type': 'application/json'})
 
-                                        if debug_notarization:
-                                            print("找到相关存证记录:")
-                                            for record in debug_notarization:
-                                                print(
-                                                    f"  ID={record[0]}, 项目='{record[1]}', 资产='{record[2]}', 当前状态='{record[3]}'")
-                                        else:
-                                            print("❌ 未找到匹配的存证记录")
+                                    if response.status_code == 200:
+                                        print("区块链接口响应:", response.json())
+                                        # 解析区块链返回的 payload
+                                        payload = json.loads(response.json().get('payload', '{}'))
+                                        tx_time = payload.get('txTime')
+                                        tx_id = payload.get('txID')
+                                        tx_hash = payload.get('txHash')
+
+                                        # 获取状态描述
+                                        status = get_status_description(currentStatus)
+
+                                        # 构建插入数据的字符串
+                                        pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status_text}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                                        # 调用 inserttable 函数插入数据到 project_notarization 表
+                                        inserttable(pro_js, tablename="project_notarization",
+                                                    con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
 
                                 except Exception as e:
                                     print(f"❌ 同步存证表状态失败: {str(e)}")
