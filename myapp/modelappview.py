@@ -98,7 +98,7 @@ def editModelOfferStatus(request):
 def model_main(request):
     return render(request,'modelapphtmls/model-main.html')
 def searchmodel(request):
-    modellist = selecttable("model_list", "id,guest,model,goal,applicationsta", '', '', '', '')
+    modellist = selecttable("model_list", "id,guest,model,goal,applicationsta,dataName", '', '', '', '')
     print('查找成功')
     print(modellist)
     return JsonResponse({'status': 0, 'data': modellist, 'msg': 'success'})

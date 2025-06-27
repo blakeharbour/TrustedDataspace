@@ -28,6 +28,50 @@
 </head>
 <body>
  <style>
+     .loader {
+    border: 6px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 6px solid #3498db;
+    width: 40px;
+    height: 40px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+
+  /* Safari */
+  @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%;
+    right: 0;
+  }
+
     #menu-guest .Hui-menu-title,
     #menu-guest .Hui-menu-item a {
         color: #FFFFFF !important;  /* 亮白色 */
@@ -69,7 +113,7 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multguest-list/" title="外部合作者列表">外部合作者列表</a></li>
+                    <li><a href="/multguest-list/" title="外部合作者列表">外部合作者列表</a></li>
                 </ul>
             </dd>
         </dl>
@@ -78,17 +122,17 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li class="current"><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>
+                    <li class="current"><a href="/multmodel-list/" title="模型列表">模型列表</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                    <li><a href="/multsample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                    <li><a href="/multtrain-model/" title="模型训练结果查看">模型训练结果查看</a></li>
                 </ul>
             </dd>
         </dl>
@@ -97,13 +141,13 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_model-main/"
+                    <li><a href="/multapplication_model-main/"
                                            title="模型使用">模型使用</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
+                    <li><a href="/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
                 </ul>
             </dd>
 
@@ -123,38 +167,9 @@
 		<header class="Hui-navbar">
 			<div class="navbar">
 				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-              <li><a href="">顶部菜单</a></li>
-              <li class="dropDown dropDown_hover">
-                <a class="dropDown_A" href="javascript:;">顶部菜单</a>
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
-							<li>超级管理员</li>
-
-							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
-							<li id="Hui-skin" class="dropDown dropDown_hover right">
-								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
-								<ul class="dropDown-menu menu radius box-shadow">
-									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
-									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
-									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
-									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
-									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
-									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
-								</ul>
-							</li>
+                            <li><a href="/tdindex/" title="返回">返回</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -202,6 +217,25 @@
 								</tbody>
 							</table>
 						</div>
+
+                         <div id="myModal" class="modal">
+
+                          <!-- 模态框内容 -->
+                          <div class="modal-content">
+                            <p>模型预测中，请稍候...</p>
+                            <div class="loader"></div>
+                          </div>
+
+                        </div>
+                        <div id="myModal1" class="modal">
+
+                          <!-- 模态框内容 -->
+                          <div class="modal-content">
+                            <p>结果处理中，请稍候...</p>
+                            <div class="loader"></div>
+                          </div>
+                        </div>
+
 					</div>
 				</div>
 			</article>
@@ -220,11 +254,29 @@
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
 	<script type="text/javascript">
+        // 显示模态框
+        function showModal() {
+          document.getElementById('myModal').style.display = "block";
+        }
+
+        // 隐藏模态框
+        function hideModal() {
+          document.getElementById('myModal').style.display = "none";
+        }
+
+        function showModal1() {
+          document.getElementById('myModal1').style.display = "block";
+        }
+
+        // 隐藏模态框
+        function hideModal1() {
+          document.getElementById('myModal1').style.display = "none";
+        }
 
 		$(function(){
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/searchmultmodel/",
+				url:"/searchmultmodel/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -233,7 +285,7 @@
 						var Result=res.data;
 						console.log(Result);
 						for(var j=0;j<Result.length;j++){
-                            var link="http://127.0.0.1:8000/application_result_shappng/"+Result[j][0];
+                            var link="/application_result_shappng/"+Result[j][0];
                             str+='<tr class="text-c">'+
                              '<td><a onclick="modeldel_list(this,\''+Result[j][0]+'\')"><i class="Hui-iconfont"></i>'+Result[j][0]+'</a></td>'+
                             '<td>'+Result[j][1]+'</td>'+
@@ -258,25 +310,37 @@
 
         function multmodel_test(obj, modelid) {
             console.log("id是", modelid);
+            $("myButton").show();
+            showModal();
             var modeldelinfo=[];
             var modeldic={
                 modelid:modelid,
             };
             console.log("modeldic",modeldic);
             modeldelinfo.push(modeldic);
-            //console.log("modeldelinfo",modeldelinfo);
+            console.log("modeldelinfo",modeldelinfo);
             var modeldata = JSON.stringify(modeldelinfo);
 
             $.ajax({
                 type: 'post',
-                url: "http://127.0.0.1:8000/multmodeltest/",
+                url: "/multmodeltest/",
                 dataType:'json',
                 data: modeldata,
                 success: function (res) {
                     console.log(res);
                     if (res.status == "0") {
-                        alert("连接成功！");
-                        location.href = "http://127.0.0.1:8000/multmodel-list/";
+                    hideModal();
+                    setTimeout(function (){
+                        showModal1();
+                        alert("样本对齐");
+                        setTimeout(function (){
+                            alert("模型训练结束");
+                            alert("模型保存成功！");
+                            hideModal1();
+                            location.href = "/multmodel-list/"
+                        },3000)
+                    },1000)
+
                     } else if (res.status == "1") {
                         alert("测试未成功！");
                     } else {
@@ -287,7 +351,7 @@
         }
 
         function modeldel_list(obj,modelid) {
-			location.href = "http://127.0.0.1:8000/multmodeldel-list/"+modelid+"/";
+			location.href = "/multmodeldel-list/"+modelid+"/";
 		}
         function open_file(obj,address) {
             var userinfo=[];
@@ -299,13 +363,13 @@
             var userdata = JSON.stringify(userinfo);
             $.ajax({
                 type: 'POST',
-                url: "http://127.0.0.1:8000/mult_open_file_manager/",
+                url: "/mult_open_file_manager/",
                 dataType:'json',
                 data: userdata,
                 success: function (res) {
                     console.log(res);
                     if (res.status == "success") {
-                        location.href = "http://127.0.0.1:8000/multmodel-list/";
+                        location.href = "/multmodel-list/";
                     } else {
                         alert("打开失败！");
                     }
@@ -322,7 +386,7 @@
             var userdata = JSON.stringify(userinfo);
             $.ajax({
                 type: 'POST',
-                url: "http://127.0.0.1:8000/mult_open_png/",
+                url: "/mult_open_png/",
                 dataType:'json',
                 data: userdata,
                 success: function (res) {
@@ -341,11 +405,11 @@
 			var id=JSON.stringify(userid);
 			sessionStorage.setItem("userid",id);
 
-			location.href = "http://127.0.0.1:8000/member-edit/";
+			location.href = "/member-edit/";
 		}
 
 		function model_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/multmodel-add/";
+			location.href = "/multmodel-add/";
 		}
 
 		function member_dele(obj,id) {
@@ -359,7 +423,7 @@
 			layer.confirm('确认要删除吗？', function (index) {
 				$.ajax({
 					type: 'post',
-					url: 'http://127.0.0.1:8000/multdeletemodel/',
+					url: '/multdeletemodel/',
 					dataType: 'json',
 					data: userdata,
 					success: function (data) {

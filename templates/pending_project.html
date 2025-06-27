@@ -132,7 +132,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+						<li><a href="/user-list/" title="用户管理">用户管理</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -140,16 +140,16 @@
               <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
               <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                  <li><a href="/data-confirmation/" title="数据确权">数据确权</a></li>
                 </ul>
               </dd>
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -158,23 +158,23 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
                     <ul>
-                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                        <li><a href="/established_project/" title="已建立项目">已建立项目</a></li>
                     </ul>
                     <ul>
-                        <li class="current"><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                        <li class="current"><a href="/pengding_project/" title="待接受项目">待接受项目</a></li>
                     </ul>
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+						<li><a href="/project_notarization/" title="项目存证信息">项目存证信息</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -182,22 +182,22 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+						<li><a href="/wb-interface/" title="数据接口">数据接口</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+						<li><a href="/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
 					</ul>
 				</dd>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/guest-list/" title="隐私计算">隐私计算</a></li>
+						<li><a href="/guest-list/" title="隐私计算">隐私计算</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
+						<li><a href="/multguest-list/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -353,7 +353,7 @@ function searchProjects() {
 
     $.ajax({
         type: "post",
-        url: "http://127.0.0.1:8000/search_pending_project_data/",
+        url: "/search_pending_project_data/",
         dataType: 'json',
         data: {
             projectName: projectName,
@@ -429,7 +429,7 @@ function searchProjects() {
   $(function () {
             $.ajax({
                 type: "post",
-                url: "http://127.0.0.1:8000/get_pending_project_data/",
+                url: "/get_pending_project_data/",
                 dataType: 'json',
                 success: function (res) {
                     console.log("res", res);
@@ -504,7 +504,7 @@ function searchProjects() {
             try {
                 // 构建携带数据的 URL，包括项目 id
                 var queryString = `id=${encodeURIComponent(id)}&project_name=${encodeURIComponent(item.projectName)}&data_demander=${encodeURIComponent(item.dataDemand)}&data_owner=${encodeURIComponent(item.dataOwner)}&data_asset=${encodeURIComponent(item.dataAsset)}&security_level=${encodeURIComponent(item.dataSecurity)}&trans_mode=${encodeURIComponent(item.shareWay)}`;
-                var targetUrl = "http://127.0.0.1:8000/project_add/?" + queryString;
+                var targetUrl = "/project_add/?" + queryString;
                 console.log("跳转URL:", targetUrl);
                 location.href = targetUrl;
             } catch (error) {
@@ -524,7 +524,7 @@ function searchProjects() {
                 // 这里需要根据实际情况发送审核请求
                 $.ajax({
                     type: 'POST',
-                    url: 'http://127.0.0.1:8000/audit_project/', // 替换为实际的审核接口
+                    url: '/audit_project/', // 替换为实际的审核接口
                     data: { id: id, currentStatus: status },
                     success: function (res) {
                         if (res.status === '0') {
@@ -554,7 +554,7 @@ function searchProjects() {
 
 
         function project_add() {
-            location.href = "http://127.0.0.1:8000/project_add/";
+            location.href = "/project_add/";
         }
         // 删除操作函数
         function project_delete(projectName, dataDemand, dataOwner, dataAsset) {
@@ -562,7 +562,7 @@ function searchProjects() {
         // 这里需要根据实际情况发送删除请求
         $.ajax({
             type: 'POST',
-            url: 'http://127.0.0.1:8000/delete_project/', // 替换为实际的删除接口
+            url: '/delete_project/', // 替换为实际的删除接口
             data: {
                 projectName: projectName,
                 dataDemand: dataDemand,
@@ -596,7 +596,7 @@ function project_submit(id) {
         // 这里需要根据实际情况发送提交请求
         $.ajax({
             type: 'POST',
-            url: 'http://127.0.0.1:8000/submit_project/', // 替换为实际的提交接口
+            url: '/submit_project/', // 替换为实际的提交接口
             data: { id: id },
             success: function (res) {
                 if (res.status === '0') {
@@ -615,31 +615,45 @@ function project_submit(id) {
         layer.close(index);
     });
 }
-        function project_rightConfirm() {
-            const selectedId = $('input[name="selectedProject"]:checked').val();
-              if (!selectedId) {
-                alert('请先选择项目');
-                return;
-              }
 
-              const selectedRow = $('input[name="selectedProject"]:checked').closest('tr');
-              const data = {
-                projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
-                demand: selectedRow.find('td:eq(2)').text(),    // 数据需求方
-                owner: selectedRow.find('td:eq(3)').text(),     // 数据所有方
-                asset: selectedRow.find('td:eq(4)').text()      // 所需数据资产
-              };
-              sessionStorage.setItem('selectedData', JSON.stringify(data));
-              location.href = "http://127.0.0.1:8000/data-confirmation/review/";
-        }
+
+//新增了筛选条件
+function project_rightConfirm() {
+    const selectedProject = $('input[name="selectedProject"]:checked');
+    if (selectedProject.length === 0) {
+        alert('请先选择项目');
+        return;
+    }
+
+    const selectedRow = selectedProject.closest('tr');
+    const data = {
+        projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
+        demand: selectedRow.find('td:eq(2)').text(),         // 数据需求方
+        owner: selectedRow.find('td:eq(3)').text(),          // 数据所有方
+        asset: selectedRow.find('td:eq(4)').text()           // 所需数据资产
+    };
+
+    // 保存到sessionStorage（保留原有逻辑）
+    sessionStorage.setItem('selectedData', JSON.stringify(data));
+
+    // 将所需数据资产作为搜索参数传递给审核页面
+    const dataAsset = data.asset.trim();
+    const targetUrl = "/data-confirmation/review/?search=" + encodeURIComponent(dataAsset);
+
+    console.log("跳转到审核页面，筛选条件：", dataAsset);
+    location.href = targetUrl;
+}
+
+
+
 // 新增共享方式跳转函数
 function sharingTypeResultShow(shareType) {
     // 定义合法的共享方式列表
     const validShareTypes = {
-        '接口交换': 'http://127.0.0.1:8000/wb-interface/',
+        '接口交换': '/wb-interface/',
         '安全沙箱': 'http://192.168.1.133/url2',// 替换为实际的URL2
-        '隐私计算': 'http://127.0.0.1:8000/index/',// 替换为实际的URL2
-        '密文计算': 'http://127.0.0.1:8000/mutiindex/'
+        '隐私计算': '/index/',// 替换为实际的URL2
+        '密文计算': '/mutiindex/'
     };
     // 参数校验
     if (!shareType) {

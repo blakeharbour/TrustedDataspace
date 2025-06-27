@@ -53,7 +53,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+						<li><a href="/guest-list/" title="参与者列表">参与者列表</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -61,13 +61,13 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+						<li ><a href="/model-list/" title="模型列表">模型列表</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+						<li ><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+						<li ><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
 					</ul>
 				 </dd>
 			</dl>
@@ -75,10 +75,10 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li> <a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+						<li> <a href="/application_model-main/" title="模型使用">模型使用</a></li>
 					</ul>
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+						<li><a href="/application_result/" title="模型应用结果">模型应用结果</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -97,38 +97,9 @@
 		<header class="Hui-navbar">
 			<div class="navbar">
 				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-              <li><a href="">顶部菜单</a></li>
-              <li class="dropDown dropDown_hover">
-                <a class="dropDown_A" href="javascript:;">顶部菜单</a>
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
-							<li>超级管理员</li>
-
-							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
-							<li id="Hui-skin" class="dropDown dropDown_hover right">
-								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
-								<ul class="dropDown-menu menu radius box-shadow">
-									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
-									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
-									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
-									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
-									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
-									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
-								</ul>
-							</li>
+                            <li><a href="/tdindex/" title="返回">返回</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -212,7 +183,7 @@
 		$(function(){
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/model-application_search/",
+				url:"/model-application_search/",
 				dataType:'json',
 				success:function (res) {
 					console.log("res",res);
@@ -249,17 +220,17 @@
 			{#var id=JSON.stringify(id);#}
             $.ajax({
 					type: 'GET',
-					url: 'http://127.0.0.1:8000/application_status_modify/',
+					url: '/application_status_modify/',
 					dataType: 'json',
 					data: {mid:mid,guest:guest},
                     success:function (res) {
                         console.log("res",res);
                         if(res.status=="2"){
                             alert("申请成功,参与方已接收请求，待审核提供");
-                            location.href="http://127.0.0.1:8000/model-application"
+                            location.href="/model-application"
                         }else if(res.status=="1"){
                             alert("申请成功");
-                            location.href="http://127.0.0.1:8000/model-application"
+                            location.href="/model-application"
                         }if(res.status=="3"){
                             alert("参与方接收请求失败");
                         }else{
@@ -270,7 +241,7 @@
 		}
 
 		function member_add(obj,userid) {
-			location.href = "http://127.0.0.1:8000/member-add/";
+			location.href = "/member-add/";
 		}
 		
 		function member_dele(obj,id) {
@@ -284,7 +255,7 @@
 			layer.confirm('确认要删除吗？', function (index) {
 				$.ajax({
 					type: 'post',
-					url: 'http://127.0.0.1:8000/deleteuser/',
+					url: '/deleteuser/',
 					dataType: 'json',
 					data: userdata,
 					success: function (data) {

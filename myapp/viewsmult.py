@@ -258,7 +258,7 @@ def searchmultmodel(request):
 
 # 查找模型_appl
 def searchmultmodel_appl(request):
-    modellist = selecttable("multmodel_list", "id,guest,model,goal,applicationsta,agreement", '', '', '', '')
+    modellist = selecttable("multmodel_list", "id,guest,model,goal,applicationsta,agreement,dataName", '', '', '', '')
     print('查找成功')
     print(modellist)
     return JsonResponse({'status': 0, 'data': modellist, 'msg': 'success'})
@@ -527,13 +527,16 @@ def upload_mult_to_remote_server(request):
     ssh_client.close()
     print("结束传输文件")
     # return JsonResponse({'status': 0, 'msg': 'success'})
-def multmodel_test(request):
-    data_dict = json.loads(request.body)
 
-    print("数据是", data_dict)
-    id = data_dict[0].get("modelid")
+from myapp.fed_PU_sci1203 import maincf
+async def multmodel_test(request):
     print('开始执行')
-    maincf.main(id)
+    proobj = request.body
+    projs = json.loads(proobj)
+    print(projs)
+    modelid = projs[0]["modelid"]
+    await maincf.main(modelid)
+    # client_port.datapsi()
     print('执行成功')
     return JsonResponse({'status': 0, 'msg': 'success'})
 
@@ -672,7 +675,7 @@ def multimodel_predict(request):
         DATA_PATH = os.path.join("myapp", "fed_PU_sci1203", "dataset", "result_in_1123.csv")
         RESULT_ROOT = os.path.join("myapp", "fed_PU_sci1203", "result", "result_in_1123")
         COLUMNS_SET2 = ['JFLC', 'COST', 'TIME', 'DISCOUNT', 'FREIGHT_95306']
-        PORT_API_URL = "http://127.0.0.1:8000/model_predict_port/"
+        PORT_API_URL = "http://192.168.1.121:8000/model_predict_port/"
         DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         # 2. 加载数据

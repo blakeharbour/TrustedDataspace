@@ -57,7 +57,7 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multguest-list/" title="参与者列表">外部合作者列表</a></li>
+                    <li><a href="/multguest-list/" title="参与者列表">外部合作者列表</a></li>
                 </ul>
             </dd>
         </dl>
@@ -66,17 +66,17 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multmodel-list/" title="模型列表">模型列表</a></li>
+                    <li><a href="/multmodel-list/" title="模型列表">模型列表</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+                    <li><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+                    <li><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
                 </ul>
             </dd>
         </dl>
@@ -85,13 +85,13 @@
                     class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li class="current"><a href="http://127.0.0.1:8000/multapplication_model-main/"
+                    <li class="current"><a href="/multapplication_model-main/"
                                            title="模型使用">模型使用</a></li>
                 </ul>
             </dd>
             <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                    <li><a href="http://127.0.0.1:8000/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
+                    <li><a href="/multapplication_result/" title="模型应用结果">模型应用结果</a></li>
                 </ul>
             </dd>
 
@@ -108,55 +108,17 @@
 </div>
 <section class="Hui-admin-article-wrapper">
     <!--_header 作为公共模版分离出去-->
-    <header class="Hui-navbar">
-        <div class="navbar">
-            <div class="container-fluid clearfix">
-                <nav id="Hui-topNav" class="nav navbar-nav">
-                    <ul class="clearfix">
-                        <li><a href="">顶部菜单</a></li>
-                        <li class="dropDown dropDown_hover">
-                            <a class="dropDown_A" href="javascript:;">顶部菜单</a>
-                            <ul class="dropDown-menu menu radius box-shadow">
-                                <li class="">
-                                    <a href="#">二级导航</a>
-                                </li>
-                                <li class="">
-                                    <a href="#">二级导航</a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-                <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
-                    <ul class="clearfix">
-                        <li>超级管理员</li>
-                        <li class="dropDown dropDown_hover"><a href="#" class="dropDown_A">admin <i
-                                class="Hui-iconfont">&#xe6d5;</i></a>
-                            <ul class="dropDown-menu menu radius box-shadow">
-                                <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-                                <li><a href="#">切换账户</a></li>
-                                <li><a href="#">退出</a></li>
-                            </ul>
-                        </li>
-                        <li id="Hui-msg"><a href="#" title="消息"><span class="badge badge-danger">1</span><i
-                                class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a></li>
-                        <li id="Hui-skin" class="dropDown dropDown_hover right">
-                            <a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont"
-                                                                                    style="font-size:18px">&#xe62a;</i></a>
-                            <ul class="dropDown-menu menu radius box-shadow">
-                                <li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
-                                <li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
-                                <li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
-                                <li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
-                                <li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
-                                <li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+                            <li><a href="/tdindex/" title="返回">返回</a></li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
     <!--/_header 作为公共模版分离出去-->
     <div class="Hui-admin-article">
         <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
@@ -178,6 +140,7 @@
                         <table class="table table-border table-bordered table-hover table-bg table-sort">
                             <thead>
                             <tr class="text-c">
+                                <th width="30">选择</th>
                                 <th width="80">模型ID</th>
                                 <th width="100">参与者</th>
                                 <th width="90">模型</th>
@@ -252,7 +215,7 @@
     $(function () {
         $.ajax({
             type: "post",
-            url: "http://127.0.0.1:8000/multapplication_model-main_search/",
+            url: "/multapplication_model-main_search/",
             dataType: 'json',
             success: function (res) {
                 console.log("res", res);
@@ -262,13 +225,18 @@
                     console.log(Result);
                     for (var j = 0; j < Result.length; j++) {
                         str += '<tr class="text-c">' +
+                            '<td>' +
+                                    '<input type="radio" name="selected_interface" ' +
+                                            'data-dataname="' + Result[j][6] + '" '+
+                                            'data-projectname="' + Result[j][3] + '" '+
+                                '</td>' +
                             '<td>' + Result[j][0] + '</td>' +
                             '<td>' + Result[j][1] + '</td>' +
                             '<td>' + Result[j][2] + '</td>' +
                             '<td>' + Result[j][3] + '</td>' +
                             '<td>' + Result[j][4] + '</td>' +
                             '<td>' + Result[j][5] + '</td>' +
-                            {#'<td><a href="http://127.0.0.1:8000/multmodel-application/" title="数据申请情况"><i class="Hui-iconfont"></i>数据申请情况</a>' +#}
+                            {#'<td><a href="/multmodel-application/" title="数据申请情况"><i class="Hui-iconfont"></i>数据申请情况</a>' +#}
                             {#'<br><a title="运行" onclick="member_edit(this,\'' + Result[j][0] + '\')" style="color: cornflowerblue;"><i class="Hui-iconfont"></i>运行</a>' +#}
                             '<td><a title="数据申请情况" class=' +
                             '"btn btn-success popup" onclick="getApplyDetail(this,\'' + Result[j][0] + '\')" style="color: white;"><span>查看数据申请情况</span></a>' +
@@ -284,13 +252,29 @@
         })
     });
 function model_test(obj, modelid) {
+    const selectedRadio = document.querySelector('input[name="selected_interface"]:checked');
+    if (!selectedRadio) {
+        layer.msg('请先选择一条数据', {icon: 2});
+        return;
+    }
+    const webName = selectedRadio.dataset.dataname;
+    const projectName = selectedRadio.dataset.projectname;
+    const webinfo=[];
+    const webdic={
+        webName:webName,
+        projectName:projectName,
+        type:"2",
+    };
+    webinfo.push(webdic);
+    console.log(webinfo);
+    const webdata = JSON.stringify(webinfo)
     // 显示加载状态
     showModal();
     
     $.ajax({
-         type: 'GET',
-            url: "http://127.0.0.1:8000/multmodel-predict/",
-                    dataType: 'json',
+        type: 'GET',
+        url: "/multmodel-predict/",
+        dataType: 'json',
         data: { model_id: modelid },  // 如果需要传递参数
         success: function (res) {
             if (res.status == "0") {
@@ -306,7 +290,24 @@ function model_test(obj, modelid) {
                         alert("结果已合并");
                         alert("结果保存成功！");
                         hideModal1();
-                        location.href = "/multapplication_model-main/";
+                        // 发送区块链请求，完成后跳转
+                        $.ajax({
+                            type: "POST",
+                            url: "/useBlockchain/",
+                            data: webdata,
+                            contentType: 'application/json',  // 添加内容类型
+                            dataType: 'json', // 修复数据类型
+                            success: function (res) {
+                                console.log("区块链响应:", res);
+                                alert("区块链存证成功！");
+                                location.href = "/multapplication_model-main/";
+                            },
+                            error: function(xhr) {
+                                console.error("区块链请求失败:", xhr.status, xhr.statusText);
+                                alert("区块链存证失败，但操作将继续！");
+                                location.href = "/multapplication_model-main/";
+                            }
+                        });
                     }, 3000);
                 }, 1000);
             } else {
@@ -336,7 +337,7 @@ function model_test(obj, modelid) {
                 {#setTimeout(hideModal1, 15000); // 3秒后隐藏模态框#}
     {#            $.ajax({#}
     {#                type: 'GET',#}
-    {#                url: "http://127.0.0.1:8000/multimodel_predict/",#}
+    {#                url: "/multimodel_predict/",#}
     {#                dataType: 'json',#}
     {#                success: function (res) {#}
     {#                    console.log(res);#}
@@ -351,7 +352,7 @@ function model_test(obj, modelid) {
     {#                            alert("结果已合并");#}
     {#                            alert("结果保存成功！");#}
     {#                            hideModal1();#}
-    {#                            location.href = "http://127.0.0.1:8000/multapplication_model-main/"#}
+    {#                            location.href = "/multapplication_model-main/"#}
     {#                        },3000)#}
     {#                    },1000)#}
     {##}
@@ -365,11 +366,11 @@ function model_test(obj, modelid) {
     {#    }#}
 
     function modeldel_list(obj, modelid) {
-        location.href = "http://127.0.0.1:8000/multmodeldel-list/" + modelid + "/";
+        location.href = "/multmodeldel-list/" + modelid + "/";
     }
 
     function getApplyDetail(obj, modelid) {
-        location.href = "http://127.0.0.1:8000/multmodel-application/";
+        location.href = "/multmodel-application/";
     }
 
     {#function model_test(obj, modelid) {#}
@@ -380,7 +381,7 @@ function model_test(obj, modelid) {
                 {#setTimeout(hideModal1, 15000); // 3秒后隐藏模态框#}
     {#            $.ajax({#}
     {#                type: 'GET',#}
-    {#                url: "http://127.0.0.1:8000/multmodel-predict/",#}
+    {#                url: "/multmodel-predict/",#}
     {#                dataType: 'json',#}
     {#                success: function (res) {#}
     {#                    console.log(res);#}
@@ -395,7 +396,7 @@ function model_test(obj, modelid) {
     {#                            alert("结果已合并");#}
     {#                            alert("结果保存成功！");#}
     {#                            hideModal1();#}
-    {#                            location.href = "http://127.0.0.1:8000/multapplication_model-main/"#}
+    {#                            location.href = "/multapplication_model-main/"#}
     {#                        },3000)#}
     {#                    },1000)#}
     {##}
@@ -412,11 +413,11 @@ function model_test(obj, modelid) {
         var id = JSON.stringify(userid);
         sessionStorage.setItem("userid", id);
 
-        location.href = "http://127.0.0.1:8000/member-edit/";
+        location.href = "/member-edit/";
     }
 
     function model_add(obj, userid) {
-        location.href = "http://127.0.0.1:8000/multmodel-add/";
+        location.href = "/multmodel-add/";
     }
 
     function member_dele(obj, id) {
@@ -430,7 +431,7 @@ function model_test(obj, modelid) {
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8000/multdeletemodel/',
+                url: '/multdeletemodel/',
                 dataType: 'json',
                 data: userdata,
                 success: function (data) {

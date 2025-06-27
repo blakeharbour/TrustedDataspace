@@ -53,7 +53,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 参与者管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/guest-list/" title="参与者列表">参与者列表</a></li>
+						<li ><a href="/guest-list/" title="参与者列表">参与者列表</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -61,19 +61,19 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型训练管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/model-list/" title="模型列表">模型列表</a></li>
+						<li ><a href="/model-list/" title="模型列表">模型列表</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
+						<li ><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>
 					</ul>
 					<ul>
-						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
+						<li ><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>
 					</ul>
 {#					<ul>#}
-{#						<li ><a href="http://127.0.0.1:8000/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>#}
+{#						<li ><a href="/sample-alignment/" title="样本对齐情况">样本对齐情况</a></li>#}
 {#					</ul>#}
 {#					<ul>#}
-{#						<li ><a href="http://127.0.0.1:8000/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>#}
+{#						<li ><a href="/train-model/" title="模型训练结果查看">模型训练结果查看</a></li>#}
 {#					</ul>#}
                 </dd>
 			</dl>
@@ -81,10 +81,10 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 模型应用<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_model-main/" title="模型使用">模型使用</a></li>
+						<li><a href="/application_model-main/" title="模型使用">模型使用</a></li>
 					</ul>
 					<ul>
-						<li><a href="http://127.0.0.1:8000/application_result/" title="模型应用结果">模型应用结果</a></li>
+						<li><a href="/application_result/" title="模型应用结果">模型应用结果</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -245,14 +245,14 @@
 			var guestdata = JSON.stringify(guestinfo)
 			$.ajax({
 				type:"post",
-				url:"http://127.0.0.1:8000/createguest/",
+				url:"/createguest/",
 				data:guestdata,
 				dataType:"json",
 				success:function (res) {
 					console.log("res",res)
 					if(res.status=="0"){
 						alert("新增成功");
-						location.href="http://127.0.0.1:8000/guest-list/"
+						location.href="/guest-list/"
 					}else{
 						alert("出现错误")
 					}

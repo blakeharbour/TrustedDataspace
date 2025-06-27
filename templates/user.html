@@ -49,7 +49,7 @@
     $(function() {
             $.ajax({
                 type: "post",
-                url: "http://127.0.0.1:8000/searchuser/",//接口地址
+                url: "/searchuser/",//接口地址
                 dataType: 'json',
                 success: function (data) {
                     console.log(data);
@@ -75,7 +75,7 @@
     });
 
     function member_add() {
-        location.href = "http://127.0.0.1:8000/user_add/";
+        location.href = "/user_add/";
     }
 
     function user_edit(obj,id) {
@@ -86,7 +86,7 @@
         dataArray.push(data1);
         var userData=JSON.stringify(dataArray);
         sessionStorage.setItem("userData",userData);
-        location.href = "http://127.0.0.1:8000/user_edit/";
+        location.href = "/user_edit/";
     }
 
     function user_dele(obj,id) {
@@ -94,7 +94,7 @@
         layer.confirm('确认要删除吗？', function (index) {
             $.ajax({
                 type: 'post',
-                url: 'http://127.0.0.1:8000/deleteuser/',
+                url: '/deleteuser/',
                 dataType: 'json',
                 data:{
                     userid:id

@@ -41,7 +41,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+						<li><a href="/user-list/" title="用户管理">用户管理</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -49,16 +49,16 @@
               <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
               <dd class="Hui-menu-item" style="display:block">
                 <ul>
-                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                  <li><a href="/data-confirmation/" title="数据确权">数据确权</a></li>
                 </ul>
               </dd>
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -67,23 +67,23 @@
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
                     <ul>
-                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                        <li><a href="/established_project/" title="已建立项目">已建立项目</a></li>
                     </ul>
                     <ul>
-                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                        <li><a href="/pengding_project/" title="待接受项目">待接受项目</a></li>
                     </ul>
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+						<li><a href="/project_notarization/" title="项目存证信息">项目存证信息</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -91,22 +91,22 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+						<li><a href="/wb-interface/" title="数据接口">数据接口</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+						<li class="current"><a href="/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
 					</ul>
 				</dd>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/guest-list/" title="隐私计算">隐私计算</a></li>
+						<li><a href="/guest-list/" title="隐私计算">隐私计算</a></li>
 					</ul>
 				</dd>
                 <dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="http://127.0.0.1:8000/multguest-list/" title="密文计算">密文计算</a></li>
+						<li><a href="/multguest-list/" title="密文计算">密文计算</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -184,7 +184,7 @@
       </div>
       <div class="row clearfix">
         <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
-          <input class="btn btn-primary radius" type="button" onclick="submitSandbox()" value="&nbsp;&nbsp;新增数据沙箱&nbsp;&nbsp;">
+          <input class="btn btn-primary radius" type="button" onclick="submitSandbox()" value="&nbsp;&nbsp;提交 &nbsp;&nbsp;">
         </div>
       </div>
     </form>
@@ -197,46 +197,60 @@
    
 
    $(function () {
-                var getData = sessionStorage.getItem("confirmman");
-                console.log(getData)
-                {#将json字符串转化为json对象#}
-                var confirmman = $.parseJSON(getData);
-                console.log(confirmman)
-                var wbdic={
-                        confirmman:confirmman
-                    };
-                var wbdata = JSON.stringify(wbdic)
-                $.ajax({
-                    type: "post",
-                    url: "http://127.0.0.1:8000/sysxsearchoneinterface/" ,//接口地址
-                    dataType:'json',
-                    data: wbdata,
-                    success: function (res) {
-                        console.log("res385:");
-                        console.log(res);
-                        result = res.data;
-                        console.log(result)
-                        $("#confirmman").val(result[0][1]);
-                        $("#confirmtime").val(result[0][2]);
-                        $("#saveurl").val(result[0][3]);
-                        $("#zichanname").val(result[0][4]);
-                        $("#staytime").val(result[0][5]);
-                        $("#jiamipro").val(result[0][6]);
-                        $("#autoscope").val(result[0][7]);
-                        $("#delchannle").val(result[0][8]);
-                    },
-                })
-            }); 
+    var confirmman = sessionStorage.getItem("edit_confirmman");
+    var saveurl = sessionStorage.getItem("edit_saveurl");
+
+    if (!confirmman || !saveurl) {
+        layer.alert("编辑信息丢失，请重新从主页面进入");
+        return;
+    }
+
+    var postData = JSON.stringify({
+        confirmman: confirmman,
+        saveurl: saveurl
+    });
+
+    $.ajax({
+        type: "post",
+        url: "/sysxsearchoneinterface/", // 接口要支持 confirmman + saveurl 查找
+        data: postData,
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (res) {
+            if (res.status === 0 && res.data.length > 0) {
+                var result = res.data[0];
+                console.log("后端返回内容：", result);
+
+        $("#creator").val(result.confirmman);
+        $("#createTime").val(result.confirmtime);
+        $("#dataPath").val(result.saveurl);
+        $("#assetName").val(result.zichanname);
+        $("#validUntil").val(result.staytime);
+        $("#encryption").val(result.jiamipro);
+        $("#accessRange").val(result.autoscope);
+        $("#destroyPolicy").val(result.delchannle);
+
+            } else {
+                layer.alert("未找到该沙箱记录");
+            }
+        },
+        error: function (err) {
+            console.error("请求失败：", err);
+            layer.msg("加载沙箱信息失败", { icon: 2 });
+        }
+    });
+});
+
     
-  function submitSandbox() {
-  const confirmman = $("#creator").val();         // 沙箱创建人
-  const confirmtime = $("#createTime").val();     // 创建时间
-  const saveurl = $("#dataPath").val();           // 数据访问路径
-  const zichanname = $("#assetName").val();       // 所存资产项名称
-  const staytime = $("#validUntil").val();        // 沙箱有效期
-  const jiamipro = $("#encryption").val();        // 加密算法说明
-  const autoscope = $("#accessRange").val();      // 访问授权范围
-  const delchannle = $("#destroyPolicy").val();   // 沙箱销毁策略
+function submitSandbox() {
+  const confirmman = $("#creator").val();
+  const confirmtime = $("#createTime").val();
+  const saveurl = $("#dataPath").val();
+  const zichanname = $("#assetName").val();
+  const staytime = $("#validUntil").val();
+  const jiamipro = $("#encryption").val();
+  const autoscope = $("#accessRange").val();
+  const delchannle = $("#destroyPolicy").val();
 
   if (confirmman === "") {
     alert("沙箱创建人不能为空");
@@ -244,24 +258,25 @@
     return false;
   }
 
-  // 👉 第一步：获取旧的 id（即 saveurl），执行删除
-  const getData = sessionStorage.getItem("confirmman");
-  console.log("获取 session 中的 confirmman:", getData);
-  const confirmman1 = $.parseJSON(getData);
-  sessionStorage.removeItem("confirmman1");
+  // ✅ 获取旧的唯一键值（用于删除）
+  const confirmman1 = sessionStorage.getItem("edit_confirmman");
+  const saveurl1 = sessionStorage.getItem("edit_saveurl");
 
-  const deleteBody = JSON.stringify({ confirmman1: confirmman1 });
+  const deleteBody = JSON.stringify({
+    confirmman: confirmman1,
+    saveurl: saveurl1
+  });
 
   $.ajax({
     type: 'post',
-    url: 'http://127.0.0.1:8000/sysxdeleteinterface/',
+    url: '/sysxdeleteinterface/',
     dataType: 'json',
     data: deleteBody,
     contentType: 'application/json',
     success: function (data) {
       console.log("删除结果:", data.status);
 
-      // 👉 第二步：删除成功后执行新增
+      // ✅ 删除后再新增
       const dataObj = {
         confirmman: confirmman,
         confirmtime: confirmtime,
@@ -275,7 +290,7 @@
 
       $.ajax({
         type: "post",
-        url: "http://127.0.0.1:8000/create-sandbox/",
+        url: "/create-sandbox/",
         data: JSON.stringify(dataObj),
         contentType: "application/json",
         dataType: "json",
@@ -301,6 +316,7 @@
     }
   });
 }
+
 
 
 </script>

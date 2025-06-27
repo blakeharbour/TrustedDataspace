@@ -52,7 +52,7 @@
 				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/member-list/" title="会员列表">用户列表</a></li>
+						<li class="current"><a href="/member-list/" title="会员列表">用户列表</a></li>
 					</ul>
 				</dd>
 			</dl>
@@ -71,38 +71,9 @@
 		<header class="Hui-navbar">
 			<div class="navbar">
 				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-              <li><a href="">顶部菜单</a></li>
-              <li class="dropDown dropDown_hover">
-                <a class="dropDown_A" href="javascript:;">顶部菜单</a>
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
 					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
 						<ul class="clearfix">
-							<li>超级管理员</li>
-
-							<li id="Hui-msg"> <a href="#" title="消息"><span class="badge badge-danger">1</span><i class="Hui-iconfont" style="font-size:18px">&#xe68a;</i></a> </li>
-							<li id="Hui-skin" class="dropDown dropDown_hover right">
-								<a href="javascript:;" class="dropDown_A" title="换肤"><i class="Hui-iconfont" style="font-size:18px">&#xe62a;</i></a>
-								<ul class="dropDown-menu menu radius box-shadow">
-									<li><a href="javascript:;" data-val="default" title="默认（蓝色）">默认（深蓝）</a></li>
-									<li><a href="javascript:;" data-val="black" title="黑色">黑色</a></li>
-									<li><a href="javascript:;" data-val="green" title="绿色">绿色</a></li>
-									<li><a href="javascript:;" data-val="red" title="红色">红色</a></li>
-									<li><a href="javascript:;" data-val="yellow" title="黄色">黄色</a></li>
-									<li><a href="javascript:;" data-val="orange" title="橙色">橙色</a></li>
-								</ul>
-							</li>
+                            <li><a href="/tdindex/" title="返回">返回</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -175,7 +146,7 @@
         var userdata = JSON.stringify(userdic)
         $.ajax({
             type: "post",
-            url: "http://127.0.0.1:8000/oneuser/" ,//接口地址
+            url: "/oneuser/" ,//接口地址
             dataType:'json',
             data: userdata,
             success: function (res) {
@@ -223,14 +194,14 @@
         var userdata = JSON.stringify(userinfo)
         $.ajax({
             type:"post",
-            url:"http://127.0.0.1:8000/edituser/",
+            url:"/edituser/",
             data:userdata,
             dataType:"json",
             success:function (res) {
                 console.log("res",res);
                 if(res.status=="0"){
                     alert("编辑成功");
-                    location.href="http://127.0.0.1:8000/member-list/"
+                    location.href="/member-list/"
                 }else{
                     alert("出现错误")
                 }

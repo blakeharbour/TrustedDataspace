@@ -35,7 +35,7 @@ def get_mnist():
 
 
 def get_container():
-    container = pd.read_csv("/home/port/hotel/myapp/fed_PU_sci1203/dataset/result_out_1123.csv", encoding="utf8")
+    container = pd.read_csv("/home/bjdtd/TrustedDataspace/myapp/fed_PU_sci1203/dataset/result_out_1123.csv", encoding="utf8")
     container['DATADATE'] = pd.to_datetime(container['DATADATE'])
     train_mask = (container['DATADATE'] < '2023-05-01')
     test_mask = (container['DATADATE'] >= '2023-05-01')

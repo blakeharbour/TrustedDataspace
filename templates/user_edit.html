@@ -63,7 +63,7 @@
         // console.log("userid:",userid);
         $.ajax({
             type: "post",
-            url: "http://127.0.0.1:8000/oneuser/" ,//接口地址
+            url: "/oneuser/" ,//接口地址
             dataType:'json',
             data: {
                 userid:userid
@@ -89,7 +89,7 @@
         var remark = document.getElementById("remark").value;
         $.ajax({
             type:"post",
-            url:"http://127.0.0.1:8000/edituser/",
+            url:"/edituser/",
             data : {
                 userid:userid,
                 username:username,
