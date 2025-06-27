@@ -1925,7 +1925,7 @@ def submit_project_toblockchain(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://202.112.151.253:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     # 解析区块链返回的 payload
@@ -2539,7 +2539,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.utils import timezone
 from datetime import datetime, date
-import json
+import requests
 from .myjob import selecttable, updatetable, inserttable
 from django.db import models
 
@@ -2550,8 +2550,6 @@ from .models import (
     DATA_SOURCE_CHOICES,
     #BUSINESS_STAGE_CHOICES
 )
-
-
 
 def get_company_code_from_name(company_name):
     """
@@ -2619,41 +2617,6 @@ def data_right_application_add(request):
                     action_user=request.user.username if hasattr(request.user, 'username') else '系统用户',
                     action_comments='提交申请'
                 )
-
-                # ========== 添加以下代码：创建项目记录 ==========
-                # 在pb8_ProjectAdd表中创建对应的项目记录，状态设为1（待审核）
-                try:
-                    project_name = application.target_business_stage  # 项目名称
-                    data_demand = application.applicant  # 申请方（数据需求方）
-                    data_owner = application.target_data_holder  # 数据持有方（数据所有方）
-                    data_asset = application.target_data_name  # 数据资产名称
-
-                    # 设置默认值
-                    data_security = '普通'  # 数据安全等级，可以根据需要调整
-                    share_way = '待确定'  # 共享方式，申请阶段可以先设为待确定
-                    is_deleted = 'N'  # 未删除
-                    current_status = '1'  # 关键：设置为1（待审核），而不是0（发起）
-
-                    # 构建插入数据
-                    pro_js = f"'{project_name}','{data_demand}','{data_owner}','{data_asset}','{data_security}','{share_way}','{is_deleted}','{current_status}'"
-
-                    # 插入项目记录
-                    insert_result = inserttable(
-                        pro_js,
-                        tablename="pb8_ProjectAdd",
-                        con1="projectName,dataDemand,dataOwner,dataAsset,dataSecurity,shareWay,isDeleted,currentStatus"
-                    )
-
-                    if insert_result:
-                        print(f"✓ 项目记录创建成功: {project_name}, 状态: 待审核")
-                    else:
-                        print(f"✗ 项目记录创建失败: {project_name}")
-
-                except Exception as e:
-                    print(f"❌ 创建项目记录时出错: {str(e)}")
-                    # 记录错误但不影响申请流程
-                # ============================================
-
                 messages.success(request, f'申请提交成功！申请编号：{application.application_id}')
                 return redirect('data_confirmation_list')
 
@@ -2786,6 +2749,45 @@ def data_right_application_review(request, application_id):
 
                             if update_result and update_result > 0:
                                 print(f"✓ 成功更新 {update_result} 个项目状态为: {status_text}")
+                                # =================== 在这里添加以下代码 ===================
+                                # 同步更新 project_notarization 表
+                                try:
+                                    print(f"=== 开始同步 project_notarization 表 ===")
+
+                                    # 构建 project_notarization 表的查询条件
+                                    notarization_query = f"projectName = '{project_name}' AND assetName = '{data_asset}'"
+                                    print(f"存证表查询条件: {notarization_query}")
+
+                                    # 更新存证表的状态
+                                    notarization_update_str = f"status = '{status_text}'"
+                                    notarization_result = updatetable("project_notarization", notarization_update_str,
+                                                                      notarization_query)
+
+                                    if notarization_result and notarization_result > 0:
+                                        print(f"✓ 成功更新 {notarization_result} 条存证记录状态为: {status_text}")
+                                    else:
+                                        print(f"⚠️ 存证表更新失败，返回值: {notarization_result}")
+
+                                        # 查询存证表中是否存在相关记录（用于调试）
+                                        notarization_fields = "id, projectName, assetName, status"
+                                        debug_notarization = selecttable("project_notarization",
+                                                                         fields=notarization_fields,
+                                                                         constr=f"projectName = '{project_name}' AND assetName = '{data_asset}'")
+
+                                        if debug_notarization:
+                                            print("找到相关存证记录:")
+                                            for record in debug_notarization:
+                                                print(
+                                                    f"  ID={record[0]}, 项目='{record[1]}', 资产='{record[2]}', 当前状态='{record[3]}'")
+                                        else:
+                                            print("❌ 未找到匹配的存证记录")
+
+                                except Exception as e:
+                                    print(f"❌ 同步存证表状态失败: {str(e)}")
+                                    import traceback
+                                    traceback.print_exc()
+                                # =================== 添加代码结束 ===================
+
                             else:
                                 print(f"⚠️ 更新失败，返回值: {update_result}")
 

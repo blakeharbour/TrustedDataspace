@@ -60,6 +60,42 @@
         vertical-align: baseline !important;
         margin-right: 4px !important;
     }
+
+    /* 优化前两行的标签和输入框间距 */
+    .form-label.tight-spacing {
+        padding-right: 5px !important;
+    }
+
+    .formControls.tight-spacing {
+        padding-left: 5px !important;
+    }
+
+    /* 新增：项目同步字段样式 */
+    .project-sync-field {
+        background-color: #f9f9f9 !important;
+        border: 1px solid #ddd !important;
+        cursor: not-allowed !important;
+        color: #666 !important;
+    }
+
+    .project-sync-field:hover {
+        background-color: #f5f5f5 !important;
+    }
+
+    .project-sync-notice {
+        background-color: #e8f4fd;
+        border: 1px solid #bee5eb;
+        border-radius: 4px;
+        padding: 10px 15px;
+        margin-bottom: 15px;
+        color: #0c5460;
+        font-size: 14px;
+    }
+
+    .project-sync-notice i {
+        margin-right: 8px;
+        color: #17a2b8;
+    }
     </style>
 <!-- 在<body>标签内的顶部添加 -->
 {% if messages %}
@@ -217,6 +253,12 @@
 					<div class="cl"></div>
 				</div>
 
+				<!-- 项目同步提示 -->
+				<div id="projectSyncNotice" class="project-sync-notice" style="display: none;">
+					<i class="Hui-iconfont">&#xe6df;</i>
+					<strong>项目同步申请：</strong>以下基本信息已从选中的项目自动填充，确保申请与项目信息一致。
+				</div>
+
 				<!-- 申请表单 -->
 				<form class="Hui-form" method="post" id="applicationForm">
 					{% csrf_token %}
@@ -232,10 +274,10 @@
 							<div class="row cl">
 								<div class="col-xs-12 col-sm-6 col-md-4">
 									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>数据需求方：</label>
-										<div class="formControls col-xs-8 col-sm-9">
+										<label class="form-label tight-spacing col-xs-4 col-sm-3"><span class="c-red">*</span>数据需求方：</label>
+										<div class="formControls tight-spacing col-xs-8 col-sm-9">
 											<span class="select-box">
-												<select class="select" name="applicant" required>
+												<select class="select" name="applicant" id="applicant" required>
 													<option value="">请选择数据需求方</option>
 													{% for source_code, source_name in data_source_choices %}
 														<option value="{{ source_code }}">{{ source_name }}</option>
@@ -248,8 +290,8 @@
 
                                 <div class="col-xs-12 col-sm-6 col-md-4">
                                     <div class="row cl">
-                                        <label class="form-label col-xs-4 col-sm-3">申请时间：</label>
-                                        <div class="formControls col-xs-8 col-sm-9">
+                                        <label class="form-label tight-spacing col-xs-4 col-sm-3">申请时间：</label>
+                                        <div class="formControls tight-spacing col-xs-8 col-sm-9">
                                             <input type="text" class="input-text" id="currentBeijingTime" readonly>
                                         </div>
                                     </div>
@@ -280,8 +322,8 @@
                                 </script>
 								<div class="col-xs-12 col-sm-6 col-md-4">
 									<div class="row cl">
-										<label class="form-label col-xs-4 col-sm-3">申请编号：</label>
-										<div class="formControls col-xs-8 col-sm-9">
+										<label class="form-label tight-spacing col-xs-4 col-sm-3">申请编号：</label>
+										<div class="formControls tight-spacing col-xs-8 col-sm-9">
 											<input type="text" class="input-text" value="系统自动生成" readonly>
 										</div>
 									</div>
@@ -301,11 +343,11 @@
         <div class="row cl">
             <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="row cl">
-                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>数据持有方：</label>
-                    <div class="formControls col-xs-7 col-sm-8">
+                    <label class="form-label tight-spacing col-xs-5 col-sm-4"><span class="c-red">*</span>数据所有方：</label>
+                    <div class="formControls tight-spacing col-xs-7 col-sm-8">
                         <span class="select-box">
-                            <select class="select" name="target_data_holder" required>
-                                <option value="">请选择数据持有方</option>
+                            <select class="select" name="target_data_holder" id="target_data_holder" required>
+                                <option value="">请选择数据所有方</option>
                                 {% for source_code, source_name in data_source_choices %}
                                     <option value="{{ source_code }}">{{ source_name }}</option>
                                 {% endfor %}
@@ -316,24 +358,24 @@
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="row cl">
-                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>所需数据资产：</label>
-                    <div class="formControls col-xs-7 col-sm-8">
-                        <input type="text" class="input-text" name="target_data_name" placeholder="请输入所需数据资产名称" required>
+                    <label class="form-label tight-spacing col-xs-5 col-sm-4"><span class="c-red">*</span>所需数据资产：</label>
+                    <div class="formControls tight-spacing col-xs-7 col-sm-8">
+                        <input type="text" class="input-text" name="target_data_name" id="target_data_name" placeholder="请输入所需数据资产名称" required>
                     </div>
                 </div>
             </div>
             <div class="col-xs-12 col-sm-6 col-md-4">
                 <div class="row cl">
-                    <label class="form-label col-xs-5 col-sm-4"><span class="c-red">*</span>项目名称：</label>
-                    <div class="formControls col-xs-7 col-sm-8">
-                        <input type="text" class="input-text" name="target_business_stage" placeholder="请输入项目名称" required>
+                    <label class="form-label tight-spacing col-xs-5 col-sm-4"><span class="c-red">*</span>项目名称：</label>
+                    <div class="formControls tight-spacing col-xs-7 col-sm-8">
+                        <input type="text" class="input-text" name="target_business_stage" id="target_business_stage" placeholder="请输入项目名称" required>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-#略
+
 					<!-- 申请权利类型区 -->
 					<div class="panel panel-default mb-20">
 						<div class="panel-header">
@@ -704,14 +746,107 @@
 		initDateLogic();
 		initFormValidation();
 
-		// 高亮当前菜单项 - 数据确权页面
-            $('#menu-data-confirmation').addClass('selected');
-            $('#menu-data-confirmation .Hui-menu-item a[href*="data-confirmation"]').parent().addClass('current');
+		// 新增：初始化项目数据同步
+		initProjectDataSync();
 
-            // 确保其他菜单项不被高亮
-            $('#menu-guest').removeClass('selected');
-            $('#menu-guest .Hui-menu-item li').removeClass('current');
+		// 高亮当前菜单项 - 数据确权页面
+        $('#menu-data-confirmation').addClass('selected');
+        $('#menu-data-confirmation .Hui-menu-item a[href*="data-confirmation"]').parent().addClass('current');
+
+        // 确保其他菜单项不被高亮
+        $('#menu-guest').removeClass('selected');
+        $('#menu-guest .Hui-menu-item li').removeClass('current');
 	});
+
+	// 修复版：项目数据同步初始化函数
+function initProjectDataSync() {
+    try {
+        // 从sessionStorage读取项目数据
+        const selectedData = sessionStorage.getItem('selectedData');
+        if (selectedData) {
+            const projectData = JSON.parse(selectedData);
+            console.log('读取到项目数据:', projectData);
+
+            // 填充表单字段
+            if (projectData.projectName) {
+                $('#target_business_stage').val(projectData.projectName);
+            }
+            if (projectData.demand) {
+                $('#applicant').val(getCompanyCodeFromName(projectData.demand));
+            }
+            if (projectData.owner) {
+                $('#target_data_holder').val(getCompanyCodeFromName(projectData.owner));
+            }
+            if (projectData.asset) {
+                $('#target_data_name').val(projectData.asset);
+            }
+
+            // 设置项目同步字段样式和行为
+            const projectSyncFields = ['#applicant', '#target_data_holder', '#target_data_name', '#target_business_stage'];
+            projectSyncFields.forEach(function(fieldSelector) {
+                const field = $(fieldSelector);
+
+                // 添加样式
+                field.addClass('project-sync-field');
+
+                // ✅ 关键修复：使用 readonly 而不是 disabled
+                field.prop('readonly', true);
+
+                // 对于 select 元素，需要特殊处理
+                if (field.is('select')) {
+                    // 禁用选项变更，但保持字段可提交
+                    field.on('mousedown keydown', function(e) {
+                        e.preventDefault();
+                        showProjectSyncAlert();
+                    });
+
+                    // 添加视觉提示
+                    field.css({
+                        'pointer-events': 'none',
+                        'background-color': '#f9f9f9',
+                        'color': '#666'
+                    });
+                } else {
+                    // 普通输入框设置为只读
+                    field.prop('readonly', true);
+                }
+
+                // 添加点击提示（对所有字段）
+                field.on('click focus', function(e) {
+                    if ($(this).is('select')) {
+                        e.preventDefault();
+                    }
+                    showProjectSyncAlert();
+                    $(this).blur(); // 失去焦点
+                });
+            });
+
+            // 显示同步提示
+            $('#projectSyncNotice').show();
+
+            // 清除sessionStorage数据（可选，避免重复使用）
+            // sessionStorage.removeItem('selectedData');
+        }
+    } catch (error) {
+        console.error('初始化项目数据同步失败:', error);
+    }
+}
+
+	// 新增：显示项目同步提示的函数
+	function showProjectSyncAlert() {
+		alert('该信息来自项目选择，如需修改请先修改项目申请信息。');
+	}
+
+	// 新增：公司名称转换为代码的函数
+	function getCompanyCodeFromName(companyName) {
+		const companyMapping = {
+			'铁路': 'railway',
+			'海关': 'customs',
+			'港口': 'port',
+			'哈方': 'kazakhstan'
+		};
+		return companyMapping[companyName] || companyName;
+	}
 
 	// 权利选择逻辑
 	function initRightsLogic() {
@@ -792,7 +927,19 @@
 	// 表单验证
 	function initFormValidation() {
 		$('#applicationForm').submit(function(e) {
-			// 验证至少选择一种权利
+			// ✅ 新增：提交前临时启用项目同步字段，确保数据能提交
+    const projectSyncFields = ['#applicant', '#target_data_holder', '#target_data_name', '#target_business_stage'];
+    projectSyncFields.forEach(function(fieldSelector) {
+        const field = $(fieldSelector);
+        if (field.prop('disabled')) {
+            field.prop('disabled', false);
+            // 标记这个字段是临时启用的
+            field.attr('data-temp-enabled', 'true');
+        }
+    });
+
+
+            // 验证至少选择一种权利
 			var hasRights = $('input[type="checkbox"][id$="_right"]:checked').length > 0;
 			if (!hasRights) {
 				alert('请至少选择一种申请权利');
