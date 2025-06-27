@@ -1852,7 +1852,7 @@ def create_project(request):
             dataSecurity = projs['dataSecurity']
             shareWay = projs['shareWay']
             isDeleted = 'N'
-            currentStatus = '1'
+            currentStatus = '0'
 
             print(projectName)
 

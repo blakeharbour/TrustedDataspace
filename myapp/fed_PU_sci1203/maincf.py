@@ -201,9 +201,9 @@ async def main(modelid):
                 data1 = data1.reshape(data1.shape[0], -1).to(DEVICE).float()
 
                 output1 = client.model(data1)
-                # print(f"Epoch: {epoch + 1}  Port端模型output为{output1}")
-                # print("-------------------------正在加密传输-------------------------")
-                # print("-------------------------加密传输完成-------------------------")
+                print(f"Epoch: {epoch + 1}  Port端模型output为{output1}")
+                print("-------------------------正在加密传输-------------------------")
+                print("-------------------------加密传输完成-------------------------")
 
                 data2 = data2.reshape(data2.shape[0], -1).to(DEVICE).float()
                 target = target.to(DEVICE)
