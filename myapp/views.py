@@ -2730,7 +2730,7 @@ def data_right_application_review(request, application_id):
                         print(f"目标状态: '{project_status}' ({status_text})")
 
                         # 构建匹配条件：项目名称 + 数据资产名称 + 待审核状态
-                        query_str = f"projectName = '{project_name}' AND dataAsset = '{data_asset}' AND currentStatus = '1' AND isDeleted != 'Y'"
+                        query_str = f"projectName = '{project_name}' AND dataAsset = '{data_asset}'"
                         print(f"查询条件: {query_str}")
 
                         # 查询匹配的待审核项目
@@ -2778,8 +2778,7 @@ def data_right_application_review(request, application_id):
                                         tx_id = payload.get('txID')
                                         tx_hash = payload.get('txHash')
 
-                                        # 获取状态描述
-                                        status = get_status_description(currentStatus)
+
 
                                         # 构建插入数据的字符串
                                         pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status_text}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
