@@ -147,6 +147,7 @@ def xqflist_open(request):
         'current_user': request.user  # 传递用户对象到模板
     })
 
+
 @login_required(login_url='/login/')
 def interface_add(request):
     return render(request, 'interface-add.html')
@@ -578,6 +579,94 @@ def useBlockchain(request):
     return JsonResponse({'status': 0})
 
 
+def useBlockchainshaxiang(request):#刘书琳新增
+    proobj = request.body
+    projs = json.loads(proobj)
+    # webName = request.body.decode('utf-8')  # 转换为字符串
+    webName = projs[0]["webName"]
+    projectName = projs[0]["projectName"]
+
+    select_js = "assetName = '" + webName + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
+                             select_js, '',
+                             '', '')
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        # 将json字符串转换为字典
+        data = json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+    # 查询项目表信息
+    select_js = "projectName = '" + projectName + "'"
+    selectlist = selecttable("pb8_ProjectAdd",
+                             "ID,  dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
+                             select_js, '',
+                             '', '')
+    print(selectlist)
+    projectId = str(selectlist[0][0])
+    dataDemand = selectlist[0][1]
+    dataOwner = selectlist[0][2]
+    dataAsset = selectlist[0][3]
+    dataSecurity = selectlist[0][4]
+    shareWay = selectlist[0][5]
+
+    # 在asset_record这个表里新建一条记录
+
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据沙箱调用','调用数据沙箱','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record",
+                con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+    # 在project_notarization这个表里新建一条记录
+    pro_js = "'" + projectId + "','" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(pro_js, tablename="project_notarization",
+                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
+
+    return JsonResponse({'status': 0})
+
 def createinterface(request):
     proobj = request.body
     projs = json.loads(proobj)
@@ -724,6 +813,45 @@ def createinterfacesx(request):
     return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
 
 
+def getreadonlylink(request):
+    print("getreadonlylink() 接口已被调用")
+    print("请求方法：", request.method)
+
+    if request.method != "POST":
+        return JsonResponse({"status": 1, "message": "只支持POST请求"})
+
+    sandbox_path = request.POST.get("sandbox_path")
+    print("接收到的 sandbox_path：", sandbox_path)
+
+    if not sandbox_path:
+        return JsonResponse({"status": 1, "message": "缺少sandbox_path参数"})
+
+    select_js = "sandbox_path = '" + sandbox_path + "'"
+    print("构造的查询条件 select_js：", select_js)
+
+    try:
+        selectlist = selecttable(
+            "readonlylinktable",
+            "readonly_link",
+            select_js,
+            '',
+            '',
+            ''
+        )
+
+        print("查询结果 selectlist：", selectlist)
+
+        if selectlist and len(selectlist) > 0:
+            readonly_link = selectlist[0][0]
+            print("返回的只读链接：", readonly_link)
+            return JsonResponse({"status": 0, "readonly_link": readonly_link})
+        else:
+            print("未查询到数据")
+            return JsonResponse({"status": 1, "message": "未找到对应的只读链接"})
+
+    except Exception as e:
+        print("查询只读链接异常:", e)
+        return JsonResponse({"status": 1, "message": "服务器内部错误"})
 
 #数据IP追踪模块
 def createip(request):
@@ -781,7 +909,34 @@ def createipbox(request):
 
 #######
 
+def insertreadonlylink(request):
+    try:
+        print("收到原始请求体：", request.body)
 
+        projs = json.loads(request.body)
+        print("解析后的数据 dict：", projs)
+
+        sandbox_path = projs["sandbox_path"]
+        readonly_link = projs["readonly_link"]
+
+        print("sandbox_path =", sandbox_path)
+        print("readonly_link =", readonly_link)
+
+        pro_js = "'" + sandbox_path + "','" + readonly_link + "'"
+        print("拼接后的 pro_js:", pro_js)
+
+        inserttable(
+            pro_js,
+            tablename="readonlylinktable",
+            con1="sandbox_path,readonly_link"
+        )
+
+        print("readonlylink新增成功")
+        return JsonResponse({'status': 0})
+
+    except Exception as e:
+        print("数据库插入失败：", e)
+        return JsonResponse({'status': 1, 'error': str(e)})
 
 
 

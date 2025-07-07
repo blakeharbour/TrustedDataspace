@@ -11,6 +11,7 @@
   <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
   <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
   <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <title>可信数据空间</title>
   <style>
     /* 页面基础设置 */
@@ -243,7 +244,34 @@
     window.onload = () => {
       const path = sessionStorage.getItem('currentSandboxPath') || '';
       document.getElementById('sandboxPath').value = path;
-      loadValidLinks(path);
+      {#loadValidLinks(path);#}
+
+      $.ajax({
+
+    type: "post",
+    url: "/getreadonlylink/",
+    dataType: "json",
+    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+    data: { sandbox_path: path },
+    success: function(res) {
+      console.log("查询只读链接结果:", res);
+      if (res.status == "0") {
+        // ✅ 用只读链接渲染有效链接表格
+        loadValidLinks(res.readonly_link);
+      } else {
+        // 没查到
+        loadValidLinks('');  // 表格显示"暂无有效链接"
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("查询只读链接失败:", error);
+      loadValidLinks('');  // 显示空内容
+    }
+  });
+
+
+
+
     };
   </script>
 </body>

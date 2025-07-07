@@ -149,28 +149,28 @@
         <div class="panel-body">
           <div class="clearfix">
             <span class="f-l">
-              <a href="javascript:;" onclick="uploadDataFeature()" class="btn btn-success radius" style="margin-right: 20px;">
+              <a href="javascript:;" id="interfaceAdd1" onclick="uploadDataFeature()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe645;</i> 上传新增沙箱
               </a>
-              <a href="javascript:;" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
+              <a href="javascript:;" id="interfaceAdd2" onclick="interface_add()" class="btn btn-primary radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 添加数据到沙箱
               </a>
-              <a href="javascript:;" onclick="downloadSelected()" class="btn btn-primary radius" >
+              <a href="javascript:;" id="interfaceAdd3" onclick="downloadSelected()" class="btn btn-primary radius" >
                 创建所需规格数据沙箱
               </a>
 
-              <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
-                <a href="javascript:;" onclick="checklinkforxq()" class="btn btn-primary radius">
+              <span class="label label-success radius"></span>
+                <a href="javascript:;" id="interfaceAdd4" onclick="checklinkforxq()" class="btn btn-primary radius">
                 可查看沙箱链接【需求方】
               </a>
-                 <a href="javascript:;" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                 <a href="javascript:;" id="interfaceAdd5" onclick="uploadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 限制沙箱IP
               </a>
                 </a>
-                <a href="javascript:;" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
+                <a href="javascript:;" id="interfaceAdd6" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 沙箱对应IP追踪
               </a>
-                <span class="label label-success radius">安全链路已就绪</span>
+
             </span>
           </div>
 <div class="panel mt-20">
@@ -182,7 +182,7 @@
           <th>容器名称</th>
           <th>状态</th>
           <th>数据访问路径</th>
-          <th>有效期</th>
+          <th>项目名称</th>
           <th>授权范围</th>
           <th>销毁策略</th>
           <th>操作</th>
@@ -204,7 +204,7 @@
                   <th>创建时间</th>
                   <th>数据访问路径</th>
                   <th>所存资产项名称</th>
-                  <th>沙箱有效期</th>
+                  <th>项目名称</th>
                   <th>加密算法说明</th>
                   <th>访问授权范围</th>
                   <th>沙箱销毁策略</th>
@@ -451,7 +451,7 @@ function checklinkforxq() {
   const row = selectedRow.closest('tr');
   const sandboxPath = row.children[3]?.innerText.trim() || '';
   const zcname      = row.children[4]?.innerText.trim() || '';
-  const yxq         = row.children[5]?.innerText.trim() || '';
+  const projectname = row.children[5]?.innerText.trim() || '';
 
   if (!sandboxPath) {
     layer.msg("无法获取沙箱路径", { icon: 2 });
@@ -481,10 +481,37 @@ function checklinkforxq() {
 
     sessionStorage.setItem("currentSandboxPath", sandboxPath);
     sessionStorage.setItem("currentzcname", zcname);
-    sessionStorage.setItem("currentyxq", yxq);
+    sessionStorage.setItem("currentprojectname", projectname);
 
     if (data.allowed) {
       location.href = "/xqflist_open/";
+
+      const zcname = sessionStorage.getItem("currentzcname");
+      const projectname = sessionStorage.getItem("currentprojectname");
+      console.log("准备发送的 zcname:", zcname);
+        var webinfo=[];
+        var webdic={
+			    webName:zcname,
+                projectName:projectname,
+
+            };
+			webinfo.push(webdic);
+			console.log(webinfo);
+			var webdata = JSON.stringify(webinfo)
+            $.ajax({
+				type:"post",
+				url:"/useBlockchainshaxiang/",
+                data:webdata,
+				dataType:'string',
+				success:function (res) {
+					console.log("res",res);
+				}
+			})
+            alert("调用成功，已通过区块链存证");
+
+
+
+
     }
   })
   .catch(err => {
@@ -508,14 +535,35 @@ function checklinkforxq() {
           const targetId = sessionStorage.getItem('target_id');
           console.log(targetId)
           // 根据值是否存在控制按钮显示
-          const btn = document.getElementById('interfaceAdd');
+          const btnAdd1 = document.getElementById('interfaceAdd1');
+          const btnAdd2 = document.getElementById('interfaceAdd2');
+           const btnAdd3 = document.getElementById('interfaceAdd3');
+            const btnAdd4 = document.getElementById('interfaceAdd4');
+             const btnAdd5 = document.getElementById('interfaceAdd5');
+              const btnAdd6 = document.getElementById('interfaceAdd6');
+
+
           //数据所有方
           if (parseInt(targetId) === 1) {
-            btn.style.display = 'inline-block';  // 显示按钮
+            btnAdd1.style.display = 'inline-block';  // 显示按钮
+              btnAdd2.style.display = 'inline-block';  // 显示按钮
+              btnAdd3.style.display = 'inline-block';  // 显示按钮
+              btnAdd5.style.display = 'inline-block';  // 显示按钮
+              btnAdd6.style.display = 'inline-block';  // 显示按钮
+
+
+
+
+            btnAdd4.style.display = 'none';  // 隐藏按钮
           }
           //数据需求方
-          else {
-            {#btn.style.display = 'none';  // 隐藏按钮#}
+          else if (parseInt(targetId) === 0){
+            btnAdd1.style.display = 'none';  // 隐藏按钮
+              btnAdd2.style.display = 'none';  // 隐藏按钮
+              btnAdd3.style.display = 'none';  // 隐藏按钮
+              btnAdd5.style.display = 'none';  // 隐藏按钮
+              btnAdd6.style.display = 'none';  // 隐藏按钮
+            btnAdd4.style.display = 'inline-block';  // 显示按钮
           }
 
           // 如果只需使用一次，可清除 sessionStorage

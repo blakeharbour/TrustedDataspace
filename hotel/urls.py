@@ -80,11 +80,12 @@ urlpatterns = [
     path('searchinsbsxterface/', views.searchinsbsxterface),
 
     path('sjtzadd/', views.sjtzadd),
-    #数据IP追踪lxy
+path('useBlockchainshaxiang/', views.useBlockchainshaxiang),
 path('shaxiangip/', views.shaxiangip),
 path('shaxiangipbox/', views.shaxiangipbox),
     path('create-sandbox/', views.createsandbox),
     path('create-ip/', views.createip),
+path('insert-readonly-link/', views.insertreadonlylink),
     path('create-ipbox/', views.createipbox, name='createipbox'),
 
 path('sjsxinterface-edit/', views.sjsxinterface_edit),
@@ -95,6 +96,7 @@ path('sysxdeleteinterface/', views.sysxdeleteinterface),
 path('upload_to_sandbox/', views.upload_to_sandbox),
 
 path('xqflist_open/', views.xqflist_open),
+path('getreadonlylink/', views.getreadonlylink),
 # 沙箱接口
 # path('api/listSandboxes', views.list_sandboxes),
 # path('api/createSandbox', views.create_sandbox),

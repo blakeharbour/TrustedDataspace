@@ -468,6 +468,29 @@ function generateReadonlyLink() {
         `;
 
         document.querySelector(".upload-container").appendChild(box);
+
+        const path = sessionStorage.getItem("currentSandboxPath");
+        const link1 = data.link;
+
+        const linkData = {
+            sandbox_path: path,
+            readonly_link: link1
+        };
+
+        $.ajax({
+        type: "post",
+        url: "/insert-readonly-link/",
+        data: JSON.stringify(linkData),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(res) {
+            console.log("链接信息提交成功：", res);
+        },
+        error: function(err) {
+            console.log("链接信息提交出错：", err);
+        }
+        });
+
       } else {
         alert("❌ 生成链接失败：" + data.message);
       }
@@ -476,7 +499,9 @@ function generateReadonlyLink() {
       console.error("❌ 请求失败：", err);
       alert("❌ 接口请求异常");
     });
-  
+
+
+
   
 }
 
