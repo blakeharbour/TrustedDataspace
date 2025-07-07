@@ -15,7 +15,18 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
-
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, Http404
+from django.contrib import messages
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.utils import timezone
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+from datetime import datetime, date
+import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse
 # from huggingface_hub.utils import parse_datetime
@@ -135,6 +146,7 @@ def xqflist_open(request):
     return render(request, 'xqflist_open.html', {
         'current_user': request.user  # 传递用户对象到模板
     })
+
 
 @login_required(login_url='/login/')
 def interface_add(request):
@@ -567,6 +579,94 @@ def useBlockchain(request):
     return JsonResponse({'status': 0})
 
 
+def useBlockchainshaxiang(request):#刘书琳新增
+    proobj = request.body
+    projs = json.loads(proobj)
+    # webName = request.body.decode('utf-8')  # 转换为字符串
+    webName = projs[0]["webName"]
+    projectName = projs[0]["projectName"]
+
+    select_js = "assetName = '" + webName + "'"
+    selectlist = selecttable("myapp_dataasset", "assetName,assetOwner,assetFormat,assetLevel,assetPath,assetID",
+                             select_js, '',
+                             '', '')
+    assetName = selectlist[0][0]
+    assetOwner = selectlist[0][1]
+    assetFormat = selectlist[0][2]
+    assetLevel = selectlist[0][3]
+    assetPath = selectlist[0][4]
+    assetID = selectlist[0][5]
+    print(assetName)
+
+    if (assetLevel == "L1"):
+        assetLevel = "高敏感密文"
+    elif (assetLevel == "L2"):
+        assetLevel = "高敏感"
+    elif (assetLevel == "L3"):
+        assetLevel = "敏感"
+    elif (assetLevel == "L4"):
+        assetLevel = "低敏感"
+
+    # 上传到区块链
+    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
+    payload = {
+        "data": "anydata"
+    }
+
+    headers = {'Content-Type': 'application/json'}
+
+    response = requests.put(blockchain_url, data=json.dumps(payload), headers=headers)
+
+    # 尝试解析JSON响应
+    try:
+        response_data = response.json()
+    except json.JSONDecodeError:
+        # 处理非JSON响应的情况
+        print(f"接口返回非JSON数据: {response.text}")
+        return None
+
+    # 处理成功响应
+    if response_data.get("status") == "ok":
+        print("区块链交易成功")
+        payload_data = response_data.get("payload", {})
+        # 将json字符串转换为字典
+        data = json.loads(payload_data)
+        print(payload_data)
+        tx_time = data.get("txTime")
+        tx_id = data["txID"]
+        tx_hash = data["txHash"]
+        print(tx_time)
+        print(tx_id)
+        print(tx_hash)
+
+    # 查询项目表信息
+    select_js = "projectName = '" + projectName + "'"
+    selectlist = selecttable("pb8_ProjectAdd",
+                             "ID,  dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus",
+                             select_js, '',
+                             '', '')
+    print(selectlist)
+    projectId = str(selectlist[0][0])
+    dataDemand = selectlist[0][1]
+    dataOwner = selectlist[0][2]
+    dataAsset = selectlist[0][3]
+    dataSecurity = selectlist[0][4]
+    shareWay = selectlist[0][5]
+
+    # 在asset_record这个表里新建一条记录
+
+    asset_js = "'" + assetName + "','" + assetOwner + "','" + assetFormat + "','" + assetLevel + "','" + assetPath + "','已上传数据','已完成数据沙箱调用','调用数据沙箱','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(asset_js, tablename="asset_record",
+                con1="assetName,assetOwner,assetFormat,assetLevel,assetPath,star_status,end_status,operation,txTime,txID,txHash")
+
+    # 在project_notarization这个表里新建一条记录
+    pro_js = "'" + projectId + "','" + projectName + "','" + dataDemand + "','" + dataOwner + "','" + dataAsset + "','已完成','" + dataSecurity + "','" + shareWay + "','" + tx_time + "','" + tx_id + "','" + tx_hash + "'"
+    inserttable(pro_js, tablename="project_notarization",
+                con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType,tranasctionTime,tranasctionId,hashDigest")
+
+    return JsonResponse({'status': 0})
+
 def createinterface(request):
     proobj = request.body
     projs = json.loads(proobj)
@@ -713,6 +813,45 @@ def createinterfacesx(request):
     return JsonResponse({"status": "0", "message": "封装成功，已写入区块链"})
 
 
+def getreadonlylink(request):
+    print("getreadonlylink() 接口已被调用")
+    print("请求方法：", request.method)
+
+    if request.method != "POST":
+        return JsonResponse({"status": 1, "message": "只支持POST请求"})
+
+    sandbox_path = request.POST.get("sandbox_path")
+    print("接收到的 sandbox_path：", sandbox_path)
+
+    if not sandbox_path:
+        return JsonResponse({"status": 1, "message": "缺少sandbox_path参数"})
+
+    select_js = "sandbox_path = '" + sandbox_path + "'"
+    print("构造的查询条件 select_js：", select_js)
+
+    try:
+        selectlist = selecttable(
+            "readonlylinktable",
+            "readonly_link",
+            select_js,
+            '',
+            '',
+            ''
+        )
+
+        print("查询结果 selectlist：", selectlist)
+
+        if selectlist and len(selectlist) > 0:
+            readonly_link = selectlist[0][0]
+            print("返回的只读链接：", readonly_link)
+            return JsonResponse({"status": 0, "readonly_link": readonly_link})
+        else:
+            print("未查询到数据")
+            return JsonResponse({"status": 1, "message": "未找到对应的只读链接"})
+
+    except Exception as e:
+        print("查询只读链接异常:", e)
+        return JsonResponse({"status": 1, "message": "服务器内部错误"})
 
 #数据IP追踪模块
 def createip(request):
@@ -770,7 +909,34 @@ def createipbox(request):
 
 #######
 
+def insertreadonlylink(request):
+    try:
+        print("收到原始请求体：", request.body)
 
+        projs = json.loads(request.body)
+        print("解析后的数据 dict：", projs)
+
+        sandbox_path = projs["sandbox_path"]
+        readonly_link = projs["readonly_link"]
+
+        print("sandbox_path =", sandbox_path)
+        print("readonly_link =", readonly_link)
+
+        pro_js = "'" + sandbox_path + "','" + readonly_link + "'"
+        print("拼接后的 pro_js:", pro_js)
+
+        inserttable(
+            pro_js,
+            tablename="readonlylinktable",
+            con1="sandbox_path,readonly_link"
+        )
+
+        print("readonlylink新增成功")
+        return JsonResponse({'status': 0})
+
+    except Exception as e:
+        print("数据库插入失败：", e)
+        return JsonResponse({'status': 1, 'error': str(e)})
 
 
 
@@ -2528,20 +2694,47 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.utils import timezone
 from datetime import datetime, date
-import json
+import requests
+from .myjob import selecttable, updatetable, inserttable
+from django.db import models
 
 from .models import (
     DataRightApplication,
     DataRightRecord,
     DataRightApplicationHistory,
     DATA_SOURCE_CHOICES,
-    BUSINESS_STAGE_CHOICES
+    #BUSINESS_STAGE_CHOICES
 )
+
+def get_company_code_from_name(company_name):
+    """
+    将中文公司名称转换为英文代码
+    """
+    # 创建反向映射字典：中文名称 -> 英文代码
+    name_to_code_mapping = {
+        name: code for code, name in DATA_SOURCE_CHOICES
+    }
+
+    # 查找对应的英文代码
+    company_code = name_to_code_mapping.get(company_name)
+    return company_code
+
+
+def get_user_company_code(user):
+    """
+    获取用户对应的公司英文代码
+    """
+    if not hasattr(user, 'com') or not user.com:
+        return None
+
+    company_code = get_company_code_from_name(user.com)
+    return company_code
 
 
 @login_required(login_url='/login/')
 def data_right_application_add(request):
     """数据权利申请页面"""
+
     if request.method == 'POST':
         try:
             with transaction.atomic():
@@ -2550,7 +2743,7 @@ def data_right_application_add(request):
                     applicant=request.POST.get('applicant'),
                     target_data_holder=request.POST.get('target_data_holder'),
                     target_data_name=request.POST.get('target_data_name'),
-                    target_business_stage=request.POST.get('target_business_stage'),
+                    target_business_stage=request.POST.get('target_business_stage'),  # 改回原字段名
 
                     # 申请的权利类型
                     resource_holding_right='resource_holding_right' in request.POST,
@@ -2579,7 +2772,6 @@ def data_right_application_add(request):
                     action_user=request.user.username if hasattr(request.user, 'username') else '系统用户',
                     action_comments='提交申请'
                 )
-
                 messages.success(request, f'申请提交成功！申请编号：{application.application_id}')
                 return redirect('data_confirmation_list')
 
@@ -2588,7 +2780,6 @@ def data_right_application_add(request):
 
     context = {
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
         'current_time': timezone.now(),
     }
     return render(request, 'data-confirmation-add.html', context)
@@ -2599,19 +2790,33 @@ def data_right_application_review(request, application_id):
     """数据权利申请审核页面"""
     application = get_object_or_404(DataRightApplication, application_id=application_id)
 
+    # 权限检查：普通用户只能审核向自己申请的记录或查看自己的申请
+    if not request.user.is_superuser:
+        user_company_code = get_user_company_code(request.user)
+        if user_company_code and (
+                application.target_data_holder != user_company_code and application.applicant != user_company_code):
+            raise Http404("您没有权限查看此申请")
+        elif not user_company_code:
+            raise Http404("用户公司信息异常")
+
     # 获取审核历史记录
     history_records = DataRightApplicationHistory.objects.filter(
         application=application
     ).exclude(action_type='submit')
 
     if request.method == 'POST':
+        # 只有数据持有方或超级用户才能审核
+        user_company_code = get_user_company_code(request.user)
+        if not request.user.is_superuser and application.target_data_holder != user_company_code:
+            messages.error(request, '您没有权限审核此申请')
+            return redirect('data_right_application_list')
+
         try:
             with transaction.atomic():
                 review_decision = request.POST.get('review_decision')
                 review_comments = request.POST.get('review_comments')
                 reviewer = request.user.username if hasattr(request.user, 'username') else '系统用户'
 
-                # 更新申请状态
                 if review_decision == 'approve':
                     application.status = 'approved'
                 elif review_decision == 'reject':
@@ -2624,7 +2829,6 @@ def data_right_application_review(request, application_id):
                 application.review_comments = review_comments
                 application.save()
 
-                # 记录审核历史
                 DataRightApplicationHistory.objects.create(
                     application=application,
                     action_type='approve' if review_decision == 'approve' else 'reject',
@@ -2632,35 +2836,155 @@ def data_right_application_review(request, application_id):
                     action_comments=review_comments
                 )
 
-                # 如果审核通过，立即生成数据确权记录
+                record_status = 'active' if review_decision == 'approve' else 'rejected'
+
+                data_right_record = DataRightRecord(
+                    original_application=application,
+                    data_name=application.target_data_name,
+                    data_holder=application.target_data_holder,
+                    right_recipient=application.applicant,
+                    business_stage=application.target_business_stage,
+
+                    granted_resource_holding_right=application.resource_holding_right if review_decision == 'approve' else False,
+                    granted_processing_use_right=application.processing_use_right if review_decision == 'approve' else False,
+                    granted_reauthorization_right=application.reauthorization_right if review_decision == 'approve' else False,
+                    granted_redistribution_right=application.redistribution_right if review_decision == 'approve' else False,
+                    granted_view_right=application.view_right if review_decision == 'approve' else False,
+
+                    usage_start_date=application.intended_duration_start,
+                    usage_end_date=application.intended_duration_end,
+                    is_permanent_usage=application.is_permanent,
+
+                    status=record_status,
+                    approver=reviewer,
+                    approval_time=timezone.now(),
+                    approval_comments=review_comments,
+                )
+                data_right_record.save()
+
+                # ========== 在messages之前添加状态同步代码 ==========
+                # 同步更新项目表中的状态
+                try:
+                    if review_decision == 'approve':
+                        project_status = '2'  # 审核通过
+                        status_text = '审核通过'
+                    elif review_decision == 'reject':
+                        project_status = '3'  # 审核不通过
+                        status_text = '审核不通过'
+                    else:
+                        project_status = None
+
+                    if project_status:
+                        # 使用项目名称和数据资产名称进行匹配
+                        project_name = application.target_business_stage  # 项目名称
+                        data_asset = application.target_data_name  # 数据资产名称
+
+                        print(f"=== 同步项目状态 ===")
+                        print(f"项目名称: '{project_name}'")
+                        print(f"数据资产: '{data_asset}'")
+                        print(f"目标状态: '{project_status}' ({status_text})")
+
+                        # 构建匹配条件：项目名称 + 数据资产名称 + 待审核状态
+                        query_str = f"projectName = '{project_name}' AND dataAsset = '{data_asset}'"
+                        print(f"查询条件: {query_str}")
+
+                        # 查询匹配的待审核项目
+                        fields = "ID, projectName, dataDemand, dataOwner, dataAsset, currentStatus"
+                        result = selecttable("pb8_ProjectAdd", fields=fields, constr=query_str)
+
+                        if result:
+                            print(f"找到 {len(result)} 个匹配的待审核项目:")
+                            for i, row in enumerate(result):
+                                print(
+                                    f"  项目{i + 1}: ID={row[0]}, 项目名='{row[1]}', 申请方='{row[2]}', 持有方='{row[3]}', 资产='{row[4]}', 状态={row[5]}")
+
+                            # 更新项目状态
+                            update_str = f"currentStatus = '{project_status}'"
+                            update_result = updatetable("pb8_ProjectAdd", update_str, query_str)
+
+                            if update_result and update_result > 0:
+                                print(f"✓ 成功更新 {update_result} 个项目状态为: {status_text}")
+                                # =================== 在这里添加以下代码 ===================
+                                # 同步更新 project_notarization 表
+                                try:
+
+                                    # 获取项目相关信息
+                                    fields = 'ID, projectName, dataDemand, dataOwner, dataAsset, dataSecurity, shareWay, currentStatus'
+                                    order = 'ID DESC'
+                                    project_result = selecttable('pb8_ProjectAdd', fields=fields, constr=query_str,
+                                                                 order=order, limit=1)
+
+                                    if project_result:
+                                        ID, project_name, data_demander, data_owner, data_asset, security_level, trans_mode, currentStatus = project_result[0]
+
+                                    anydata = {
+                                        "data": "anydata"
+                                    }
+
+                                    response = requests.put('http://192.168.1.135:8080/datasharing/addRaw',
+                                                            data=json.dumps(anydata),
+                                                            headers={'Content-Type': 'application/json'})
+
+                                    if response.status_code == 200:
+                                        print("区块链接口响应:", response.json())
+                                        # 解析区块链返回的 payload
+                                        payload = json.loads(response.json().get('payload', '{}'))
+                                        tx_time = payload.get('txTime')
+                                        tx_id = payload.get('txID')
+                                        tx_hash = payload.get('txHash')
+
+
+
+                                        # 构建插入数据的字符串
+                                        pro_js = f"'{ID}','{project_name}','{data_demander}','{data_owner}','{data_asset}','{status_text}','{security_level}','{trans_mode}','{tx_time}','{tx_id}','{tx_hash}'"
+                                        # 调用 inserttable 函数插入数据到 project_notarization 表
+                                        inserttable(pro_js, tablename="project_notarization",
+                                                    con1="projectId,projectName,assetDemander,assetOwner,assetName,status,assetLevel,assetSharingType, tranasctionTime,tranasctionId,hashDigest")
+
+
+                                except Exception as e:
+                                    print(f"❌ 同步存证表状态失败: {str(e)}")
+                                    import traceback
+                                    traceback.print_exc()
+                                # =================== 添加代码结束 ===================
+
+                            else:
+                                print(f"⚠️ 更新失败，返回值: {update_result}")
+
+                        else:
+                            print("❌ 没有找到匹配的待审核项目")
+
+                            # 显示相关的项目数据用于调试
+                            print(f"\n=== 查找相关项目（忽略状态） ===")
+                            debug_query = f"projectName = '{project_name}' AND dataAsset = '{data_asset}' AND isDeleted != 'Y'"
+                            debug_result = selecttable("pb8_ProjectAdd", fields=fields, constr=debug_query)
+
+                            if debug_result:
+                                print("找到相同项目名称和数据资产的项目:")
+                                for row in debug_result:
+                                    print(f"  ID={row[0]}, 状态={row[5]} (需要状态=1)")
+                            else:
+                                print("没有找到相同项目名称和数据资产的项目")
+
+                                # 显示最近的项目用于对比
+                                print(f"\n=== 最近的项目记录 ===")
+                                recent_result = selecttable("pb8_ProjectAdd",
+                                                            fields="ID, projectName, dataAsset, currentStatus",
+                                                            constr="isDeleted != 'Y' ORDER BY ID DESC LIMIT 5")
+                                if recent_result:
+                                    for row in recent_result:
+                                        print(f"  ID={row[0]}, 项目='{row[1]}', 资产='{row[2]}', 状态={row[3]}")
+
+                except Exception as e:
+                    print(f"❌ 同步项目状态失败: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
+                # =============================================
+
                 if review_decision == 'approve':
-                    data_right_record = DataRightRecord(
-                        original_application=application,
-                        data_name=application.target_data_name,
-                        data_holder=application.target_data_holder,
-                        right_recipient=application.applicant,
-                        business_stage=application.target_business_stage,
-
-                        # 复制申请的权利到已获得权利
-                        granted_resource_holding_right=application.resource_holding_right,
-                        granted_processing_use_right=application.processing_use_right,
-                        granted_reauthorization_right=application.reauthorization_right,
-                        granted_redistribution_right=application.redistribution_right,
-                        granted_view_right=application.view_right,
-
-                        usage_start_date=application.intended_duration_start,
-                        usage_end_date=application.intended_duration_end,
-                        is_permanent_usage=application.is_permanent,
-
-                        approver=reviewer,
-                        approval_time=timezone.now(),
-                        approval_comments=review_comments,
-                    )
-                    data_right_record.save()
-
                     messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
                 else:
-                    messages.success(request, '审核完成，申请已拒绝')
+                    messages.success(request, f'审核已拒绝！已生成拒绝记录：{data_right_record.record_id}')
 
                 return redirect('data_confirmation_list')
 
@@ -2669,27 +2993,41 @@ def data_right_application_review(request, application_id):
 
     # 将choices转换为字典
     data_source_dict = dict(DATA_SOURCE_CHOICES)
-    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
 
     context = {
         'application': application,
         'history_records': history_records,
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
-        # 添加字典版本供模板使用
         'data_source_dict': data_source_dict,
-        'business_stage_dict': business_stage_dict,
-        # 添加当前用户和时间信息
         'current_user': request.user.username if hasattr(request.user, 'username') else '系统用户',
         'current_time': timezone.now(),
+        'is_superuser': request.user.is_superuser,
+        'can_review': request.user.is_superuser or application.target_data_holder == get_user_company_code(
+            request.user),
     }
     return render(request, 'data-right-application-review.html', context)
+
 
 
 @login_required(login_url='/login/')
 def data_confirmation_list(request):
     """数据确权记录列表页面"""
-    records = DataRightRecord.objects.all()
+
+    # 根据用户权限获取记录
+    if request.user.is_superuser:
+        # 超级用户可以看到所有记录
+        records = DataRightRecord.objects.all()
+    else:
+        # 普通用户只能看到自己相关的记录
+        user_company_code = get_user_company_code(request.user)
+
+        if user_company_code:
+            from django.db.models import Q
+            records = DataRightRecord.objects.filter(
+                Q(right_recipient=user_company_code) | Q(data_holder=user_company_code)
+            )
+        else:
+            records = DataRightRecord.objects.none()
 
     # 搜索功能
     search_query = request.GET.get('search', '')
@@ -2724,7 +3062,7 @@ def data_confirmation_list(request):
 
     # 将choices转换为字典
     data_source_dict = dict(DATA_SOURCE_CHOICES)
-    business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
+    #business_stage_dict = dict(BUSINESS_STAGE_CHOICES)
     record_status_dict = dict(DataRightRecord.RECORD_STATUS_CHOICES)
 
     context = {
@@ -2734,20 +3072,31 @@ def data_confirmation_list(request):
         'holder_filter': holder_filter,
         'recipient_filter': recipient_filter,
         'data_source_choices': DATA_SOURCE_CHOICES,
-        'business_stage_choices': BUSINESS_STAGE_CHOICES,
+        #'business_stage_choices': BUSINESS_STAGE_CHOICES,
         'record_status_choices': DataRightRecord.RECORD_STATUS_CHOICES,
         # 添加字典版本供模板使用
         'data_source_dict': data_source_dict,
-        'business_stage_dict': business_stage_dict,
+        #'business_stage_dict': business_stage_dict,
         'record_status_dict': record_status_dict,
+        # 添加用户权限信息
+        'is_superuser': request.user.is_superuser,
+        'current_user': request.user,
     }
     return render(request, 'data-confirmation.html', context)
-
 
 @login_required(login_url='/login/')
 def data_confirmation_detail(request, record_id):
     """数据确权记录详情页面"""
     record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+    # 权限检查：普通用户只能查看自己相关的记录
+    if not request.user.is_superuser:
+        user_company_code = get_user_company_code(request.user)
+        if user_company_code and (
+                record.right_recipient != user_company_code and record.data_holder != user_company_code):
+            raise Http404("您没有权限查看此记录")
+        elif not user_company_code:
+            raise Http404("用户公司信息异常")
 
     # 获取原始申请的历史记录
     application_history = DataRightApplicationHistory.objects.filter(
@@ -2758,7 +3107,9 @@ def data_confirmation_detail(request, record_id):
         'record': record,
         'application_history': application_history,
         'data_source_choices': dict(DATA_SOURCE_CHOICES),
-        'business_stage_choices': dict(BUSINESS_STAGE_CHOICES),
+        #'business_stage_choices': dict(BUSINESS_STAGE_CHOICES),
+        'current_user': request.user,
+        'is_superuser': request.user.is_superuser,
     }
     return render(request, 'data-confirmation-detail.html', context)
 
@@ -2766,7 +3117,23 @@ def data_confirmation_detail(request, record_id):
 @login_required(login_url='/login/')
 def data_right_application_list(request):
     """数据权利申请列表页面（用于审核人员查看待审核申请）"""
-    applications = DataRightApplication.objects.all()
+
+    # 根据用户权限获取申请记录
+    if request.user.is_superuser:
+        # 超级用户可以看到所有申请
+        applications = DataRightApplication.objects.all()
+    else:
+        # 普通用户只能看到相关的申请
+        user_company_code = get_user_company_code(request.user)
+
+        if user_company_code:
+            from django.db.models import Q
+            applications = DataRightApplication.objects.filter(
+                Q(target_data_holder=user_company_code) |  # 向自己申请的（需要审核的）
+                Q(applicant=user_company_code)  # 自己提交的申请
+            )
+        else:
+            applications = DataRightApplication.objects.none()
 
     # 状态过滤，默认显示待审核的申请
     status_filter = request.GET.get('status', 'pending')
@@ -2795,9 +3162,126 @@ def data_right_application_list(request):
         'applicant_filter': applicant_filter,
         'data_source_choices': DATA_SOURCE_CHOICES,
         'application_status_choices': DataRightApplication.APPLICATION_STATUS_CHOICES,
+        # 添加用户权限信息
+        'is_superuser': request.user.is_superuser,
+        'current_user': request.user,
     }
     return render(request, 'data-right-application-list.html', context)
 
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def delete_data_confirmation_record(request, record_id):
+    """删除数据确权记录"""
+    try:
+        record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+        # 权限检查：普通用户只能删除自己相关的记录
+        if not request.user.is_superuser:
+            user_company_code = get_user_company_code(request.user)
+            if not user_company_code:
+                return JsonResponse({
+                    'success': False,
+                    'message': '用户公司信息异常'
+                }, status=403)
+
+            if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+                return JsonResponse({
+                    'success': False,
+                    'message': '您没有权限删除此记录'
+                }, status=403)
+
+        # 移除状态限制 - 现在允许删除所有状态的记录
+        # 可选：根据不同状态给出不同的提示
+        status_messages = {
+            'active': '生效中的确权记录',
+            'expired': '已过期的确权记录',
+            'revoked': '已撤销的确权记录',
+            'rejected': '被拒绝的确权记录'
+        }
+
+        record_status_desc = status_messages.get(record.status, '确权记录')
+
+        # 记录被删除的信息用于日志
+        record_info = f"{record.record_id} - {record.data_name} ({record_status_desc})"
+
+        # 删除记录
+        record.delete()
+
+        messages.success(request, f'已成功删除{record_status_desc}：{record.data_name}')
+        return JsonResponse({
+            'success': True,
+            'message': f'成功删除{record_status_desc}'
+        })
+
+    except DataRightRecord.DoesNotExist:
+        return JsonResponse({
+            'success': False,
+            'message': '记录不存在'
+        }, status=404)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'删除失败：{str(e)}'
+        }, status=500)
+
+
+@login_required(login_url='/login/')
+@require_http_methods(["POST"])
+def batch_delete_data_confirmation_records(request):
+    """批量删除数据确权记录"""
+    try:
+        selected_records = request.POST.getlist('selected_records')
+        if not selected_records:
+            return JsonResponse({
+                'success': False,
+                'message': '未选择要删除的记录'
+            }, status=400)
+
+        user_company_code = get_user_company_code(request.user)
+        deleted_count = 0
+        failed_records = []
+
+        for record_id in selected_records:
+            try:
+                record = get_object_or_404(DataRightRecord, record_id=record_id)
+
+                # 权限检查
+                if not request.user.is_superuser:
+                    if not user_company_code:
+                        failed_records.append(f"{record_id}(权限异常)")
+                        continue
+
+                    if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+                        failed_records.append(f"{record_id}(无权限)")
+                        continue
+
+                # 删除记录（不再检查状态）
+                record.delete()
+                deleted_count += 1
+
+            except DataRightRecord.DoesNotExist:
+                failed_records.append(f"{record_id}(不存在)")
+            except Exception as e:
+                failed_records.append(f"{record_id}(删除失败)")
+
+        message = f'成功删除 {deleted_count} 条记录'
+        if failed_records:
+            message += f'，失败 {len(failed_records)} 条：{", ".join(failed_records)}'
+
+        messages.success(request, message)
+        return JsonResponse({
+            'success': True,
+            'message': message,
+            'deleted_count': deleted_count,
+            'failed_count': len(failed_records)
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'message': f'批量删除失败：{str(e)}'
+        }, status=500)
 
 # AJAX接口函数
 @login_required(login_url='/login/')

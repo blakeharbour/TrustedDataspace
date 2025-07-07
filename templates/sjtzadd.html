@@ -55,10 +55,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -75,7 +75,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -143,7 +143,7 @@
       <div class="row clearfix">
         <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>创建时间：</label>
         <div class="form-controls col-xs-8 col-sm-9">
-          <input type="datetime-local" class="input-text" id="createTime" name="createTime">
+          <input type="date" class="input-text" id="createTime" name="createTime">
         </div>
       </div>
       <div class="row clearfix">
@@ -159,9 +159,9 @@
         </div>
       </div>
       <div class="row clearfix">
-        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>沙箱有效期：</label>
+        <label class="form-label col-xs-4 col-sm-3"><span class="c-red">*</span>项目名称：</label>
         <div class="form-controls col-xs-8 col-sm-9">
-          <input type="date" class="input-text" id="validUntil" name="validUntil">
+          <input type="text" class="input-text" id="validUntil" name="validUntil">
         </div>
       </div>
       <div class="row clearfix">
@@ -210,6 +210,8 @@
     $("#creator").focus();
     return false;
   }
+    console.log("创建时间输入框值是：", $("#createTime").val());
+
 
   const data = {
   confirmman: $('#creator').val(),
@@ -230,6 +232,7 @@ $.ajax({
   dataType: "json",
   success: function(res) {
     console.log("提交成功：", res);
+    location.href="/sjsx-interface/"
   },
   error: function(err) {
     console.log("提交出错：", err);

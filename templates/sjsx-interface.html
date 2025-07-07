@@ -57,10 +57,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -77,7 +77,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -159,7 +159,7 @@
                 创建所需规格数据沙箱
               </a>
 
-              <span class="label label-success radius">TLS/HTTPS 安全通道已启用</span>
+              <span class="label label-success radius"></span>
                 <a href="javascript:;" id="interfaceAdd4" onclick="checklinkforxq()" class="btn btn-primary radius">
                 可查看沙箱链接【需求方】
               </a>
@@ -170,7 +170,7 @@
                 <a href="javascript:;" id="interfaceAdd6" onclick="boxloadDataIP()" class="btn btn-success radius" style="margin-right: 20px;">
                 <i class="Hui-iconfont">&#xe600;</i> 沙箱对应IP追踪
               </a>
-                <span class="label label-success radius">安全链路已就绪</span>
+
             </span>
           </div>
 <div class="panel mt-20">
@@ -182,7 +182,7 @@
           <th>容器名称</th>
           <th>状态</th>
           <th>数据访问路径</th>
-          <th>有效期</th>
+          <th>项目名称</th>
           <th>授权范围</th>
           <th>销毁策略</th>
           <th>操作</th>
@@ -204,7 +204,7 @@
                   <th>创建时间</th>
                   <th>数据访问路径</th>
                   <th>所存资产项名称</th>
-                  <th>沙箱有效期</th>
+                  <th>项目名称</th>
                   <th>加密算法说明</th>
                   <th>访问授权范围</th>
                   <th>沙箱销毁策略</th>
@@ -240,46 +240,6 @@
             account: "{{ current_user.account }}",
         };
 
-         // 页面加载时检查 sessionStorage
-        document.addEventListener('DOMContentLoaded', function() {
-          // 从 sessionStorage 读取值
-          const targetId = sessionStorage.getItem('target_id');
-          console.log(targetId)
-          // 根据值是否存在控制按钮显示
-          const btnAdd1 = document.getElementById('interfaceAdd1');
-          const btnAdd2 = document.getElementById('interfaceAdd2');
-           const btnAdd3 = document.getElementById('interfaceAdd3');
-            const btnAdd4 = document.getElementById('interfaceAdd4');
-             const btnAdd5 = document.getElementById('interfaceAdd5');
-              const btnAdd6 = document.getElementById('interfaceAdd6');
-             
-         
-          //数据所有方
-          if (parseInt(targetId) === 1) {
-            btnAdd1.style.display = 'inline-block';  // 显示按钮
-              btnAdd2.style.display = 'inline-block';  // 显示按钮
-              btnAdd3.style.display = 'inline-block';  // 显示按钮
-              btnAdd5.style.display = 'inline-block';  // 显示按钮
-              btnAdd6.style.display = 'inline-block';  // 显示按钮
-             
-              
-              
-              
-            btnAdd4.style.display = 'none';  // 隐藏按钮
-          }
-          //数据需求方
-          else if (parseInt(targetId) === 0){
-            btnAdd1.style.display = 'none';  // 隐藏按钮
-              btnAdd2.style.display = 'none';  // 隐藏按钮
-              btnAdd3.style.display = 'none';  // 隐藏按钮
-              btnAdd5.style.display = 'none';  // 隐藏按钮
-              btnAdd6.style.display = 'none';  // 隐藏按钮
-            btnAdd4.style.display = 'inline-block';  // 显示按钮
-          }
-
-          // 如果只需使用一次，可清除 sessionStorage
-          sessionStorage.removeItem('target_id');
-        });
 
    $(function() {
     console.log("当前用户ID:", currentUser.id);
@@ -340,7 +300,7 @@
 
    let activeSandboxPaths = new Set(); // ← 全局变量
    function loadSandboxStatus() {
-  fetch('http://127.0.0.1:5001/api/listSandboxes')
+  fetch('http://192.168.1.132:5001/api/listSandboxes')
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -376,7 +336,7 @@
 
 function destroySandbox(containerName) {
     layer.confirm(`是否销毁沙箱容器：${containerName}？`, function(index){
-        fetch(`http://127.0.0.1:5001/api/destroySandbox/${containerName}`, {
+        fetch(`http://192.168.1.132:5001/api/destroySandbox/${containerName}`, {
             method: 'DELETE'
         })
         .then(res => res.json())
@@ -422,7 +382,7 @@ console.log('destroyStrategy', destroyStrategy);
 
     layer.msg('正在创建数据沙箱，请稍候...', { icon: 16, shade: 0.3, time: 0 });
 
-    fetch('http://127.0.0.1:5001/api/createSandbox', {
+    fetch('http://192.168.1.132:5001/api/createSandbox', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -491,7 +451,7 @@ function checklinkforxq() {
   const row = selectedRow.closest('tr');
   const sandboxPath = row.children[3]?.innerText.trim() || '';
   const zcname      = row.children[4]?.innerText.trim() || '';
-  const yxq         = row.children[5]?.innerText.trim() || '';
+  const projectname = row.children[5]?.innerText.trim() || '';
 
   if (!sandboxPath) {
     layer.msg("无法获取沙箱路径", { icon: 2 });
@@ -521,10 +481,37 @@ function checklinkforxq() {
 
     sessionStorage.setItem("currentSandboxPath", sandboxPath);
     sessionStorage.setItem("currentzcname", zcname);
-    sessionStorage.setItem("currentyxq", yxq);
+    sessionStorage.setItem("currentprojectname", projectname);
 
     if (data.allowed) {
       location.href = "/xqflist_open/";
+
+      const zcname = sessionStorage.getItem("currentzcname");
+      const projectname = sessionStorage.getItem("currentprojectname");
+      console.log("准备发送的 zcname:", zcname);
+        var webinfo=[];
+        var webdic={
+			    webName:zcname,
+                projectName:projectname,
+
+            };
+			webinfo.push(webdic);
+			console.log(webinfo);
+			var webdata = JSON.stringify(webinfo)
+            $.ajax({
+				type:"post",
+				url:"/useBlockchainshaxiang/",
+                data:webdata,
+				dataType:'string',
+				success:function (res) {
+					console.log("res",res);
+				}
+			})
+            alert("调用成功，已通过区块链存证");
+
+
+
+
     }
   })
   .catch(err => {
@@ -542,7 +529,46 @@ function checklinkforxq() {
             console.log(selectedInterface.url);
         });
 
-      
+        // 页面加载时检查 sessionStorage
+        document.addEventListener('DOMContentLoaded', function() {
+          // 从 sessionStorage 读取值
+          const targetId = sessionStorage.getItem('target_id');
+          console.log(targetId)
+          // 根据值是否存在控制按钮显示
+          const btnAdd1 = document.getElementById('interfaceAdd1');
+          const btnAdd2 = document.getElementById('interfaceAdd2');
+           const btnAdd3 = document.getElementById('interfaceAdd3');
+            const btnAdd4 = document.getElementById('interfaceAdd4');
+             const btnAdd5 = document.getElementById('interfaceAdd5');
+              const btnAdd6 = document.getElementById('interfaceAdd6');
+
+
+          //数据所有方
+          if (parseInt(targetId) === 1) {
+            btnAdd1.style.display = 'inline-block';  // 显示按钮
+              btnAdd2.style.display = 'inline-block';  // 显示按钮
+              btnAdd3.style.display = 'inline-block';  // 显示按钮
+              btnAdd5.style.display = 'inline-block';  // 显示按钮
+              btnAdd6.style.display = 'inline-block';  // 显示按钮
+
+
+
+
+            btnAdd4.style.display = 'none';  // 隐藏按钮
+          }
+          //数据需求方
+          else if (parseInt(targetId) === 0){
+            btnAdd1.style.display = 'none';  // 隐藏按钮
+              btnAdd2.style.display = 'none';  // 隐藏按钮
+              btnAdd3.style.display = 'none';  // 隐藏按钮
+              btnAdd5.style.display = 'none';  // 隐藏按钮
+              btnAdd6.style.display = 'none';  // 隐藏按钮
+            btnAdd4.style.display = 'inline-block';  // 显示按钮
+          }
+
+          // 如果只需使用一次，可清除 sessionStorage
+          sessionStorage.removeItem('target_id');
+        });
 
 
 function uploadDataFeature() {

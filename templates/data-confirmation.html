@@ -75,10 +75,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
                     <ul>
-                        <li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+                        <li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
                     </ul>
                  </dd>
             </dl>
@@ -95,7 +95,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -180,18 +180,22 @@
         </nav>
 
         <div class="pd-20">
+            <!-- CSRF Token -->
+            {% csrf_token %}
             <!-- 页面标题和操作按钮 -->
             <div class="text-c mb-20">
                 <div class="f-l">
                     <h2 class="h2-title">数据确权记录</h2>
+
                 </div>
                 <div class="f-r">
-                    <a href="{% url 'data_right_application_add' %}" class="btn btn-primary mr-10">
-                        <i class="Hui-iconfont">&#xe600;</i> 申请数据确权
-                    </a>
-                    <a href="{% url 'data_right_application_list' %}" class="btn btn-success">
+                    <a href="{% url 'data_right_application_list' %}" class="btn btn-success mr-10">
                         <i class="Hui-iconfont">&#xe6df;</i> 审核数据确权
                     </a>
+                    <!-- 批量删除按钮 -->
+                    <button type="button" class="btn btn-danger" id="batchDeleteBtn" onclick="batchDelete()" style="display:none;">
+                        <i class="Hui-iconfont">&#xe6e2;</i> 批量删除
+                    </button>
                 </div>
                 <div class="cl"></div>
             </div>
@@ -245,11 +249,27 @@
             <!-- 数据确权记录列表 -->
             <div class="mt-20">
                 {% if page_obj %}
+                    <!-- 全选控制 -->
+                    <div class="mb-10">
+                        <label class="checkbox-wrap">
+                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                            <span class="checkmark"></span>
+                            全选
+                        </label>
+                    </div>
+
                     {% for record in page_obj %}
                         <div class="data-record-card mb-15" onclick="goToDetail('{{ record.record_id }}')">
                             <div class="pd-20 bg-1 radius-5 border-solid-1 border-color-ddd cursor-pointer hover-bg-light">
                                 <div class="row cl">
-                                    <div class="col-xs-12 col-sm-8">
+                                    <div class="col-xs-12 col-sm-1">
+                                        <!-- 所有记录都显示复选框 -->
+                                        <label class="checkbox-wrap" onclick="event.stopPropagation();">
+                                            <input type="checkbox" class="record-checkbox" value="{{ record.record_id }}" onchange="updateBatchDeleteBtn()">
+                                            <span class="checkmark"></span>
+                                        </label>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-7">
                                         <h4 class="text-primary mb-5">{{ record.data_name }}</h4>
                                         <div class="c-666 mb-5">
                                             <span class="mr-20"><strong>数据流向：</strong>{{ record.get_data_holder_display }} → {{ record.get_right_recipient_display }}</span>
@@ -270,10 +290,18 @@
                                                 <span class="label label-warning">已过期</span>
                                             {% elif record.status == 'revoked' %}
                                                 <span class="label label-danger">已撤销</span>
+                                            {% elif record.status == 'rejected' %}
+                                                <span class="label label-default">已拒绝</span>
                                             {% endif %}
                                         </div>
                                         <div class="mt-10">
-                                            <small class="c-999">点击查看详情</small>
+                                            <!-- 所有记录都显示删除和查看按钮 -->
+                                            <button type="button" class="btn btn-danger btn-sm mr-5" onclick="deleteRecord('{{ record.record_id }}', event)">
+                                                <i class="Hui-iconfont">&#xe6e2;</i> 删除
+                                            </button>
+                                            <button type="button" class="btn btn-secondary btn-sm" onclick="viewDetail('{{ record.record_id }}', event)">
+                                                <i class="Hui-iconfont">&#xe665;</i> 查看详情
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -379,6 +407,28 @@
 			background-color: #d9534f;
 			color: white;
 		}
+
+		.label-default {
+			background-color: #999;
+			color: white;
+		}
+
+		/* 复选框样式 */
+		.checkbox-wrap {
+			display: flex;
+			align-items: center;
+			cursor: pointer;
+			margin: 0;
+		}
+
+		.checkbox-wrap input[type="checkbox"] {
+			margin-right: 8px;
+		}
+
+		.btn-sm {
+			padding: 4px 8px;
+			font-size: 12px;
+		}
 	</style>
 
 	<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
@@ -386,37 +436,164 @@
 	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
 
 	<script type="text/javascript">
-		// 跳转到详情页面
-		function goToDetail(recordId) {
-			window.location.href = "{% url 'data_confirmation_detail' 'RECORD_ID' %}".replace('RECORD_ID', recordId);
-		}
+        // 获取当前登录用户信息
+        var currentUser = {
+            id: "{{current_user.id}}",
+            account: "{{current_user.account}}",
+            com: "{{current_user.com}}",
+            comid: "{{current_user.comid}}"
+        };
 
-		// 页面加载完成后的初始化
-		$(document).ready(function(){
-			// 初始化下拉选择框
-			if(typeof $.Huifold != 'undefined') {
-				$.Huifold();
-			}
+        // 调试输出用户信息
+        console.log('当前用户:', currentUser);
+        console.log('用户公司:', currentUser.com);
 
-			// 高亮当前菜单项 - 数据确权页面
+        // 修复1：改进查看详情跳转函数
+        function goToDetail(recordId) {
+            // 构建详情页面URL - 使用相对路径更稳定
+            var detailUrl = '/data-confirmation/detail/' + recordId + '/';
+            console.log('跳转到详情页面:', detailUrl);
+            window.location.href = detailUrl;
+        }
+
+        // 修复1：新增查看详情按钮的点击函数
+        function viewDetail(recordId, event) {
+            event.stopPropagation();
+            goToDetail(recordId);
+        }
+
+        // 修复2：删除单个记录 - 现在支持所有状态的记录
+        function deleteRecord(recordId, event) {
+            event.stopPropagation();
+            if (confirm('确定要删除这条确权记录吗？删除后将无法恢复！')) {
+                $.ajax({
+                    url: '/data-confirmation/delete/' + recordId + '/',
+                    method: 'POST',
+                    data: {
+                        'csrfmiddlewaretoken': $('[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('删除成功');
+                            location.reload();
+                        } else {
+                            alert('删除失败：' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        var errorMessage = '删除失败';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage += '：' + xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            errorMessage += '：' + xhr.responseText;
+                        }
+                        alert(errorMessage);
+                    }
+                });
+            }
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('.record-checkbox');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+            updateBatchDeleteBtn();
+        }
+
+        // 更新批量删除按钮显示状态
+        function updateBatchDeleteBtn() {
+            const checkedBoxes = document.querySelectorAll('.record-checkbox:checked');
+            const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+
+            if (checkedBoxes.length > 0) {
+                batchDeleteBtn.style.display = 'inline-block';
+            } else {
+                batchDeleteBtn.style.display = 'none';
+            }
+        }
+
+        // 修复2：批量删除 - 现在支持所有状态的记录
+        function batchDelete() {
+            const checkedBoxes = document.querySelectorAll('.record-checkbox:checked');
+            if (checkedBoxes.length === 0) {
+                alert('请选择要删除的记录');
+                return;
+            }
+
+            if (confirm('确定要删除选中的 ' + checkedBoxes.length + ' 条确权记录吗？删除后将无法恢复！')) {
+                const recordIds = Array.from(checkedBoxes).map(cb => cb.value);
+
+                const formData = new FormData();
+                formData.append('csrfmiddlewaretoken', $('[name=csrfmiddlewaretoken]').val());
+                recordIds.forEach(id => formData.append('selected_records', id));
+
+                $.ajax({
+                    url: '/data-confirmation/batch-delete/',
+                    method: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            alert('批量删除成功，共删除 ' + recordIds.length + ' 条记录');
+                            location.reload();
+                        } else {
+                            alert('批量删除失败：' + response.message);
+                        }
+                    },
+                    error: function(xhr) {
+                        var errorMessage = '批量删除失败';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            errorMessage += '：' + xhr.responseJSON.message;
+                        } else if (xhr.responseText) {
+                            errorMessage += '：' + xhr.responseText;
+                        }
+                        alert(errorMessage);
+                    }
+                });
+            }
+        }
+
+        // 页面加载完成后的初始化
+        $(document).ready(function(){
+            // 初始化下拉选择框
+            if(typeof $.Huifold != 'undefined') {
+                $.Huifold();
+            }
+
+            // 高亮当前菜单项 - 数据确权页面
             $('#menu-data-confirmation').addClass('selected');
             $('#menu-data-confirmation .Hui-menu-item a[href*="data-confirmation"]').parent().addClass('current');
 
             // 确保其他菜单项不被高亮
             $('#menu-guest').removeClass('selected');
             $('#menu-guest .Hui-menu-item li').removeClass('current');
-		});
 
-		// 导航栏显示隐藏
-		function displaynavbar(obj){
-			if($(".Hui-admin-aside-wrapper").hasClass("aside-hide")){
-				$(".Hui-admin-aside-wrapper").removeClass("aside-hide");
-				$(obj).find("i").removeClass("Hui-iconfont-right").addClass("Hui-iconfont-left");
-			} else {
-				$(".Hui-admin-aside-wrapper").addClass("aside-hide");
-				$(obj).find("i").removeClass("Hui-iconfont-left").addClass("Hui-iconfont-right");
-			}
-		}
+            // 添加CSRF token到所有AJAX请求
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                        xhr.setRequestHeader("X-CSRFToken", $('[name=csrfmiddlewaretoken]').val());
+                    }
+                }
+            });
+
+            // 调试：输出页面上的记录ID，帮助排查跳转问题
+            $('.record-checkbox').each(function() {
+                console.log('记录ID:', $(this).val());
+            });
+        });
+
+        // 导航栏显示隐藏
+        function displaynavbar(obj){
+            if($(".Hui-admin-aside-wrapper").hasClass("aside-hide")){
+                $(".Hui-admin-aside-wrapper").removeClass("aside-hide");
+                $(obj).find("i").removeClass("Hui-iconfont-right").addClass("Hui-iconfont-left");
+            } else {
+                $(".Hui-admin-aside-wrapper").addClass("aside-hide");
+                $(obj).find("i").removeClass("Hui-iconfont-left").addClass("Hui-iconfont-right");
+            }
+        }
 	</script>
 </body>
 </html>

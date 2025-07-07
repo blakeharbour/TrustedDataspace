@@ -146,10 +146,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -166,7 +166,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -615,23 +615,37 @@ function project_submit(id) {
         layer.close(index);
     });
 }
-        function project_rightConfirm() {
-            const selectedId = $('input[name="selectedProject"]:checked').val();
-              if (!selectedId) {
-                alert('请先选择项目');
-                return;
-              }
 
-              const selectedRow = $('input[name="selectedProject"]:checked').closest('tr');
-              const data = {
-                projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
-                demand: selectedRow.find('td:eq(2)').text(),    // 数据需求方
-                owner: selectedRow.find('td:eq(3)').text(),     // 数据所有方
-                asset: selectedRow.find('td:eq(4)').text()      // 所需数据资产
-              };
-              sessionStorage.setItem('selectedData', JSON.stringify(data));
-              location.href = "/data-confirmation/review/";
-        }
+
+//新增了筛选条件
+function project_rightConfirm() {
+    const selectedProject = $('input[name="selectedProject"]:checked');
+    if (selectedProject.length === 0) {
+        alert('请先选择项目');
+        return;
+    }
+
+    const selectedRow = selectedProject.closest('tr');
+    const data = {
+        projectName: selectedRow.find('td:eq(1)').text(),    // 项目名称
+        demand: selectedRow.find('td:eq(2)').text(),         // 数据需求方
+        owner: selectedRow.find('td:eq(3)').text(),          // 数据所有方
+        asset: selectedRow.find('td:eq(4)').text()           // 所需数据资产
+    };
+
+    // 保存到sessionStorage（保留原有逻辑）
+    sessionStorage.setItem('selectedData', JSON.stringify(data));
+
+    // 将所需数据资产作为搜索参数传递给审核页面
+    const dataAsset = data.asset.trim();
+    const targetUrl = "/data-confirmation/review/?search=" + encodeURIComponent(dataAsset);
+
+    console.log("跳转到审核页面，筛选条件：", dataAsset);
+    location.href = targetUrl;
+}
+
+
+
 // 新增共享方式跳转函数
 function sharingTypeResultShow(shareType) {
     // 定义合法的共享方式列表

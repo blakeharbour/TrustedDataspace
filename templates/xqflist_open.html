@@ -11,6 +11,7 @@
   <link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
   <link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
   <link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <title>可信数据空间</title>
   <style>
     /* 页面基础设置 */
@@ -150,11 +151,11 @@
           <ul><li><a href="/data-confirmation/" title="数据确权">数据确权</a></li></ul>
         </dd>
       </dl>
-      <!-- 数据管理 -->
+      <!-- 数据资产管理 -->
       <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
         <dd class="Hui-menu-item" style="display:block">
-          <ul><li><a href="/data_asset_list/" title="数据列表">数据列表</a></li></ul>
+          <ul><li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li></ul>
         </dd>
       </dl>
       <!-- 项目信息管理 -->
@@ -165,9 +166,9 @@
           <ul><li><a href="/pengding_project/" title="待接受项目">待接受项目</a></li></ul>
         </dd>
       </dl>
-      <!-- 存证信息管理 -->
+      <!-- 区块链存证信息管理 -->
       <dl class="Hui-menu">
-        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
+        <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;"></i></dt>
         <dd class="Hui-menu-item" style="display:block">
           <ul><li><a href="/records/" title="数据存证信息">数据存证信息</a></li></ul>
           <ul><li><a href="/project_notarization/" title="项目存证信息">项目存证信息</a></li></ul>
@@ -243,7 +244,34 @@
     window.onload = () => {
       const path = sessionStorage.getItem('currentSandboxPath') || '';
       document.getElementById('sandboxPath').value = path;
-      loadValidLinks(path);
+      {#loadValidLinks(path);#}
+
+      $.ajax({
+
+    type: "post",
+    url: "/getreadonlylink/",
+    dataType: "json",
+    contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+    data: { sandbox_path: path },
+    success: function(res) {
+      console.log("查询只读链接结果:", res);
+      if (res.status == "0") {
+        // ✅ 用只读链接渲染有效链接表格
+        loadValidLinks(res.readonly_link);
+      } else {
+        // 没查到
+        loadValidLinks('');  // 表格显示"暂无有效链接"
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error("查询只读链接失败:", error);
+      loadValidLinks('');  // 显示空内容
+    }
+  });
+
+
+
+
     };
   </script>
 </body>

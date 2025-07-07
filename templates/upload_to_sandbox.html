@@ -196,10 +196,10 @@
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据资产管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
-						<li><a href="/data_asset_list/" title="数据列表">数据列表</a></li>
+						<li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
 					</ul>
 				</dd>
 
@@ -216,7 +216,7 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 区块链存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
 				<dd class="Hui-menu-item" style="display:block">
 					<ul>
 						<li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
@@ -373,7 +373,7 @@ function submitUpload() {
   formData.append("file", fileInput.files[0]);
   formData.append("sandbox_path", containerName);
 
-  fetch("http://0.0.0.0:5001/api/uploadToSandbox", {
+  fetch("http://192.168.1.132:5001/api/uploadToSandbox", {
   method: "POST",
   body: formData
 })
@@ -436,7 +436,7 @@ function generateReadonlyLink() {
     return;
   }
 
-  fetch("http://0.0.0.0:5001/api/generateReadonlyLink", {
+  fetch("http://192.168.1.132:5001/api/generateReadonlyLink", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ container_name: currentContainerName })
@@ -468,6 +468,29 @@ function generateReadonlyLink() {
         `;
 
         document.querySelector(".upload-container").appendChild(box);
+
+        const path = sessionStorage.getItem("currentSandboxPath");
+        const link1 = data.link;
+
+        const linkData = {
+            sandbox_path: path,
+            readonly_link: link1
+        };
+
+        $.ajax({
+        type: "post",
+        url: "/insert-readonly-link/",
+        data: JSON.stringify(linkData),
+        contentType: "application/json",
+        dataType: "json",
+        success: function(res) {
+            console.log("链接信息提交成功：", res);
+        },
+        error: function(err) {
+            console.log("链接信息提交出错：", err);
+        }
+        });
+
       } else {
         alert("❌ 生成链接失败：" + data.message);
       }
@@ -476,7 +499,9 @@ function generateReadonlyLink() {
       console.error("❌ 请求失败：", err);
       alert("❌ 接口请求异常");
     });
-  
+
+
+
   
 }
 
@@ -487,7 +512,7 @@ function exportSandbox() {
     return;
   }
 
-  fetch("http://0.0.0.0:5001/api/exportSandbox", {
+  fetch("http://192.168.1.132:5001/api/exportSandbox", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

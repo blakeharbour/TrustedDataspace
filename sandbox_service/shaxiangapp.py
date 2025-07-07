@@ -345,8 +345,12 @@ def generate_readonly_link():
         # ip = request.host.split(":")[0]
         # link = f"http://{ip}:{port}/?container={container_name}"
         # return jsonify(success=True, link=link)
-        link = f"http://0.0.0.0/{container_name}"
+        # link = f"http://127.0.0.1/{container_name}"
+        # return jsonify(success=True, link=link)
+        link = f"http://0.0.0.0:{port}/?container={container_name}"
         return jsonify(success=True, link=link)
+        print(f"✅ 启动 readonly 容器 {readonly_container_name}，监听端口：{port}")
+
 
     except Exception as e:
         return jsonify(success=False, message=f"后端异常：{str(e)}")
