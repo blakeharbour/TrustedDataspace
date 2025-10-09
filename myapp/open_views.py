@@ -6,7 +6,7 @@ import os
 from hotel import settings
 
 
-def open_file_manager(request,parameter):
+def open_file_manager(request):
     try:
         # 使用 xdg-open 命令打开文件资源管理器
         absolute_path='./myapp/fed_PU_sci1203/result/nnPU/'
