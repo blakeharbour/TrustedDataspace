@@ -88,7 +88,11 @@ path('upload_to_sandbox/', views.upload_to_sandbox),
 # path('api/listSandboxes', views.list_sandboxes),
 # path('api/createSandbox', views.create_sandbox),
 # path('api/destroySandbox/<str:sandbox_name>', views.destroy_sandbox),
-
+path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name='asset_field_dimension'),
+    path('asset/dimension/detail/<int:dimension_id>/', views.get_dimension_detail, name='get_dimension_detail'),
+    path('asset/dimension/save/', views.save_dimension, name='save_dimension'),
+    path('asset/dimension/delete/<int:dimension_id>/', views.delete_dimension, name='delete_dimension'),
+    path('asset/add-field/<int:asset_id>/', views.add_field, name='add_field'),
 
 
 

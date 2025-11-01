@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from huggingface_hub.utils import parse_datetime
 from sqlalchemy.sql.functions import current_user
 
-from .models import LoginUser, AssetRecord
+from .models import LoginUser, AssetRecord, AssetDimension, AssetDimensionDetail
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -1368,7 +1368,9 @@ def add_data_asset(request):
             )
 
             # 上传到区块链
-            blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+            blockchain_url = "http://202.112.151.253:8080/datasharing/addRaw"
+            # blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+
             payload = {
                 "assetID": str(asset.assetID),
                 "assetName": asset.assetName,
@@ -1549,6 +1551,246 @@ def batch_delete_data_asset(request):
         return JsonResponse({'status': 'error', 'message': '无效的ID格式'}, status=400)
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+
+
+
+
+
+@login_required
+def asset_field_dimension(request, asset_id):
+    # 获取数据资产
+    asset = get_object_or_404(DataAsset, assetID=asset_id, assetOwner=request.user.com)
+
+    # 获取所有机构列表（排除当前用户所属机构）
+    companies = LoginUser.objects.exclude(com=request.user.com).values_list('com', flat=True).distinct()
+
+    # 获取该资产的所有维度设置
+    dimensions = AssetDimension.objects.filter(asset=asset)
+    dimension_details = AssetDimensionDetail.objects.filter(asset=asset)
+
+    # 获取所有字段名（从现有维度设置中提取）
+    field_names = set(dimensions.values_list('field_name', flat=True))
+
+    return render(request, 'asset_field_dimension.html', {
+        'asset': asset,
+        'companies': companies,
+        'field_names': sorted(field_names),
+        'dimensions': dimensions,
+        'dimension_details': dimension_details
+    })
+
+
+@csrf_exempt
+@login_required
+def get_dimension_detail(request, dimension_id):
+    try:
+        dimension = AssetDimension.objects.get(id=dimension_id)
+        # 检查权限
+        if dimension.asset.assetOwner != request.user.com:
+            return JsonResponse({'success': False, 'message': '没有权限'})
+
+        # 获取时间维度明细
+        time_detail = AssetDimensionDetail.objects.filter(
+            asset=dimension.asset,
+            target_company=dimension.target_company,
+            field_name=dimension.field_name,
+            sub_dimension='time'
+        ).first()
+
+        # 获取空间维度明细
+        space_detail = AssetDimensionDetail.objects.filter(
+            asset=dimension.asset,
+            target_company=dimension.target_company,
+            field_name=dimension.field_name,
+            sub_dimension='space'
+        ).first()
+
+        return JsonResponse({
+            'success': True,
+            'dimension': {
+                'id': dimension.id,
+                'field_name': dimension.field_name,
+                'target_company': dimension.target_company,
+                'security_dimension': dimension.security_dimension,
+                'time_dimension': dimension.time_dimension,
+                'space_dimension': dimension.space_dimension,
+                'business_dimension': dimension.business_dimension,
+            },
+            'time_detail': time_detail.sub_dimension_detail if time_detail else '',
+            'space_detail': space_detail.sub_dimension_detail if space_detail else ''
+        })
+    except AssetDimension.DoesNotExist:
+        return JsonResponse({'success': False, 'message': '维度设置不存在'})
+
+@csrf_exempt
+@login_required
+def save_dimension(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            asset = get_object_or_404(DataAsset, assetID=data.get('asset_id'))
+            # 检查权限
+            if asset.assetOwner != request.user.com:
+                return JsonResponse({'success': False, 'message': '没有权限'})
+
+            # 如果是编辑现有维度
+            if data.get('dimension_id'):
+                dimension = AssetDimension.objects.get(id=data.get('dimension_id'))
+                # 检查权限
+                if dimension.asset.assetOwner != request.user.com:
+                    return JsonResponse({'success': False, 'message': '没有权限'})
+
+                # 检查目标机构是否改变
+                old_target_company = dimension.target_company
+                new_target_company = data.get('target_company')
+
+                # 如果目标机构改变，需要删除旧的明细记录
+                if old_target_company != new_target_company:
+                    AssetDimensionDetail.objects.filter(
+                        asset=asset,
+                        target_company=old_target_company,
+                        field_name=dimension.field_name
+                    ).delete()
+            else:
+                # 创建新维度
+                dimension = AssetDimension(
+                    asset=asset,
+                    user=request.user,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name')
+                )
+
+            # 更新维度字段
+            dimension.target_company = data.get('target_company')  # 确保更新目标机构
+            dimension.security_dimension = data.get('security_dimension')
+            dimension.time_dimension = data.get('time_dimension')
+            dimension.space_dimension = data.get('space_dimension')
+            dimension.business_dimension = data.get('business_dimension')
+            dimension.save()
+
+            # 处理时间维度明细
+            time_detail = data.get('time_detail')
+            if time_detail and data.get('time_dimension'):
+                # 删除旧的明细记录
+                AssetDimensionDetail.objects.filter(
+                    asset=asset,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='time'
+                ).delete()
+
+                # 创建新的明细记录
+                AssetDimensionDetail.objects.create(
+                    asset=asset,
+                    user=request.user,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='time',
+                    sub_dimension_detail=time_detail
+                )
+            elif not data.get('time_dimension'):
+                # 如果没有选择时间维度，删除相关的明细记录
+                AssetDimensionDetail.objects.filter(
+                    asset=asset,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='time'
+                ).delete()
+
+            # 处理空间维度明细
+            space_detail = data.get('space_detail')
+            if space_detail and data.get('space_dimension'):
+                # 删除旧的明细记录
+                AssetDimensionDetail.objects.filter(
+                    asset=asset,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='space'
+                ).delete()
+
+                # 创建新的明细记录
+                AssetDimensionDetail.objects.create(
+                    asset=asset,
+                    user=request.user,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='space',
+                    sub_dimension_detail=space_detail
+                )
+            elif not data.get('space_dimension'):
+                # 如果没有选择空间维度，删除相关的明细记录
+                AssetDimensionDetail.objects.filter(
+                    asset=asset,
+                    target_company=data.get('target_company'),
+                    field_name=data.get('field_name'),
+                    sub_dimension='space'
+                ).delete()
+
+            return JsonResponse({'success': True, 'message': '保存成功'})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': '无效的请求方法'})
+
+@csrf_exempt
+@login_required
+def delete_dimension(request, dimension_id):
+    if request.method == 'POST':
+        try:
+            dimension = AssetDimension.objects.get(id=dimension_id)
+            # 检查权限
+            if dimension.asset.assetOwner != request.user.com:
+                return JsonResponse({'success': False, 'message': '没有权限'})
+
+            # 删除相关的明细记录
+            AssetDimensionDetail.objects.filter(
+                asset=dimension.asset,
+                target_company=dimension.target_company,
+                field_name=dimension.field_name
+            ).delete()
+
+            # 删除主记录
+            dimension.delete()
+
+            return JsonResponse({'success': True, 'message': '删除成功'})
+        except AssetDimension.DoesNotExist:
+            return JsonResponse({'success': False, 'message': '维度设置不存在'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': '无效的请求方法'})
+
+
+# 添加字段的视图
+@csrf_exempt
+@login_required
+def add_field(request, asset_id):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            asset = get_object_or_404(DataAsset, assetID=asset_id)
+            # 检查权限
+            if asset.assetOwner != request.user.com:
+                return JsonResponse({'success': False, 'message': '没有权限'})
+
+            field_name = data.get('field_name')
+
+            # 检查字段是否已存在
+            if field_name in set(AssetDimension.objects.filter(asset=asset).values_list('field_name', flat=True)):
+                return JsonResponse({'success': False, 'message': '字段已存在'})
+
+            # 返回成功，字段会在前端动态添加
+            return JsonResponse({
+                'success': True,
+                'message': '字段添加成功',
+                'field_name': field_name
+            })
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': '无效的请求方法'})
 
 @login_required(login_url='/login/')
 def asset_record_list(request):
