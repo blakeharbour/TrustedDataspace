@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <head>
+    <meta charset="UTF-8">
+    <title>数据资产列表</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/lib/Hui-iconfont/1.0.8/iconfont.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+	<!--/meta 作为公共模版分离出去-->
+
+	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版下载">
+	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
+        <style>
+        .field-panel {
+            margin-bottom: 20px;
+            border: 1px solid #e6e6e6;
+            border-radius: 4px;
+        }
+        .field-header {
+            background-color: #f5f5f5;
+            padding: 10px 15px;
+            border-bottom: 1px solid #e6e6e6;
+        }
+        .field-body {
+            padding: 15px;
+        }
+        .dimension-table {
+            width: 100%;
+            font-size: 12px;
+        }
+        .dimension-table th, .dimension-table td {
+            padding: 5px;
+            text-align: center;
+        }
+        .add-field-form {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+        }
+    </style>
+</head>
+</head>
+<body>
+ <style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;  /* 亮白色 */
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
+    }
+    </style>
+ {% if messages %}
+<script>
+    {% for message in messages %}
+        alert("{{ message }}");
+    {% endfor %}
+</script>
+{% endif %}
+	<aside class="Hui-admin-aside-wrapper">
+		<div class="Hui-admin-logo-wrapper">
+			<a class="logo navbar-logo" href="/aboutHui.shtml">
+				<i class="va-m iconpic global-logo"></i>
+				<span class="va-m">可信数据空间</span>
+			</a>
+		</div>
+		<div class="Hui-admin-menu-dropdown bk_2">
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-data-confirmation" class="Hui-menu">
+              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+              <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+              </dd>
+            </dl>
+
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li class="current"><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+					</ul>
+				</dd>
+
+			</dl>
+             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/established_project/" title="已建立项目">已建立项目</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/pengding_project/" title="待接受项目">待接受项目</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+					</ul>
+				</dd>
+			</dl>
+            <dl id="menu-guest" class="Hui-menu">
+				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+					</ul>
+				</dd>
+				<dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+					</ul>
+				</dd>
+                <dd class="Hui-menu-item" style="display:block">
+					<ul>
+						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+	</aside>
+     <div class="Hui-admin-aside-mask"></div>
+
+	<div class="Hui-admin-dislpayArrow">
+		<a href="javascript:void(0);" onClick="displaynavbar(this)">
+			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+		</a>
+	</div>
+	<section class="Hui-admin-article-wrapper">
+		<!--_header 作为公共模版分离出去-->
+		<header class="Hui-navbar">
+			<div class="navbar">
+				<div class="container-fluid clearfix">
+          <nav id="Hui-topNav" class="nav navbar-nav">
+            <ul class="clearfix">
+              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
+              <li class="dropDown dropDown_hover">
+                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
+                <ul class="dropDown-menu menu radius box-shadow">
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                  <li class="">
+                    <a href="#">二级导航</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </nav>
+					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+						<ul class="clearfix">
+							{% comment %}<li>超级管理员</li>{% endcomment %}
+							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+								<ul class="dropDown-menu menu radius box-shadow">
+									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+									<li><a href="#">切换账户</a></li>
+									<li><a href="#">退出</a></li>
+								</ul>
+							</li>
+</ul>
+					</nav>
+				</div>
+			</div>
+		</header>
+		<!--/_header 作为公共模版分离出去-->
+		<div class="Hui-admin-article">
+			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+				首页
+				<span class="c-gray en">/</span>
+				数据管理
+				<span class="c-gray en">/</span>
+				数据列表
+                <span class="c-gray en">/</span>
+				数据资产明细
+
+			</nav>
+
+ <article class="Hui-admin-content clearfix">
+                <div class="panel mt-20">
+                    <div class="panel-body">
+                        <div class="clearfix">
+                            <span class="f-l">
+                                <h4>数据资产字段维度管理 - {{ asset.assetName }}</h4>
+                            </span>
+                            <span class="f-r">
+                                <a href="{% url 'data_asset_list' %}" class="btn btn-default radius">
+                                    <i class="Hui-iconfont">&#xe66b;</i> 返回列表
+                                </a>
+                            </span>
+                        </div>
+
+                        <div class="clearfix mt-20">
+                            <!-- 基本信息 -->
+                            <div class="panel panel-default">
+                                <div class="panel-header">基本信息</div>
+                                <div class="panel-body">
+                                    <table class="table table-bordered">
+                                        <tr>
+                                            <td width="150"><strong>序号</strong></td>
+                                            <td>{{ asset.assetID }}</td>
+                                            <td width="150"><strong>名称</strong></td>
+                                            <td>{{ asset.assetName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>所有者</strong></td>
+                                            <td>{{ asset.assetOwner }}</td>
+                                            <td><strong>所属机构</strong></td>
+                                            <td>{{ asset.assetOwner }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>格式</strong></td>
+                                            <td>{{ asset.assetFormat }}</td>
+                                            <td><strong>安全等级</strong></td>
+                                            <td>{{ asset.get_assetLevel_display }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 添加字段 -->
+                            <div class="panel panel-default mt-20">
+                                <div class="panel-header">添加字段</div>
+                                <div class="panel-body">
+                                    <div class="add-field-form">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <input type="text" id="new-field-name" class="form-control" placeholder="输入字段名" style="width: 300px;height: 25px;">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button type="button" class="btn btn-success" onclick="addNewField()">添加字段</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 字段维度管理 -->
+                            <div class="panel panel-default mt-20">
+                                <div class="panel-header">
+                                    <h5>字段维度设置</h5>
+                                </div>
+                                <div class="panel-body">
+                                    <!-- 字段列表 - 排成一列 -->
+                                    <div id="fields-container">
+                                        {% for field_name in field_names %}
+                                            <div class="mb-20" id="field-{{ field_name|slugify }}">
+                                                <div class="panel panel-primary field-panel">
+                                                    <div class="field-header">
+                                                        <span class="field-title">{{ field_name }}</span>
+                                                        <button class="btn btn-success btn-sm" onclick="addDimensionForField('{{ field_name }}')">
+                                                            <i class="Hui-iconfont">&#xe600;</i> 统一授权
+                                                        </button>
+                                                    </div>
+                                                    <div class="field-body">
+                                                        <table class="table table-bordered table-hover table-sm dimension-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th width="15%">数据需求方</th>
+                                                                    <th width="15%">安全维度</th>
+                                                                    <th width="20%">时间维度</th>
+                                                                    <th width="20%">空间维度</th>
+                                                                    <th width="15%">业务维度</th>
+                                                                    <th width="15%">操作</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <!-- 在 asset_field_dimension.html 中，更新表格显示部分 -->
+<!-- 在表格中正确显示维度信息 -->
+<tbody id="dimension-{{ field_name|slugify }}-list">
+    {% for dimension in dimensions %}
+        {% if dimension.field_name == field_name %}
+            <tr>
+                <td>{{ dimension.target_company }}</td>
+                <td>{{ dimension.get_security_dimension_display|default:"-" }}</td>
+                <td>
+                    {% if dimension.time_dimension %}
+                        {{ dimension.get_time_dimension_display }}
+                        {% for detail in dimension_details %}
+                            {% if detail.field_name == field_name and detail.target_company == dimension.target_company and detail.sub_dimension == 'time' %}
+                                <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if dimension.space_dimension %}
+                        {{ dimension.get_space_dimension_display }}
+                        {% for detail in dimension_details %}
+                            {% if detail.field_name == field_name and detail.target_company == dimension.target_company and detail.sub_dimension == 'space' %}
+                                <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>{{ dimension.get_business_dimension_display|default:"-" }}</td>
+                <td>
+                    <button class="btn btn-primary btn-xs" onclick="editDimension({{ dimension.id }})">编辑</button>
+                    <button class="btn btn-danger btn-xs" onclick="deleteDimension({{ dimension.id }}, '{{ field_name }}')">删除</button>
+                </td>
+            </tr>
+        {% endif %}
+    {% empty %}
+        <tr>
+            <td colspan="6" class="text-center">暂无维度设置</td>
+        </tr>
+    {% endfor %}
+</tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% empty %}
+                                            <div class="empty-state">
+                                                <p>暂无字段，请先添加字段</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- 添加/编辑维度模态框 -->
+    <div id="dimension-modal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="dimension-modal-title">添加字段维度授权</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="dimension-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="dimension_id" id="dimension-id">
+                        <input type="hidden" name="asset_id" value="{{ asset.assetID }}">
+                        <input type="hidden" name="field_name" id="dimension-field-name">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>数据需求方</label>
+                                    <select name="target_company" class="form-control" required id="target-company">
+                                        <option value="">请选择数据需求方</option>
+                                        {% for company in companies %}
+                                            <option value="{{ company }}">{{ company }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>字段名</label>
+                                    <input type="text" class="form-control" id="field-name-display" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>安全子维度</label>
+                                    <select name="security_dimension" class="form-control">
+                                        <option value="">请选择</option>
+                                        <option value="national_secret">国家秘密</option>
+                                        <option value="confidential">机密</option>
+                                        <option value="internal">内部</option>
+                                        <option value="public">公开</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>业务子维度</label>
+                                    <select name="business_dimension" class="form-control">
+                                        <option value="">请选择</option>
+                                        <option value="summary">汇总</option>
+                                        <option value="detail">不汇总</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>时间子维度</label>
+                                    <select name="time_dimension" class="form-control" id="time-dimension">
+    <option value="">请选择</option>
+    <option value="realtime">实时级</option>
+    <option value="minutes">*分钟</option>
+    <option value="hours">*小时</option>
+    <option value="weeks">*周</option>
+    <option value="months">*月</option>
+    <option value="quarters">*季度</option>
+    <option value="years">*年</option>
+    <option value="">无</option>  <!-- 修改为无 -->
+</select>
+                                </div>
+                                <div class="form-group" id="time-detail-group" style="display: none;">
+                                    <label>时间明细值</label>
+                                    <input type="text" name="time_detail" class="form-control" placeholder="例如：30分钟、2小时">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>空间子维度</label>
+                                   <select name="space_dimension" class="form-control" id="space-dimension">
+    <option value="">请选择</option>
+    <option value="all_railway">全路</option>
+    <option value="railway_bureau">路局内</option>
+    <option value="station">站</option>
+    <option value="section">段</option>
+    <option value="interval">区间</option>
+    <option value="">无</option>  <!-- 修改为无 -->
+
+                                    </select>
+                                </div>
+                                <div class="form-group" id="space-detail-group" style="display: none;">
+                                    <label>空间明细值</label>
+                                    <input type="text" name="space_detail" class="form-control" placeholder="例如：车务段、机务段">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" onclick="saveDimension()">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
+	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+	<!--/_footer /作为公共模版分离出去-->
+
+	<!--请在下方写此页面业务相关的脚本-->
+	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
+<!-- asset_field_dimension.html -->
+
+
+<script>
+        // 添加新字段
+        function addNewField() {
+            const fieldName = document.getElementById('new-field-name').value;
+
+            if (!fieldName) {
+                alert('请输入字段名');
+                return;
+            }
+
+            const data = {
+                field_name: fieldName
+            };
+
+            fetch('/asset/add-field/{{ asset.assetID }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // 清空输入框
+                    document.getElementById('new-field-name').value = '';
+
+                    // 动态添加字段面板
+                    addFieldPanel(result.field_name);
+
+                    alert('字段添加成功');
+                } else {
+                    alert('字段添加失败: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('添加字段时发生错误');
+            });
+        }
+
+        // 动态添加字段面板
+        function addFieldPanel(fieldName) {
+            const fieldsContainer = document.getElementById('fields-container');
+
+            // 如果当前是空状态，移除空状态提示
+            if (fieldsContainer.querySelector('.empty-state')) {
+                fieldsContainer.innerHTML = '';
+            }
+
+            // 创建新的字段面板
+            const fieldDiv = document.createElement('div');
+            fieldDiv.className = 'mb-20';
+            fieldDiv.id = 'field-' + fieldName.replace(/[^a-zA-Z0-9]/g, '-');
+
+            // 字段面板的HTML内容
+            fieldDiv.innerHTML = `
+                <div class="panel panel-primary field-panel">
+                    <div class="field-header">
+                        <span class="field-title">${fieldName}</span>
+                        <button class="btn btn-success btn-sm" onclick="addDimensionForField('${fieldName}')">
+                            <i class="Hui-iconfont">&#xe600;</i> 统一授权
+                        </button>
+                    </div>
+                    <div class="field-body">
+                        <table class="table table-bordered table-hover table-sm dimension-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">数据需求方</th>
+                                    <th width="15%">安全维度</th>
+                                    <th width="20%">时间维度</th>
+                                    <th width="20%">空间维度</th>
+                                    <th width="15%">业务维度</th>
+                                    <th width="15%">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dimension-${fieldName.replace(/[^a-zA-Z0-9]/g, '-')}-list">
+                                <tr>
+                                    <td colspan="6" class="text-center">暂无维度设置</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            // 添加到容器
+            fieldsContainer.appendChild(fieldDiv);
+        }
+
+        // 为指定字段添加维度授权
+        function addDimensionForField(fieldName) {
+            document.getElementById('dimension-modal-title').textContent = '为字段添加维度授权 - ' + fieldName;
+            document.getElementById('dimension-form').reset();
+            document.getElementById('dimension-id').value = '';
+            document.getElementById('dimension-field-name').value = fieldName;
+            document.getElementById('field-name-display').value = fieldName;
+            $('#dimension-modal').modal('show');
+        }
+
+
+// 编辑维度授权
+function editDimension(dimensionId) {
+    fetch('/asset/dimension/detail/' + dimensionId + '/')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('dimension-modal-title').textContent = '编辑维度授权';
+                document.getElementById('dimension-id').value = data.dimension.id;
+                document.getElementById('dimension-field-name').value = data.dimension.field_name;
+                document.getElementById('field-name-display').value = data.dimension.field_name;
+
+                // 修复：正确设置目标机构
+                const targetCompanySelect = document.getElementById('target-company');
+                targetCompanySelect.value = data.dimension.target_company;
+
+                // 设置其他维度字段
+                document.querySelector('select[name="security_dimension"]').value = data.dimension.security_dimension || '';
+                document.querySelector('select[name="business_dimension"]').value = data.dimension.business_dimension || '';
+                document.querySelector('select[name="time_dimension"]').value = data.dimension.time_dimension || '';
+                document.querySelector('select[name="space_dimension"]').value = data.dimension.space_dimension || '';
+
+                // 处理明细值
+                if (data.dimension.time_dimension && data.time_detail) {
+                    document.querySelector('input[name="time_detail"]').value = data.time_detail;
+                    document.getElementById('time-detail-group').style.display = 'block';
+                } else {
+                    document.querySelector('input[name="time_detail"]').value = '';
+                    document.getElementById('time-detail-group').style.display = 'none';
+                }
+
+                if (data.dimension.space_dimension && data.space_detail) {
+                    document.querySelector('input[name="space_detail"]').value = data.space_detail;
+                    document.getElementById('space-detail-group').style.display = 'block';
+                } else {
+                    document.querySelector('input[name="space_detail"]').value = '';
+                    document.getElementById('space-detail-group').style.display = 'none';
+                }
+
+                // 手动触发change事件来更新显示状态
+                document.getElementById('time-dimension').dispatchEvent(new Event('change'));
+                document.getElementById('space-dimension').dispatchEvent(new Event('change'));
+
+                $('#dimension-modal').modal('show');
+            } else {
+                alert('获取维度详情失败: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('获取维度详情时发生错误');
+        });
+}
+
+// 保存维度授权
+function saveDimension() {
+    const formData = new FormData(document.getElementById('dimension-form'));
+    const data = {
+        asset_id: '{{ asset.assetID }}',
+        dimension_id: formData.get('dimension_id'),
+        field_name: formData.get('field_name'),
+        target_company: formData.get('target_company'),
+        security_dimension: formData.get('security_dimension'),
+        time_dimension: formData.get('time_dimension'),
+        space_dimension: formData.get('space_dimension'),
+        business_dimension: formData.get('business_dimension'),
+        time_detail: formData.get('time_detail'),
+        space_detail: formData.get('space_detail')
+    };
+
+    // 验证必填字段
+    if (!data.target_company) {
+        alert('请选择数据需求方');
+        return;
+    }
+
+    // 修复：确保目标机构值正确传递
+    if (!data.target_company) {
+        const targetCompanySelect = document.getElementById('target-company');
+        data.target_company = targetCompanySelect.value;
+    }
+
+    fetch('/asset/dimension/save/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.success) {
+            alert('保存成功');
+            $('#dimension-modal').modal('hide');
+            // 重新加载页面以显示更新后的维度设置
+            location.reload();
+        } else {
+            alert('保存失败: ' + result.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('保存过程中发生错误');
+    });
+}
+
+        // 删除维度授权
+        function deleteDimension(dimensionId, fieldName) {
+            if (confirm('确定要删除这个维度授权吗？')) {
+                fetch('/asset/dimension/delete/' + dimensionId + '/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('删除成功');
+                        // 重新加载该字段的维度列表
+                        location.reload();
+                    } else {
+                        alert('删除失败: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('删除过程中发生错误');
+                });
+            }
+        }
+
+
+
+        // 时间维度选择显示明细输入框
+        document.getElementById('time-dimension').addEventListener('change', function() {
+            const detailGroup = document.getElementById('time-detail-group');
+            if (this.value === 'minutes' || this.value === 'hours' || this.value === 'weeks' ||
+                this.value === 'months' || this.value === 'quarters' || this.value === 'years') {
+                detailGroup.style.display = 'block';
+            } else {
+                detailGroup.style.display = 'none';
+            }
+        });
+
+        // 空间维度选择显示明细输入框
+        document.getElementById('space-dimension').addEventListener('change', function() {
+            const detailGroup = document.getElementById('space-detail-group');
+            if (this.value === 'station' || this.value === 'section' || this.value === 'interval') {
+                detailGroup.style.display = 'block';
+            } else {
+                detailGroup.style.display = 'none';
+            }
+        });
+
+        // CSRF Token 函数
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.startsWith(name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

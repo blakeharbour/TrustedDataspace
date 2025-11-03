@@ -363,3 +363,81 @@ class SandboxIPLog(models.Model):
     class Meta:
         db_table = 'sandboxiplog'
         managed  = False   # 如果你不希望 Django 管理迁移，就保持 False
+
+
+class AssetDimension(models.Model):
+    DIMENSION_CHOICES = [
+        ('security', '安全维度'),
+        ('time', '时间维度'),
+        ('space', '空间维度'),
+        ('business', '业务维度'),
+    ]
+
+    SECURITY_SUB_CHOICES = [
+        ('national_secret', '国家秘密'),
+        ('confidential', '机密'),
+        ('internal', '内部'),
+        ('public', '公开'),
+    ]
+
+    TIME_SUB_CHOICES = [
+        ('realtime', '实时级'),
+        ('minutes', '*分钟'),
+        ('hours', '*小时'),
+        ('weeks', '*周'),
+        ('months', '*月'),
+        ('quarters', '*季度'),
+        ('years', '*年'),
+    ]
+
+    SPACE_SUB_CHOICES = [
+        ('all_railway', '全路'),
+        ('railway_bureau', '路局内'),
+        ('station', '站'),
+        ('section', '段'),
+        ('interval', '区间'),
+    ]
+
+    BUSINESS_SUB_CHOICES = [
+        ('summary', '汇总'),
+        ('detail', '不汇总'),
+    ]
+
+    asset = models.ForeignKey(DataAsset, on_delete=models.CASCADE, verbose_name="数据资产")
+    user = models.ForeignKey(LoginUser, on_delete=models.CASCADE, verbose_name="授权用户")
+    target_company = models.CharField(max_length=255, verbose_name="目标机构")
+    field_name = models.CharField(max_length=100, verbose_name="字段名")
+    time_dimension = models.CharField(max_length=20, choices=TIME_SUB_CHOICES, blank=True, null=True,
+                                      verbose_name="时间子维度")
+    space_dimension = models.CharField(max_length=20, choices=SPACE_SUB_CHOICES, blank=True, null=True,
+                                       verbose_name="空间子维度")
+    security_dimension = models.CharField(max_length=20, choices=SECURITY_SUB_CHOICES, blank=True, null=True,
+                                          verbose_name="安全子维度")
+    business_dimension = models.CharField(max_length=20, choices=BUSINESS_SUB_CHOICES, blank=True, null=True,
+                                          verbose_name="业务子维度")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
+    class Meta:
+        verbose_name = "数据资产维度主表"
+        verbose_name_plural = "数据资产维度主表"
+        unique_together = ['asset', 'user', 'field_name', 'target_company']
+
+
+# 维度明细表
+class AssetDimensionDetail(models.Model):
+    SUB_DIMENSION_CHOICES = [
+        ('time', '时间维度'),
+        ('space', '空间维度'),
+    ]
+
+    asset = models.ForeignKey(DataAsset, on_delete=models.CASCADE, verbose_name="数据资产")
+    user = models.ForeignKey(LoginUser, on_delete=models.CASCADE, verbose_name="授权用户")
+    target_company = models.CharField(max_length=255, verbose_name="目标机构")
+    field_name = models.CharField(max_length=100, verbose_name="字段名")
+    sub_dimension = models.CharField(max_length=20, choices=SUB_DIMENSION_CHOICES, verbose_name="子维度类型")
+    sub_dimension_detail = models.CharField(max_length=200, verbose_name="子维度明细")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
+
+    class Meta:
+        verbose_name = "数据资产维度明细表"
+        verbose_name_plural = "数据资产维度明细表"
