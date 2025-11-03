@@ -416,8 +416,8 @@ class AssetDimension(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="创建时间")
 
     class Meta:
-        verbose_name = "数据资产维度主表"
-        verbose_name_plural = "数据资产维度主表"
+        verbose_name = "数据资产维度表"
+        verbose_name_plural = "数据资产维度表"
         unique_together = ['asset', 'user', 'field_name', 'target_company']
 
 

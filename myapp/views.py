@@ -32,7 +32,7 @@ from django.http import JsonResponse
 # from huggingface_hub.utils import parse_datetime
 # from sqlalchemy.sql.functions import current_user
 
-from .models import LoginUser, AssetRecord
+from .models import LoginUser, AssetRecord, AssetDimension, AssetDimensionDetail
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse

@@ -110,7 +110,7 @@ path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name=
 
 
 
-    #以下为旧平台方法
+    #以下旧平台方法
     path('index/', views.index),
     path('mutiindex/', views.mutiindex),
     path('member-list/', views.member_list),
