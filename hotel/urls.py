@@ -29,6 +29,7 @@ from myapp import views, modelappview
 # from django.conf.urls.static import static
 # from django.conf import settings
 # from django.contrib import admin
+# 测试
 urlpatterns = [
     path('admin/', admin.site.urls),
     #校验登录
