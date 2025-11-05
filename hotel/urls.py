@@ -101,6 +101,7 @@ path('getreadonlylink/', views.getreadonlylink),
 # path('api/listSandboxes', views.list_sandboxes),
 # path('api/createSandbox', views.create_sandbox),
 # path('api/destroySandbox/<str:sandbox_name>', views.destroy_sandbox),
+
 path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name='asset_field_dimension'),
     path('asset/dimension/detail/<int:dimension_id>/', views.get_dimension_detail, name='get_dimension_detail'),
     path('asset/dimension/save/', views.save_dimension, name='save_dimension'),
@@ -109,8 +110,7 @@ path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name=
 
 
 
-
-    #以下为旧平台方法
+    #以下旧平台方法
     path('index/', views.index),
     path('mutiindex/', views.mutiindex),
     path('member-list/', views.member_list),
