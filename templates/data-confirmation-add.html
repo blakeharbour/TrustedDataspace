@@ -832,19 +832,25 @@ function initProjectDataSync() {
     }
 }
 
-	// 新增：显示项目同步提示的函数
+	// 新增：显示项目同步提 示的函数
 	function showProjectSyncAlert() {
 		alert('该信息来自项目选择，如需修改请先修改项目申请信息。');
 	}
 
 	// 新增：公司名称转换为代码的函数
-	function getCompanyCodeFromName(companyName) {
-		const companyMapping = {
-			'铁路': 'railway',
-			'海关': 'customs',
-			'港口': 'port',
-			'哈方': 'kazakhstan'
-		};
+		function getCompanyCodeFromName(companyName) {
+    const companyMapping = {
+        '车务': '车务',
+        '机务': '机务',
+        '工务': '工务',
+        '电务（信号）': '电务（信号）',
+        '电务（通信）': '电务（通信）',
+        '供电': '供电',
+        '车辆': '车辆',
+        '港口': '港口',
+        '海关': '海关',
+
+    };
 		return companyMapping[companyName] || companyName;
 	}
 

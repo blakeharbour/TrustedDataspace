@@ -136,11 +136,17 @@ import uuid
 
 # 数据来源选择
 DATA_SOURCE_CHOICES = [
-    ('customs', '海关'),
-    ('port', '港口'),
-    ('railway', '铁路'),
-    ('kazakhstan', '哈方'),
+    ('车务', '车务'),
+    ('机务', '机务'),
+    ('工务', '工务'),
+    ('电务（信号）', '电务（信号）'),
+    ('电务（通信）', '电务（通信）'),
+    ('供电', '供电'),
+    ('车辆', '车辆'),
+    ('港口','港口'),
+    ('海关','海关'),
 ]
+
 
 
 
@@ -330,7 +336,7 @@ class DataRightRecord(models.Model):
         return False
 
 class DataRightApplicationHistory(models.Model):
-    """数据权利申请历史记录模型"""
+    """数据权利申请历 史记录模型"""
 
     application = models.ForeignKey(DataRightApplication, on_delete=models.CASCADE, verbose_name="申请")
     action_type = models.CharField(max_length=50, verbose_name="操作类型")  # submit, review, approve, reject

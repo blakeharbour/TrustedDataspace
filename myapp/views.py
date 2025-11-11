@@ -3005,7 +3005,7 @@ def data_right_application_add(request):
                 )
                 application.save()
 
-                # 记录申请历史
+                # 记录申 请历史
                 DataRightApplicationHistory.objects.create(
                     application=application,
                     action_type='submit',
