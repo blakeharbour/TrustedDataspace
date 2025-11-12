@@ -35,7 +35,7 @@ class CustomUserManager(BaseUserManager):
 
 class LoginUser(AbstractBaseUser, PermissionsMixin):  # 关键！继承 AbstractBaseUser
     account = models.CharField(max_length=255, unique=True, verbose_name="账号")
-    password = models.CharField(max_length=255, verbose_name="密码")  # 存储加密后的密码
+    password = models.CharField(max_length=255, verbose_name="密码")  # 存储 加密后的密码
     com = models.CharField(max_length=255, verbose_name="所属公司")
     comid = models.IntegerField(default=0, verbose_name="公司ID")
 

@@ -2955,7 +2955,7 @@ def get_company_code_from_name(company_name):
         name: code for code, name in DATA_SOURCE_CHOICES
     }
 
-    # 查找对应的英文代码
+    # 查找 对应的英文代码
     company_code = name_to_code_mapping.get(company_name)
     return company_code
 

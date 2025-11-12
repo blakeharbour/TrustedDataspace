@@ -569,7 +569,7 @@
             $('#menu-guest').removeClass('selected');
             $('#menu-guest .Hui-menu-item li').removeClass('current');
 
-            // 添加CSRF token到所有AJAX请求
+            // 添加CSRF token到所 有AJAX请求
             $.ajaxSetup({
                 beforeSend: function(xhr, settings) {
                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
