@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <head>
+    <head>
     <meta charset="UTF-8">
     <title>数据资产列表</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -59,6 +59,14 @@
             text-align: center;
             padding: 20px;
             color: #999;
+        }
+        .view-only-badge {
+            background-color: #f0ad4e;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -221,7 +229,9 @@
 				数据列表
                 <span class="c-gray en">/</span>
 				数据资产明细
-
+                {% if not is_owner %}
+                <span class="view-only-badge">只读视图</span>
+                {% endif %}
 			</nav>
 
  <article class="Hui-admin-content clearfix">
@@ -229,7 +239,11 @@
                     <div class="panel-body">
                         <div class="clearfix">
                             <span class="f-l">
-                                <h4>数据资产字段维度管理 - {{ asset.assetName }}</h4>
+                                <h4>数据资产字段维度管理 - {{ asset.assetName }}
+                                    {% if not is_owner %}
+                                    <small class="text-muted">(只读视图)</small>
+                                    {% endif %}
+                                </h4>
                             </span>
                             <span class="f-r">
                                 <a href="{% url 'data_asset_list' %}" class="btn btn-default radius">
@@ -266,7 +280,8 @@
                                 </div>
                             </div>
 
-                            <!-- 添加字段 -->
+                            <!-- 添加字段 - 只对所有者显示 -->
+                            {% if is_owner %}
                             <div class="panel panel-default mt-20">
                                 <div class="panel-header">添加字段</div>
                                 <div class="panel-body">
@@ -282,11 +297,16 @@
                                     </div>
                                 </div>
                             </div>
+                            {% endif %}
 
                             <!-- 字段维度管理 -->
                             <div class="panel panel-default mt-20">
                                 <div class="panel-header">
-                                    <h5>字段维度设置</h5>
+                                    <h5>字段维度设置
+                                        {% if not is_owner %}
+                                        <small class="text-muted">(仅显示您机构的共享维度)</small>
+                                        {% endif %}
+                                    </h5>
                                 </div>
                                 <div class="panel-body">
                                     <!-- 字段列表 - 排成一列 -->
@@ -296,9 +316,14 @@
                                                 <div class="panel panel-primary field-panel">
                                                     <div class="field-header">
                                                         <span class="field-title">{{ field_name }}</span>
+                                                        {% if is_owner %}
                                                         <button class="btn btn-success btn-sm" onclick="addDimensionForField('{{ field_name }}')">
                                                             <i class="Hui-iconfont">&#xe600;</i> 统一授权
                                                         </button>
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteField('{{ field_name }}')">
+                                                            <i class="Hui-iconfont">&#xe6e2;</i> 删除字段
+                                                        </button>
+                                                        {% endif %}
                                                     </div>
                                                     <div class="field-body">
                                                         <table class="table table-bordered table-hover table-sm dimension-table">
@@ -309,14 +334,16 @@
                                                                     <th width="20%">时间维度</th>
                                                                     <th width="20%">空间维度</th>
                                                                     <th width="15%">业务维度</th>
+                                                                    {% if is_owner %}
                                                                     <th width="15%">操作</th>
+                                                                    {% endif %}
                                                                 </tr>
                                                             </thead>
                                                             <!-- 在 asset_field_dimension.html 中，更新表格显示部分 -->
 <!-- 在表格中正确显示维度信息 -->
 <tbody id="dimension-{{ field_name|slugify }}-list">
     {% for dimension in dimensions %}
-        {% if dimension.field_name == field_name %}
+        {% if dimension.field_name == field_name and dimension.target_company != "field_definition" %}
             <tr>
                 <td>{{ dimension.target_company }}</td>
                 <td>{{ dimension.get_security_dimension_display|default:"-" }}</td>
@@ -345,18 +372,26 @@
                     {% endif %}
                 </td>
                 <td>{{ dimension.get_business_dimension_display|default:"-" }}</td>
+                {% if is_owner %}
                 <td>
                     <button class="btn btn-primary btn-xs" onclick="editDimension({{ dimension.id }})">编辑</button>
                     <button class="btn btn-danger btn-xs" onclick="deleteDimension({{ dimension.id }}, '{{ field_name }}')">删除</button>
                 </td>
-            </tr>
-        {% endif %}
-    {% empty %}
-        <tr>
-            <td colspan="6" class="text-center">暂无维度设置</td>
-        </tr>
-    {% endfor %}
-</tbody>
+                                                {% endif %}
+                                            </tr>
+                                        {% endif %}
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="{% if is_owner %}6{% else %}5{% endif %}" class="text-center">
+                                                {% if is_owner %}
+                                                    暂无维度设置
+                                                {% else %}
+                                                    暂无与您机构相关的维度设置
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
@@ -376,7 +411,8 @@
         </div>
     </section>
 
-    <!-- 添加/编辑维度模态框 -->
+    <!-- 添加/编辑维度模态框 - 只对所有者显示 -->
+    {% if is_owner %}
     <div id="dimension-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -443,34 +479,34 @@
                                 <div class="form-group">
                                     <label>时间子维度</label>
                                     <select name="time_dimension" class="form-control" id="time-dimension">
-    <option value="">请选择</option>
-    <option value="realtime">实时级</option>
-    <option value="minutes">*分钟</option>
-    <option value="hours">*小时</option>
-    <option value="weeks">*周</option>
-    <option value="months">*月</option>
-    <option value="quarters">*季度</option>
-    <option value="years">*年</option>
-    <option value="">无</option>  <!-- 修改为无 -->
-</select>
+                                        <option value="">请选择</option>
+                                        <option value="realtime">实时级</option>
+                                        <option value="minutes">*分钟</option>
+                                        <option value="hours">*小时</option>
+                                        <option value="days">*天</option>
+                                        <option value="weeks">*周</option>
+                                        <option value="months">*月</option>
+                                        <option value="quarters">*季度</option>
+                                        <option value="years">*年</option>
+                                        <option value="">无</option>
+                                    </select>
                                 </div>
                                 <div class="form-group" id="time-detail-group" style="display: none;">
                                     <label>时间明细值</label>
-                                    <input type="text" name="time_detail" class="form-control" placeholder="例如：30分钟、2小时">
+                                    <input type="text" name="time_detail" class="form-control" placeholder="例如：30分钟、2小时、实时">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>空间子维度</label>
                                    <select name="space_dimension" class="form-control" id="space-dimension">
-    <option value="">请选择</option>
-    <option value="all_railway">全路</option>
-    <option value="railway_bureau">路局内</option>
-    <option value="station">站</option>
-    <option value="section">段</option>
-    <option value="interval">区间</option>
-    <option value="">无</option>  <!-- 修改为无 -->
-
+                                        <option value="">请选择</option>
+                                        <option value="all_railway">全路</option>
+                                        <option value="railway_bureau">路局内</option>
+                                        <option value="station">站</option>
+                                        <option value="section">段</option>
+                                        <option value="interval">区间</option>
+                                        <option value="">无</option>
                                     </select>
                                 </div>
                                 <div class="form-group" id="space-detail-group" style="display: none;">
@@ -488,6 +524,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 
 
 <script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
@@ -500,8 +537,6 @@
 	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
 	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
 	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
-<!-- asset_field_dimension.html -->
-
 
 <script>
         // 添加新字段
@@ -567,6 +602,9 @@
                         <button class="btn btn-success btn-sm" onclick="addDimensionForField('${fieldName}')">
                             <i class="Hui-iconfont">&#xe600;</i> 统一授权
                         </button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteField('${fieldName}')">
+                            <i class="Hui-iconfont">&#xe6e2;</i> 删除字段
+                        </button>
                     </div>
                     <div class="field-body">
                         <table class="table table-bordered table-hover table-sm dimension-table">
@@ -604,112 +642,115 @@
             $('#dimension-modal').modal('show');
         }
 
+        // 编辑维度授权
+        function editDimension(dimensionId) {
+            fetch('/asset/dimension/detail/' + dimensionId + '/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('dimension-modal-title').textContent = '编辑维度授权';
+                        document.getElementById('dimension-id').value = data.dimension.id;
+                        document.getElementById('dimension-field-name').value = data.dimension.field_name;
+                        document.getElementById('field-name-display').value = data.dimension.field_name;
 
-// 编辑维度授权
-function editDimension(dimensionId) {
-    fetch('/asset/dimension/detail/' + dimensionId + '/')
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.getElementById('dimension-modal-title').textContent = '编辑维度授权';
-                document.getElementById('dimension-id').value = data.dimension.id;
-                document.getElementById('dimension-field-name').value = data.dimension.field_name;
-                document.getElementById('field-name-display').value = data.dimension.field_name;
+                        // 修复：正确设置目标机构
+                        const targetCompanySelect = document.getElementById('target-company');
+                        targetCompanySelect.value = data.dimension.target_company;
 
-                // 修复：正确设置目标机构
-                const targetCompanySelect = document.getElementById('target-company');
-                targetCompanySelect.value = data.dimension.target_company;
+                        // 设置其他维度字段
+                        document.querySelector('select[name="security_dimension"]').value = data.dimension.security_dimension || '';
+                        document.querySelector('select[name="business_dimension"]').value = data.dimension.business_dimension || '';
+                        document.querySelector('select[name="time_dimension"]').value = data.dimension.time_dimension || '';
+                        document.querySelector('select[name="space_dimension"]').value = data.dimension.space_dimension || '';
 
-                // 设置其他维度字段
-                document.querySelector('select[name="security_dimension"]').value = data.dimension.security_dimension || '';
-                document.querySelector('select[name="business_dimension"]').value = data.dimension.business_dimension || '';
-                document.querySelector('select[name="time_dimension"]').value = data.dimension.time_dimension || '';
-                document.querySelector('select[name="space_dimension"]').value = data.dimension.space_dimension || '';
+                        // 处理明细值
+                        if (data.dimension.time_dimension && data.time_detail) {
+                            document.querySelector('input[name="time_detail"]').value = data.time_detail;
+                            document.getElementById('time-detail-group').style.display = 'block';
+                        } else if (data.dimension.time_dimension === 'realtime') {
+                            // 如果是实时级但没有明细，设置默认值
+                            document.querySelector('input[name="time_detail"]').value = data.time_detail || '实时';
+                            document.getElementById('time-detail-group').style.display = 'block';
+                        } else {
+                            document.querySelector('input[name="time_detail"]').value = '';
+                            document.getElementById('time-detail-group').style.display = 'none';
+                        }
 
-                // 处理明细值
-                if (data.dimension.time_dimension && data.time_detail) {
-                    document.querySelector('input[name="time_detail"]').value = data.time_detail;
-                    document.getElementById('time-detail-group').style.display = 'block';
-                } else {
-                    document.querySelector('input[name="time_detail"]').value = '';
-                    document.getElementById('time-detail-group').style.display = 'none';
-                }
+                        if (data.dimension.space_dimension && data.space_detail) {
+                            document.querySelector('input[name="space_detail"]').value = data.space_detail;
+                            document.getElementById('space-detail-group').style.display = 'block';
+                        } else {
+                            document.querySelector('input[name="space_detail"]').value = '';
+                            document.getElementById('space-detail-group').style.display = 'none';
+                        }
 
-                if (data.dimension.space_dimension && data.space_detail) {
-                    document.querySelector('input[name="space_detail"]').value = data.space_detail;
-                    document.getElementById('space-detail-group').style.display = 'block';
-                } else {
-                    document.querySelector('input[name="space_detail"]').value = '';
-                    document.getElementById('space-detail-group').style.display = 'none';
-                }
+                        // 手动触发change事件来更新显示状态
+                        document.getElementById('time-dimension').dispatchEvent(new Event('change'));
+                        document.getElementById('space-dimension').dispatchEvent(new Event('change'));
 
-                // 手动触发change事件来更新显示状态
-                document.getElementById('time-dimension').dispatchEvent(new Event('change'));
-                document.getElementById('space-dimension').dispatchEvent(new Event('change'));
-
-                $('#dimension-modal').modal('show');
-            } else {
-                alert('获取维度详情失败: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('获取维度详情时发生错误');
-        });
-}
-
-// 保存维度授权
-function saveDimension() {
-    const formData = new FormData(document.getElementById('dimension-form'));
-    const data = {
-        asset_id: '{{ asset.assetID }}',
-        dimension_id: formData.get('dimension_id'),
-        field_name: formData.get('field_name'),
-        target_company: formData.get('target_company'),
-        security_dimension: formData.get('security_dimension'),
-        time_dimension: formData.get('time_dimension'),
-        space_dimension: formData.get('space_dimension'),
-        business_dimension: formData.get('business_dimension'),
-        time_detail: formData.get('time_detail'),
-        space_detail: formData.get('space_detail')
-    };
-
-    // 验证必填字段
-    if (!data.target_company) {
-        alert('请选择数据需求方');
-        return;
-    }
-
-    // 修复：确保目标机构值正确传递
-    if (!data.target_company) {
-        const targetCompanySelect = document.getElementById('target-company');
-        data.target_company = targetCompanySelect.value;
-    }
-
-    fetch('/asset/dimension/save/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(result => {
-        if (result.success) {
-            alert('保存成功');
-            $('#dimension-modal').modal('hide');
-            // 重新加载页面以显示更新后的维度设置
-            location.reload();
-        } else {
-            alert('保存失败: ' + result.message);
+                        $('#dimension-modal').modal('show');
+                    } else {
+                        alert('获取维度详情失败: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('获取维度详情时发生错误');
+                });
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('保存过程中发生错误');
-    });
-}
+
+        // 保存维度授权
+        function saveDimension() {
+            const formData = new FormData(document.getElementById('dimension-form'));
+            const data = {
+                asset_id: '{{ asset.assetID }}',
+                dimension_id: formData.get('dimension_id'),
+                field_name: formData.get('field_name'),
+                target_company: formData.get('target_company'),
+                security_dimension: formData.get('security_dimension'),
+                time_dimension: formData.get('time_dimension'),
+                space_dimension: formData.get('space_dimension'),
+                business_dimension: formData.get('business_dimension'),
+                time_detail: formData.get('time_detail'),
+                space_detail: formData.get('space_detail')
+            };
+
+            // 验证必填字段
+            if (!data.target_company) {
+                alert('请选择数据需求方');
+                return;
+            }
+
+            // 修复：确保目标机构值正确传递
+            if (!data.target_company) {
+                const targetCompanySelect = document.getElementById('target-company');
+                data.target_company = targetCompanySelect.value;
+            }
+
+            fetch('/asset/dimension/save/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    alert('保存成功');
+                    $('#dimension-modal').modal('hide');
+                    // 重新加载页面以显示更新后的维度设置
+                    location.reload();
+                } else {
+                    alert('保存失败: ' + result.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('保存过程中发生错误');
+            });
+        }
 
         // 删除维度授权
         function deleteDimension(dimensionId, fieldName) {
@@ -738,16 +779,90 @@ function saveDimension() {
             }
         }
 
+        // 删除字段
+        function deleteField(fieldName) {
+            if (confirm('确定要删除字段 "' + fieldName + '" 吗？这将删除该字段的所有维度设置！')) {
+                const data = {
+                    field_name: fieldName
+                };
 
+                fetch('/asset/delete-field/{{ asset.assetID }}/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        alert('字段删除成功');
+                        // 移除字段面板
+                        document.getElementById('field-' + fieldName.replace(/[^a-zA-Z0-9]/g, '-')).remove();
+
+                        // 如果没有任何字段了，显示空状态
+                        const fieldsContainer = document.getElementById('fields-container');
+                        if (fieldsContainer.children.length === 0) {
+                            fieldsContainer.innerHTML = '<div class="empty-state"><p>暂无字段，请先添加字段</p></div>';
+                        }
+                    } else {
+                        alert('字段删除失败: ' + result.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('删除字段时发生错误');
+                });
+            }
+        }
 
         // 时间维度选择显示明细输入框
         document.getElementById('time-dimension').addEventListener('change', function() {
             const detailGroup = document.getElementById('time-detail-group');
-            if (this.value === 'minutes' || this.value === 'hours' || this.value === 'weeks' ||
-                this.value === 'months' || this.value === 'quarters' || this.value === 'years') {
+            const timeDetailInput = document.querySelector('input[name="time_detail"]');
+
+            // 所有有时间明细的选项都显示输入框
+            if (this.value === 'realtime' || this.value === 'minutes' || this.value === 'hours' ||
+                this.value === 'days' || this.value === 'weeks' || this.value === 'months' ||
+                this.value === 'quarters' || this.value === 'years') {
                 detailGroup.style.display = 'block';
+
+                // 如果是实时级，设置默认值（但允许用户修改）
+                if (this.value === 'realtime' && !timeDetailInput.value) {
+                    timeDetailInput.value = '实时';
+                }
+
+                // 根据选择设置占位符提示
+                switch(this.value) {
+                    case 'realtime':
+                        timeDetailInput.placeholder = '例如：实时、即时';
+                        break;
+                    case 'minutes':
+                        timeDetailInput.placeholder = '例如：30分钟、15分钟';
+                        break;
+                    case 'hours':
+                        timeDetailInput.placeholder = '例如：2小时、6小时';
+                        break;
+                    case 'days':
+                        timeDetailInput.placeholder = '例如：1天、7天';
+                        break;
+                    case 'weeks':
+                        timeDetailInput.placeholder = '例如：2周、4周';
+                        break;
+                    case 'months':
+                        timeDetailInput.placeholder = '例如：1个月、3个月';
+                        break;
+                    case 'quarters':
+                        timeDetailInput.placeholder = '例如：1季度、2季度';
+                        break;
+                    case 'years':
+                        timeDetailInput.placeholder = '例如：1年、2年';
+                        break;
+                }
             } else {
                 detailGroup.style.display = 'none';
+                timeDetailInput.value = '';
             }
         });
 

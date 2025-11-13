@@ -382,6 +382,8 @@ class AssetDimension(models.Model):
         ('realtime', '实时级'),
         ('minutes', '*分钟'),
         ('hours', '*小时'),
+        ('days', '*天'),
+
         ('weeks', '*周'),
         ('months', '*月'),
         ('quarters', '*季度'),

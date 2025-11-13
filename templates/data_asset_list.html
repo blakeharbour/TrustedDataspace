@@ -279,15 +279,9 @@
                         </a>
 {#                        <a href="{% url 'asset_field_dimension' asset.assetID %}" class="btn btn-info radius btn-sm">#}
 {#    <i class="Hui-iconfont">&#xe695;</i> 资产明细</a>#}
-                         {% if asset.assetOwner == user.com %}
-                    <a href="{% url 'asset_field_dimension' asset.assetID %}" class="btn btn-info radius btn-sm">
-                        <i class="Hui-iconfont">&#xe695;</i> 资产明细
-                    </a>
-                {% else %}
-                    <a href="javascript:void(0);" class="btn btn-info radius btn-sm disabled" style="opacity: 0.5; cursor: not-allowed;" title="无权设置其他机构资产的共享维度">
-                        <i class="Hui-iconfont">&#xe695;</i> 资产明细
-                    </a>
-                {% endif %}
+                        <a href="{% url 'asset_field_dimension' asset.assetID %}" class="btn btn-info radius btn-sm">
+                <i class="Hui-iconfont">&#xe695;</i> 资产明细
+            </a>
                     </td>
                 </tr>
             {% endfor %}
