@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <head>
     <meta charset="UTF-8">
-    <title>数据资产列表</title>
+    <title>数据资产字段维度管理</title>
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
@@ -23,11 +22,10 @@
 	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
 	<script>DD_belatedPNG.fix('*');</script>
 	<![endif]-->
-	<!--/meta 作为公共模版分离出去-->
 
 	<meta name="keywords" content="h-ui.admin.pro v1.0,H-ui网站后台模版,后台模版下载,后台管理系统模版,HTML后台模版">
 	<meta name="description" content="h-ui.admin.pro v1.0，是一款由国人开发的轻量级扁平化网站后台模板，完全免费开源的网站后台管理系统模版，适合中小型CMS后台系统。">
-        <style>
+    <style>
         .field-panel {
             margin-bottom: 20px;
             border: 1px solid #e6e6e6;
@@ -68,65 +66,71 @@
             font-size: 12px;
             margin-left: 10px;
         }
+        .no-dimensions-hint {
+            text-align: center;
+            padding: 10px;
+            color: #999;
+            font-style: italic;
+        }
     </style>
-</head>
 </head>
 <body>
- <style>
-    #menu-guest .Hui-menu-title,
-    #menu-guest .Hui-menu-item a {
-        color: #FFFFFF !important;  /* 亮白色 */
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
-    }
+    <style>
+        #menu-guest .Hui-menu-title,
+        #menu-guest .Hui-menu-item a {
+            color: #FFFFFF !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
 
-    #menu-data-confirmation .Hui-menu-title,
-    #menu-data-confirmation .Hui-menu-item a {
-        color: #FFFFFF !important;  /* 亮白色 */
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 增加文字对比度 */
-    }
+        #menu-data-confirmation .Hui-menu-title,
+        #menu-data-confirmation .Hui-menu-item a {
+            color: #FFFFFF !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
     </style>
- {% if messages %}
-<script>
-    {% for message in messages %}
-        alert("{{ message }}");
-    {% endfor %}
-</script>
-{% endif %}
-	<aside class="Hui-admin-aside-wrapper">
-		<div class="Hui-admin-logo-wrapper">
-			<a class="logo navbar-logo" href="/aboutHui.shtml">
-				<i class="va-m iconpic global-logo"></i>
-				<span class="va-m">可信数据空间</span>
-			</a>
-		</div>
-		<div class="Hui-admin-menu-dropdown bk_2">
+
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            alert("{{ message }}");
+        {% endfor %}
+    </script>
+    {% endif %}
+
+    <aside class="Hui-admin-aside-wrapper">
+        <div class="Hui-admin-logo-wrapper">
+            <a class="logo navbar-logo" href="/aboutHui.shtml">
+                <i class="va-m iconpic global-logo"></i>
+                <span class="va-m">可信数据空间</span>
+            </a>
+        </div>
+        <div class="Hui-admin-menu-dropdown bk_2">
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li ><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
-					</ul>
-				</dd>
-			</dl>
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 用户管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/user-list/" title="用户管理">用户管理</a></li>
+                    </ul>
+                </dd>
+            </dl>
             <dl id="menu-data-confirmation" class="Hui-menu">
-              <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-              <dd class="Hui-menu-item" style="display:block">
-                <ul>
-                  <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
-                </ul>
-              </dd>
+                <dt class="Hui-menu-title"><i class="Hui-iconfont">&#xe616;</i> 数据确权<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/data-confirmation/" title="数据确权">数据确权</a></li>
+                    </ul>
+                </dd>
             </dl>
 
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li class="current"><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
-					</ul>
-				</dd>
-
-			</dl>
-             <dl id="menu-guest" class="Hui-menu">
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 数据管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li class="current"><a href="http://127.0.0.1:8000/data_asset_list/" title="数据列表">数据列表</a></li>
+                    </ul>
+                </dd>
+            </dl>
+            <dl id="menu-guest" class="Hui-menu">
                 <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 项目信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
                     <ul>
@@ -138,103 +142,95 @@
                 </dd>
             </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
-					</ul>
-				</dd>
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i> 存证信息管理<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
-					</ul>
-				</dd>
-			</dl>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/records/" title="数据存证信息">数据存证信息</a></li>
+                    </ul>
+                </dd>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+                    </ul>
+                </dd>
+            </dl>
             <dl id="menu-guest" class="Hui-menu">
-				<dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
+                <dt class="Hui-menu-title selected"><i class="Hui-iconfont">&#xe60d;</i>数据安全共享方法<i class="Hui-iconfont Hui-admin-menu-dropdown-arrow">&#xe6d5;</i></dt>
                 <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
-					</ul>
-				</dd>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/wb-interface/" title="数据接口">数据接口</a></li>
+                    </ul>
+                </dd>
                 <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
-					</ul>
-				</dd>
-				<dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
-					</ul>
-				</dd>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+                    </ul>
+                </dd>
                 <dd class="Hui-menu-item" style="display:block">
-					<ul>
-						<li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
-					</ul>
-				</dd>
-			</dl>
-		</div>
-	</aside>
-     <div class="Hui-admin-aside-mask"></div>
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/index/" title="隐私计算">隐私计算</a></li>
+                    </ul>
+                </dd>
+                <dd class="Hui-menu-item" style="display:block">
+                    <ul>
+                        <li><a href="http://127.0.0.1:8000/mutiindex/" title="密文计算">密文计算</a></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div>
+    </aside>
+    <div class="Hui-admin-aside-mask"></div>
 
-	<div class="Hui-admin-dislpayArrow">
-		<a href="javascript:void(0);" onClick="displaynavbar(this)">
-			<i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
-			<i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
-		</a>
-	</div>
-	<section class="Hui-admin-article-wrapper">
-		<!--_header 作为公共模版分离出去-->
-		<header class="Hui-navbar">
-			<div class="navbar">
-				<div class="container-fluid clearfix">
-          <nav id="Hui-topNav" class="nav navbar-nav">
-            <ul class="clearfix">
-              {% comment %}<li><a href="">顶部菜单</a></li>{% endcomment %}
-              <li class="dropDown dropDown_hover">
-                {% comment %}<a class="dropDown_A" href="javascript:;">顶部菜单</a>{% endcomment %}
-                <ul class="dropDown-menu menu radius box-shadow">
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                  <li class="">
-                    <a href="#">二级导航</a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </nav>
-					<nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
-						<ul class="clearfix">
-							{% comment %}<li>超级管理员</li>{% endcomment %}
-							<li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
-								<ul class="dropDown-menu menu radius box-shadow">
-									<li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
-									<li><a href="#">切换账户</a></li>
-									<li><a href="#">退出</a></li>
-								</ul>
-							</li>
-</ul>
-					</nav>
-				</div>
-			</div>
-		</header>
-		<!--/_header 作为公共模版分离出去-->
-		<div class="Hui-admin-article">
-			<nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
-				首页
-				<span class="c-gray en">/</span>
-				数据管理
-				<span class="c-gray en">/</span>
-				数据列表
+    <div class="Hui-admin-dislpayArrow">
+        <a href="javascript:void(0);" onClick="displaynavbar(this)">
+            <i class="Hui-iconfont Hui-iconfont-left">&#xe6d4;</i>
+            <i class="Hui-iconfont Hui-iconfont-right">&#xe6d7;</i>
+        </a>
+    </div>
+    <section class="Hui-admin-article-wrapper">
+        <header class="Hui-navbar">
+            <div class="navbar">
+                <div class="container-fluid clearfix">
+                    <nav id="Hui-topNav" class="nav navbar-nav">
+                        <ul class="clearfix">
+                            <li class="dropDown dropDown_hover">
+                                <ul class="dropDown-menu menu radius box-shadow">
+                                    <li class=""><a href="#">二级导航</a></li>
+                                    <li class=""><a href="#">二级导航</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                    <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+                        <ul class="clearfix">
+                            <li class="dropDown dropDown_hover"> <a href="#" class="dropDown_A">admin <i class="Hui-iconfont">&#xe6d5;</i></a>
+                                <ul class="dropDown-menu menu radius box-shadow">
+                                    <li><a href="javascript:;" onClick="myselfinfo()">个人信息</a></li>
+                                    <li><a href="#">切换账户</a></li>
+                                    <li><a href="#">退出</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <div class="Hui-admin-article">
+            <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+                首页
                 <span class="c-gray en">/</span>
-				数据资产明细
+                数据管理
+                <span class="c-gray en">/</span>
+                数据列表
+                <span class="c-gray en">/</span>
+                数据资产明细
                 {% if not is_owner %}
                 <span class="view-only-badge">只读视图</span>
                 {% endif %}
-			</nav>
+            </nav>
 
- <article class="Hui-admin-content clearfix">
+            <article class="Hui-admin-content clearfix">
                 <div class="panel mt-20">
                     <div class="panel-body">
                         <div class="clearfix">
@@ -308,101 +304,107 @@
                                         {% endif %}
                                     </h5>
                                 </div>
-                                <div class="panel-body">
-                                    <!-- 字段列表 - 排成一列 -->
-                                    <div id="fields-container">
-                                        {% for field_name in field_names %}
-                                            <div class="mb-20" id="field-{{ field_name|slugify }}">
-                                                <div class="panel panel-primary field-panel">
-                                                    <div class="field-header">
-                                                        <span class="field-title">{{ field_name }}</span>
-                                                        {% if is_owner %}
-                                                        <button class="btn btn-success btn-sm" onclick="addDimensionForField('{{ field_name }}')">
-                                                            <i class="Hui-iconfont">&#xe600;</i> 统一授权
-                                                        </button>
-                                                        <button class="btn btn-danger btn-sm" onclick="deleteField('{{ field_name }}')">
-                                                            <i class="Hui-iconfont">&#xe6e2;</i> 删除字段
-                                                        </button>
-                                                        {% endif %}
-                                                    </div>
-                                                    <div class="field-body">
-                                                        <table class="table table-bordered table-hover table-sm dimension-table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th width="15%">数据需求方</th>
-                                                                    <th width="15%">安全维度</th>
-                                                                    <th width="20%">时间维度</th>
-                                                                    <th width="20%">空间维度</th>
-                                                                    <th width="15%">业务维度</th>
-                                                                    {% if is_owner %}
-                                                                    <th width="15%">操作</th>
-                                                                    {% endif %}
-                                                                </tr>
-                                                            </thead>
-                                                            <!-- 在 asset_field_dimension.html 中，更新表格显示部分 -->
-<!-- 在表格中正确显示维度信息 -->
-<tbody id="dimension-{{ field_name|slugify }}-list">
-    {% for dimension in dimensions %}
-        {% if dimension.field_name == field_name and dimension.target_company != "field_definition" %}
-            <tr>
-                <td>{{ dimension.target_company }}</td>
-                <td>{{ dimension.get_security_dimension_display|default:"-" }}</td>
-                <td>
-                    {% if dimension.time_dimension %}
-                        {{ dimension.get_time_dimension_display }}
-                        {% for detail in dimension_details %}
-                            {% if detail.field_name == field_name and detail.target_company == dimension.target_company and detail.sub_dimension == 'time' %}
-                                <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-                <td>
-                    {% if dimension.space_dimension %}
-                        {{ dimension.get_space_dimension_display }}
-                        {% for detail in dimension_details %}
-                            {% if detail.field_name == field_name and detail.target_company == dimension.target_company and detail.sub_dimension == 'space' %}
-                                <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
-                            {% endif %}
-                        {% endfor %}
-                    {% else %}
-                        -
-                    {% endif %}
-                </td>
-                <td>{{ dimension.get_business_dimension_display|default:"-" }}</td>
-                {% if is_owner %}
-                <td>
-                    <button class="btn btn-primary btn-xs" onclick="editDimension({{ dimension.id }})">编辑</button>
-                    <button class="btn btn-danger btn-xs" onclick="deleteDimension({{ dimension.id }}, '{{ field_name }}')">删除</button>
-                </td>
-                                                {% endif %}
-                                            </tr>
+                            <!-- 在 asset_field_dimension.html 中 -->
+<div class="panel-body">
+    <!-- 字段列表 - 排成一列 -->
+    <div id="fields-container">
+        {% for field in field_list %}
+            <div class="mb-20" id="field-{{ field.name|slugify }}">
+                <div class="panel panel-primary field-panel">
+<div class="field-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <span class="field-title" style="font-size: 18px; font-weight: bold;">{{ field.name }}</span>
+    {% if is_owner %}
+    <div class="field-actions">
+        <button class="btn btn-success btn-sm" onclick="addDimensionForField('{{ field.name }}')" style="margin-left: 10px;">
+            <i class="Hui-iconfont">&#xe600;</i> 统一授权
+        </button>
+        <button class="btn btn-danger btn-sm" onclick="deleteField('{{ field.name }}')" style="margin-left: 10px;">
+            <i class="Hui-iconfont">&#xe6e2;</i> 删除字段
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+                    <!-- 只有当字段有维度设置时才显示维度表格 -->
+                    {% if field.has_dimensions %}
+                    <div class="field-body">
+                        <table class="table table-bordered table-hover table-sm dimension-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">数据需求方</th>
+                                    <th width="15%">安全维度</th>
+                                    <th width="20%">时间维度</th>
+                                    <th width="20%">空间维度</th>
+                                    <th width="15%">业务维度</th>
+                                    {% if is_owner %}
+                                    <th width="15%">操作</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody id="dimension-{{ field.name|slugify }}-list">
+                                {% for dimension in dimensions %}
+                                    {% if dimension.field_name == field.name and dimension.target_company != "field_definition" %}
+                                    <tr>
+                                        <td>{{ dimension.target_company }}</td>
+                                        <td>{{ dimension.get_security_dimension_display|default:"-" }}</td>
+                                        <td>
+                                            {% if dimension.time_dimension %}
+                                                {{ dimension.get_time_dimension_display }}
+                                                {% for detail in dimension_details %}
+                                                    {% if detail.field_name == field.name and detail.target_company == dimension.target_company and detail.sub_dimension == 'time' %}
+                                                        <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if dimension.space_dimension %}
+                                                {{ dimension.get_space_dimension_display }}
+                                                {% for detail in dimension_details %}
+                                                    {% if detail.field_name == field.name and detail.target_company == dimension.target_company and detail.sub_dimension == 'space' %}
+                                                        <br><small class="text-muted">{{ detail.sub_dimension_detail }}</small>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ dimension.get_business_dimension_display|default:"-" }}</td>
+                                        {% if is_owner %}
+                                        <td>
+                                            <button class="btn btn-primary btn-xs" onclick="editDimension({{ dimension.id }})">编辑</button>
+                                            <button class="btn btn-danger btn-xs" onclick="deleteDimension({{ dimension.id }}, '{{ field.name }}')">删除</button>
+                                        </td>
                                         {% endif %}
-                                    {% empty %}
-                                        <tr>
-                                            <td colspan="{% if is_owner %}6{% else %}5{% endif %}" class="text-center">
-                                                {% if is_owner %}
-                                                    暂无维度设置
-                                                {% else %}
-                                                    暂无与您机构相关的维度设置
-                                                {% endif %}
-                                            </td>
-                                        </tr>
-                                    {% endfor %}
-                                </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% empty %}
-                                            <div class="empty-state">
-                                                <p>暂无字段，请先添加字段</p>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                                    </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="{% if is_owner %}6{% else %}5{% endif %}" class="text-center">
+                                            暂无维度设置
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <!-- 没有维度设置时显示提示 -->
+                    <div class="no-dimensions-hint">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <p>暂无字段，请先添加字段</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
                             </div>
                         </div>
                     </div>
@@ -526,19 +528,15 @@
     </div>
     {% endif %}
 
+    <script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
+    <script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
+    <script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+    <script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
+    <script type="text/javascript" src="/static/static/business/js/main.js"></script>
 
-<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
-	<script type="text/javascript" src="/static/lib/layer/2.4/layer.js"></script>
-	<script type="text/javascript" src="/static/static/h-ui/js/H-ui.min.js"></script>
-	<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
-	<!--/_footer /作为公共模版分离出去-->
-
-	<!--请在下方写此页面业务相关的脚本-->
-	<script type="text/javascript" src="/static/lib/datatables/1.10.15/jquery.dataTables.min.js"></script>
-	<script type="text/javascript" src="/static/lib/laypage/1.2/laypage.js"></script>
-	<script type="text/javascript" src="/static/static/business/js/main.js"></script>
-
-<script>
+    <script>
         // 添加新字段
         function addNewField() {
             const fieldName = document.getElementById('new-field-name').value;
@@ -606,24 +604,8 @@
                             <i class="Hui-iconfont">&#xe6e2;</i> 删除字段
                         </button>
                     </div>
-                    <div class="field-body">
-                        <table class="table table-bordered table-hover table-sm dimension-table">
-                            <thead>
-                                <tr>
-                                    <th width="15%">数据需求方</th>
-                                    <th width="15%">安全维度</th>
-                                    <th width="20%">时间维度</th>
-                                    <th width="20%">空间维度</th>
-                                    <th width="15%">业务维度</th>
-                                    <th width="15%">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="dimension-${fieldName.replace(/[^a-zA-Z0-9]/g, '-')}-list">
-                                <tr>
-                                    <td colspan="6" class="text-center">暂无维度设置</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="no-dimensions-hint">
+                        该字段暂无维度设置
                     </div>
                 </div>
             `;
@@ -780,43 +762,91 @@
         }
 
         // 删除字段
+        // 删除字段函数
         function deleteField(fieldName) {
-            if (confirm('确定要删除字段 "' + fieldName + '" 吗？这将删除该字段的所有维度设置！')) {
-                const data = {
-                    field_name: fieldName
-                };
+    if (confirm('确定要删除字段 "' + fieldName + '" 吗？这将删除该字段的所有维度设置！')) {
+        const data = { field_name: fieldName };
 
-                fetch('/asset/delete-field/{{ asset.assetID }}/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify(data)
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        alert('字段删除成功');
-                        // 移除字段面板
-                        document.getElementById('field-' + fieldName.replace(/[^a-zA-Z0-9]/g, '-')).remove();
-
-                        // 如果没有任何字段了，显示空状态
-                        const fieldsContainer = document.getElementById('fields-container');
-                        if (fieldsContainer.children.length === 0) {
-                            fieldsContainer.innerHTML = '<div class="empty-state"><p>暂无字段，请先添加字段</p></div>';
-                        }
-                    } else {
-                        alert('字段删除失败: ' + result.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('删除字段时发生错误');
-                });
+        fetch("{% url 'delete_field' asset.assetID %}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert('字段删除成功');
+                location.reload(); // 简单可靠的刷新方式
+            } else {
+                alert('字段删除失败: ' + result.message);
             }
-        }
-
+        })
+        .catch(error => {
+            alert('删除字段时发生错误: ' + error.message);
+        });
+    }
+}
+{#function deleteField(fieldName) {#}
+{#    if (confirm('确定要删除字段 "' + fieldName + '" 吗？这将删除该字段的所有维度设置！')) {#}
+{#        const data = {#}
+{#            field_name: fieldName#}
+{#        };#}
+{##}
+{#        // 显示加载状态#}
+{#        const deleteBtn = event.target;#}
+{#        const originalText = deleteBtn.innerHTML;#}
+{#        deleteBtn.innerHTML = '<i class="Hui-iconfont">&#xe6d7;</i> 删除中...';#}
+{#        deleteBtn.disabled = true;#}
+{##}
+{#        // 使用 Django 的 URL 模板标签#}
+{#        const url = "{% url 'delete_field' asset.assetID %}";#}
+{#        console.log('删除字段URL:', url); // 调试信息#}
+{##}
+{#        fetch(url, {#}
+{#            method: 'POST',#}
+{#            headers: {#}
+{#                'Content-Type': 'application/json',#}
+{#                'X-CSRFToken': getCookie('csrftoken')#}
+{#            },#}
+{#            body: JSON.stringify(data)#}
+{#        })#}
+{#        .then(response => {#}
+{#            if (!response.ok) {#}
+{#                throw new Error(`HTTP错误! 状态码: ${response.status}`);#}
+{#            }#}
+{#            return response.json();#}
+{#        })#}
+{#        .then(result => {#}
+{#            if (result.success) {#}
+{#                alert('字段删除成功');#}
+{#                // 移除字段面板#}
+{#                const fieldElement = document.getElementById('field-' + fieldName.replace(/[^a-zA-Z0-9]/g, '-'));#}
+{#                if (fieldElement) {#}
+{#                    fieldElement.remove();#}
+{#                }#}
+{##}
+{#                // 如果没有任何字段了，显示空状态#}
+{#                const fieldsContainer = document.getElementById('fields-container');#}
+{#                if (fieldsContainer.children.length === 0) {#}
+{#                    fieldsContainer.innerHTML = '<div class="empty-state"><p>暂无字段，请先添加字段</p></div>';#}
+{#                }#}
+{#            } else {#}
+{#                alert('字段删除失败: ' + result.message);#}
+{#            }#}
+{#        })#}
+{#        .catch(error => {#}
+{#            console.error('Error:', error);#}
+{#            alert('删除字段时发生错误: ' + error.message);#}
+{#        })#}
+{#        .finally(() => {#}
+{#            // 恢复按钮状态#}
+{#            deleteBtn.innerHTML = originalText;#}
+{#            deleteBtn.disabled = false;#}
+{#        });#}
+{#    }#}
         // 时间维度选择显示明细输入框
         document.getElementById('time-dimension').addEventListener('change', function() {
             const detailGroup = document.getElementById('time-detail-group');

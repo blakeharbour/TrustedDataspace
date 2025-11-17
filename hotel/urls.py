@@ -107,6 +107,7 @@ path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name=
     path('asset/dimension/save/', views.save_dimension, name='save_dimension'),
     path('asset/dimension/delete/<int:dimension_id>/', views.delete_dimension, name='delete_dimension'),
     path('asset/add-field/<int:asset_id>/', views.add_field, name='add_field'),
+    path('asset/delete-field/<int:asset_id>/', views.delete_field, name='delete_field'),
 
 
 

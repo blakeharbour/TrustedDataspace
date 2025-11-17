@@ -77,6 +77,7 @@ class DataAsset(models.Model):
     assetID = models.AutoField(primary_key=True)
     # 数据资产名称
     assetName = models.CharField(max_length=100, verbose_name="名称")
+    assetEnName = models.CharField(max_length=255, verbose_name="资产英文名", null=True, blank=True)
     # 数据所有者
     assetOwner = models.CharField(max_length=100, verbose_name="所有者")
     # 数据字段描述
@@ -109,6 +110,7 @@ class DataAsset(models.Model):
         verbose_name_plural = "数据资产"
 class AssetRecord(models.Model):
     assetName = models.CharField(max_length=255, verbose_name="资产名称")
+    assetEnName = models.CharField(max_length=255, verbose_name="资产英文名",null=True, blank=True)
     assetOwner =models.CharField(max_length=255, verbose_name="资产所有者")
     assetFormat = models.CharField(max_length=100, verbose_name="资产格式")
     assetLevel = models.CharField(max_length=100, verbose_name="资产级别")
@@ -392,6 +394,7 @@ class AssetDimension(models.Model):
 
     SPACE_SUB_CHOICES = [
         ('all_railway', '全路'),
+        ('line', '线路'),
         ('railway_bureau', '路局内'),
         ('station', '站'),
         ('section', '段'),
