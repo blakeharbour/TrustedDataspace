@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>查看共享数据集</title>
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="Bookmark" href="favicon.ico" >
+	<link rel="Shortcut Icon" href="favicon.ico" />
+	<!--[if lt IE 9]>
+	<script type="text/javascript" src="/static/lib/html5.js"></script>
+	<script type="text/javascript" src="/static/lib/respond.min.js"></script>
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui/css/H-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/css/h-ui.admin.pro.min.css" />
+	<!-- 替换为Font Awesome 4.0.3 -->
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+	<link rel="stylesheet" type="text/css" href="/static/static/h-ui.admin.pro/skin/default/skin.css" id="skin" />
+	<link rel="stylesheet" type="text/css" href="/static/static/business/css/style.css" />
+	<!--[if IE 6]>
+	<script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js" ></script>
+	<script>DD_belatedPNG.fix('*');</script>
+	<![endif]-->
+</head>
+<body>
+<style>
+    #menu-guest .Hui-menu-title,
+    #menu-guest .Hui-menu-item a {
+        color: #FFFFFF !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    #menu-data-confirmation .Hui-menu-title,
+    #menu-data-confirmation .Hui-menu-item a {
+        color: #FFFFFF !important;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    /* 数据集信息卡片样式 */
+    .dataset-info-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .dataset-id {
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .dataset-meta {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .dataset-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .dataset-meta-item i {
+        font-size: 18px;
+    }
+
+    /* 数据预览表格样式 */
+    .data-preview-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .data-preview-table thead {
+        background: #f8f9fa;
+    }
+
+    .data-preview-table th {
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #333;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .data-preview-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid #e9ecef;
+        color: #666;
+    }
+
+    .data-preview-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+
+    /* 按钮样式 */
+    .btn-download {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 30px;
+        font-size: 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .no-permission-notice {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 20px 0;
+        color: #856404;
+    }
+
+    .empty-dataset-notice {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        padding: 20px;
+        margin: 20px 0;
+        color: #721c24;
+        text-align: center;
+    }
+
+    .preview-container {
+        max-height: 600px;
+        overflow: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin-top: 20px;
+    }
+</style>
+
+<!-- 侧边栏 -->
+<aside class="Hui-admin-aside-wrapper">
+    <div class="Hui-admin-logo-wrapper">
+        <a class="logo navbar-logo" href="/aboutHui.shtml">
+            <i class="va-m iconpic global-logo"></i>
+            <span class="va-m">可信数据空间</span>
+        </a>
+    </div>
+    <div class="Hui-admin-menu-dropdown bk_2">
+        <dl id="menu-user" class="Hui-menu">
+            <dt class="Hui-menu-title"><i class="fa fa-users"></i> 用户管理<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/user-list/" title="用户管理">用户管理</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-data-confirmation" class="Hui-menu">
+            <dt class="Hui-menu-title selected"><i class="fa fa-shield"></i> 数据确权<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li class="current"><a href="/data-confirmation/" title="数据确权">数据确权</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-data-asset" class="Hui-menu">
+            <dt class="Hui-menu-title"><i class="fa fa-database"></i> 数据资产管理<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/data_asset_list/" title="数据资产列表">数据资产列表</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-project" class="Hui-menu">
+            <dt class="Hui-menu-title"><i class="fa fa-sitemap"></i> 项目信息管理<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/established_project/" title="已建立项目">已建立项目</a></li>
+                </ul>
+                <ul>
+                    <li><a href="/pengding_project/" title="待接受项目">待接受项目</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-blockchain" class="Hui-menu">
+            <dt class="Hui-menu-title"><i class="fa fa-archive"></i> 区块链存证信息管理<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/records/" title="数据存证信息">数据存证信息</a></li>
+                </ul>
+            </dd>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/project_notarization/" title="项目存证信息">项目存证信息</a></li>
+                </ul>
+            </dd>
+        </dl>
+        <dl id="menu-share" class="Hui-menu">
+            <dt class="Hui-menu-title"><i class="fa fa-share"></i>数据安全共享方法<i class="fa fa-chevron-down Hui-admin-menu-dropdown-arrow"></i></dt>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/wb-interface/" title="数据接口">数据接口</a></li>
+                </ul>
+            </dd>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/sjsx-interface/" title="数据沙箱">数据沙箱</a></li>
+                </ul>
+            </dd>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/guest-list/" title="隐私计算">隐私计算</a></li>
+                </ul>
+            </dd>
+            <dd class="Hui-menu-item" style="display:block">
+                <ul>
+                    <li><a href="/multguest-list/" title="密文计算">密文计算</a></li>
+                </ul>
+            </dd>
+        </dl>
+    </div>
+</aside>
+<div class="Hui-admin-aside-mask"></div>
+
+<div class="Hui-admin-dislpayArrow">
+    <a href="javascript:void(0);" onClick="displaynavbar(this)">
+        <i class="fa fa-chevron-left Hui-iconfont-left"></i>
+        <i class="fa fa-chevron-right Hui-iconfont-right"></i>
+    </a>
+</div>
+
+<!-- 主内容区 -->
+<section class="Hui-admin-article-wrapper">
+    <header class="Hui-navbar">
+        <div class="navbar">
+            <div class="container-fluid clearfix">
+                <nav id="Hui-topNav" class="nav navbar-nav">
+                    <ul class="clearfix">
+                        <li class="dropDown dropDown_hover">
+                            <ul class="dropDown-menu menu radius box-shadow">
+                                <li class=""><a href="#">二级导航</a></li>
+                                <li class=""><a href="#">二级导航</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <nav id="Hui-userbar" class="nav navbar-nav navbar-userbar">
+                    <ul class="clearfix"></ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <div class="Hui-admin-article">
+        <!-- 面包屑导航 -->
+        <nav class="breadcrumb" style="background-color:#fff;padding: 0 24px">
+            首页
+            <span class="c-gray en">/</span>
+            数据确权
+            <span class="c-gray en">/</span>
+            <a href="{% url 'data_confirmation_list' %}">数据确权记录</a>
+            <span class="c-gray en">/</span>
+            共享数据集
+        </nav>
+
+        <div class="pd-20">
+            <!-- 页面标题和返回按钮 -->
+            <div class="text-c mb-20">
+                <div class="f-l">
+                    <h2 class="h2-title">
+                        <i class="fa fa-database"></i> 共享数据集
+                    </h2>
+                </div>
+                <div class="f-r">
+                    <a href="{% url 'data_confirmation_list' %}" class="btn btn-default">
+                        <i class="fa fa-arrow-left"></i> 返回列表
+                    </a>
+                </div>
+                <div class="cl"></div>
+            </div>
+
+            {% if dataset %}
+                <!-- 数据集信息卡片 -->
+                <div class="dataset-info-card">
+                    <div class="dataset-id">
+                        <i class="fa fa-file-excel-o"></i> {{ dataset.dataset_id }}
+                    </div>
+                    <div>数据资产：{{ dataset.original_table_name_cn }}</div>
+                    <div class="dataset-meta">
+                        <div class="dataset-meta-item">
+                            <i class="fa fa-table"></i>
+                            <span>{{ dataset.total_rows }} 行 × {{ dataset.total_columns }} 列</span>
+                        </div>
+                        <div class="dataset-meta-item">
+                            <i class="fa fa-hdd-o"></i>
+                            <span>{{ dataset.get_file_size_display }}</span>
+                        </div>
+                        <div class="dataset-meta-item">
+                            <i class="fa fa-clock-o"></i>
+                            <span>生成于 {{ dataset.created_at|date:"Y-m-d H:i:s" }}</span>
+                        </div>
+                        <div class="dataset-meta-item">
+                            <i class="fa fa-user"></i>
+                            <span>申请方：{{ dataset.user_identity }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 权限信息 -->
+                <div class="panel panel-default mb-20">
+                    <div class="panel-header">
+                        <h4 class="panel-title">
+                            <i class="fa fa-key"></i> 数据权限
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <div class="row cl">
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="info-item">
+                                    <label class="info-label">查看权限：</label>
+                                    <span class="info-value">
+                                        {% if dataset.has_view_permission %}
+                                            <i class="fa fa-check-circle text-success"></i> 已授予
+                                        {% else %}
+                                            <i class="fa fa-times-circle text-danger"></i> 未授予
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-6">
+                                <div class="info-item">
+                                    <label class="info-label">下载权限：</label>
+                                    <span class="info-value">
+                                        {% if dataset.has_download_permission %}
+                                            <i class="fa fa-check-circle text-success"></i> 已授予
+                                        {% else %}
+                                            <i class="fa fa-times-circle text-danger"></i> 未授予
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据集状态判断 -->
+                {% if dataset.processing_status == 'empty' %}
+                    <!-- 空数据集提示 -->
+                    <div class="empty-dataset-notice">
+                        <i class="fa fa-exclamation-triangle fa-3x"></i>
+                        <h3>数据集为空</h3>
+                        <p>根据您的权限配置和维度筛选条件，筛选后的数据集为空。</p>
+                        <p>请联系数据持有方调整权限配置。</p>
+                    </div>
+
+                {% elif dataset.processing_status == 'failed' %}
+                    <!-- 生成失败提示 -->
+                    <div class="empty-dataset-notice">
+                        <i class="fa fa-times-circle fa-3x"></i>
+                        <h3>数据集生成失败</h3>
+                        <p>{{ dataset.error_message }}</p>
+                        <p>请联系系统管理员处理。</p>
+                    </div>
+
+                {% else %}
+                    <!-- 正常数据集 -->
+
+                    <!-- 下载按钮 -->
+                    <div class="text-center mb-20">
+                        {% if dataset.has_download_permission %}
+                        <button type="button" class="btn-download" onclick="downloadDataset()">
+                            <i class="fa fa-download"></i> 下载数据集
+                        </button>
+                        {% else %}
+                        <button type="button" class="btn btn-secondary btn-lg" disabled>
+                            <i class="fa fa-download"></i> 下载数据集
+                        </button>
+                        <div class="no-permission-notice mt-10">
+                            <i class="fa fa-info-circle"></i>
+                            <strong>提示：</strong> 您没有下载权限。您申请的权限不包含下载权限，仅可在线预览数据。
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- 数据预览 -->
+                    {% if dataset.has_view_permission %}
+                    <div class="panel panel-default">
+                        <div class="panel-header">
+                            <h4 class="panel-title">
+                                <i class="fa fa-eye"></i> 数据预览（前50行）
+                            </h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="preview-container">
+                                {{ preview_html|safe }}
+                            </div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="no-permission-notice">
+                        <i class="fa fa-lock"></i>
+                        <strong>无查看权限：</strong> 您没有查看数据内容的权限。
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+            {% else %}
+                <!-- 未找到数据集 -->
+                <div class="panel panel-danger">
+                    <div class="panel-header">
+                        <h4 class="panel-title">
+                            <i class="fa fa-exclamation-triangle"></i> 错误
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <p class="text-danger">
+                            <i class="fa fa-times-circle"></i>
+                            未找到对应的共享数据集，可能该申请尚未审核通过或数据集生成失败。
+                        </p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript" src="/static/lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="/static/static/h-ui/js/H-ui.js"></script>
+<script type="text/javascript" src="/static/static/h-ui.admin.pro/js/h-ui.admin.pro.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        // 移除所有菜单的高亮
+        $('.Hui-menu').removeClass('selected');
+        $('.Hui-menu .Hui-menu-item li').removeClass('current');
+        $('.Hui-menu .Hui-menu-title').removeClass('selected');
+        
+        // 只高亮数据确权菜单
+        $('#menu-data-confirmation').addClass('selected');
+        $('#menu-data-confirmation .Hui-menu-title').addClass('selected');
+        $('#menu-data-confirmation .Hui-menu-item li').addClass('current');
+    });
+
+    // 下载数据集函数
+    function downloadDataset() {
+        {% if dataset and dataset.dataset_id %}
+        var downloadUrl = '/download-shared-dataset/{{ dataset.dataset_id }}/';
+        console.log('下载数据集:', downloadUrl);
+        window.location.href = downloadUrl;
+        {% else %}
+        alert('数据集信息不完整，无法下载');
+        {% endif %}
+    }
+
+    // 导航栏显示隐藏
+    function displaynavbar(obj){
+        if($(".Hui-admin-aside-wrapper").hasClass("aside-hide")){
+            $(".Hui-admin-aside-wrapper").removeClass("aside-hide");
+            $(obj).find("i").removeClass("fa-chevron-right").addClass("fa-chevron-left");
+        } else {
+            $(".Hui-admin-aside-wrapper").addClass("aside-hide");
+            $(obj).find("i").removeClass("fa-chevron-left").addClass("fa-chevron-right");
+        }
+    }
+</script>
+</body>
+</html>

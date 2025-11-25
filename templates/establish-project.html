@@ -516,7 +516,7 @@
               if (item.currentStatus!== '0' && item.currentStatus!== '1') {
                 disabledClass = " disabled";
               }
-             var actions = '<td>' +
+              var actions = '<td>' +
                  '<a title="修改" data-item=\'' + JSON.stringify(item) + '\' data-id="' + item.ID + '" onclick="project_edit(this)" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6df;</i></a> ' +
                  '<a title="删除" onclick="project_delete(\'' + item.projectName + '\', \'' + item.dataDemand + '\', \'' + item.dataOwner + '\', \'' + item.dataAsset + '\', \'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe6e2;</i></a> ' +
                  '<a title="提交" onclick="project_submit(\'' + item.ID + '\')" class="btn' + disabledClass + '"><i class="Hui-iconfont">&#xe600;</i></a>' +
@@ -642,7 +642,7 @@
         });
         layer.close(index);
     });
-}
+    }
 
 // 提交操作函数
     function project_submit(id) {
@@ -708,7 +708,7 @@ function sharingTypeResultShow(shareType, dataOwner,projectName) {
     console.log(dataOwner)
     console.log(currentUser.com)
     if (shareType === '接口交换')
-        // 存储 到sessionStorage
+        // 存储到sessionStorage
     {sessionStorage.setItem('target_id', targetId);
         sessionStorage.setItem('project_name', projectName);}
     if (shareType === '安全沙箱')

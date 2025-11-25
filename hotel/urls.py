@@ -249,13 +249,26 @@ path('asset/field-dimension/<int:asset_id>/', views.asset_field_dimension, name=
     path('data-confirmation/review/', views.data_right_application_list, name='data_right_application_list'),
     path('data-confirmation/review/<str:application_id>/', views.data_right_application_review,
          name='data_right_application_review'),
-#略
+    # 查看共享数据集-新添加
+    path('view-shared-dataset/<str:application_id>/',
+         views.view_shared_dataset,
+         name='view_shared_dataset'),
+    
+    # 通过record_id查看共享数据集
+    path('view-shared-dataset-by-record/<str:record_id>/',
+         views.view_shared_dataset_by_record,
+         name='view_shared_dataset_by_record'),
+
+    # 下载共享数据集-新添加
+    path('download-shared-dataset/<str:dataset_id>/',
+         views.download_shared_dataset,
+         name='download_shared_dataset'),
+
     path('data-confirmation/delete/<str:record_id>/', views.delete_data_confirmation_record, name='delete_data_confirmation_record'),
     path('data-confirmation/batch-delete/', views.batch_delete_data_confirmation_records, name='batch_delete_data_confirmation_records'),
     # AJAX接口URL
     path('api/data-confirmation/application/<str:application_id>/', views.get_application_detail,
          name='get_application_detail'),
-
     # 数据确权记录相关URLAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     # 数据资产管理
     path('data_asset_list/', views.data_asset_list, name='data_asset_list'),  # 确保配置正确

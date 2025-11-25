@@ -552,10 +552,6 @@
         comid: "{{current_user.comid}}"
     };
 
-    // 调试输出用户信息
-    console.log('当前用户:', currentUser);
-    console.log('用户公司:', currentUser.com);
-
 	// 跳转到审核详情页面
 	function goToReview(applicationId) {
 		window.location.href = "{% url 'data_right_application_review' 'APPLICATION_ID' %}".replace('APPLICATION_ID', applicationId);
@@ -599,8 +595,11 @@
 
             // 延迟检查搜索结果
             setTimeout(function() {
-                if ($('.application-card').length === 0 && !$('#unique-no-results').length) {
-                    // 如果没有结果，显示提示信息
+                // 【修复】先移除可能存在的旧提示，避免重复
+                $('#unique-no-results').remove();
+                
+                if ($('.application-card').length === 0) {
+                    // 如果没有结果，显示提示信息（只显示一次）
                     $('#unique-filter-notice').after(
                         '<div id="unique-no-results" class="alert alert-warning no-results-notice">' +
                         '<i class="Hui-iconfont">&#xe6df;</i> ' +
@@ -642,15 +641,8 @@
     autoFilterByUrlParams();
     checkSessionData();
 
-    // 监听页面上其他可能的刷新事件，清理重复提示
-    $(document).on('DOMNodeInserted', function(e) {
-        if ($(e.target).hasClass('filter-notice') && $(e.target).attr('id') !== 'unique-filter-notice') {
-            $(e.target).remove(); // 移除重复的提示
-        }
-        if ($(e.target).hasClass('no-results-notice') && $(e.target).attr('id') !== 'unique-no-results') {
-            $(e.target).remove(); // 移除重复的提示
-        }
-    });
+    // 【修复】移除DOMNodeInserted监听，改为在添加前先清理
+    // DOMNodeInserted已废弃且会导致重复触发
 
 		// 初始化下 拉选择框
 		if(typeof $.Huifold != 'undefined') {

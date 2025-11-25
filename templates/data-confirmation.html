@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -182,6 +183,7 @@
         <div class="pd-20">
             <!-- CSRF Token -->
             {% csrf_token %}
+            
             <!-- 页面标题和操作按钮 -->
             <div class="text-c mb-20">
                 <div class="f-l">
@@ -302,6 +304,18 @@
                                             <button type="button" class="btn btn-secondary btn-sm" onclick="viewDetail('{{ record.record_id }}', event)">
                                                 <i class="Hui-iconfont">&#xe665;</i> 查看详情
                                             </button>
+                                            <!-- 查看数据集按钮 - 仅在状态为"生效中"且有数据集时显示 -->
+                                            {% if record.status == 'active' %}
+                                                {% if record.shared_dataset %}
+                                                <button type="button" class="btn btn-primary btn-sm" onclick="viewDataset('{{ record.record_id }}', event)">
+                                                    <i class="Hui-iconfont">&#xe665;</i> 查看数据集
+                                                </button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-secondary btn-sm" disabled title="数据集生成中或不可用">
+                                                    <i class="Hui-iconfont">&#xe665;</i> 暂无数据集
+                                                </button>
+                                                {% endif %}
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -444,10 +458,6 @@
             comid: "{{current_user.comid}}"
         };
 
-        // 调试输出用户信息
-        console.log('当前用户:', currentUser);
-        console.log('用户公司:', currentUser.com);
-
         // 修复1：改进查看详情跳转函数
         function goToDetail(recordId) {
             // 构建详情页面URL - 使用相对路径更稳定
@@ -460,6 +470,16 @@
         function viewDetail(recordId, event) {
             event.stopPropagation();
             goToDetail(recordId);
+        }
+
+        // 查看数据集按钮的点击函数
+        function viewDataset(recordId, event) {
+            event.stopPropagation();
+            // 需要通过record找到对应的application_id
+            // 跳转到数据集详情页
+            var viewUrl = '/view-shared-dataset-by-record/' + recordId + '/';
+            console.log('查看数据集:', viewUrl);
+            window.location.href = viewUrl;
         }
 
         // 修复2：删除单个记录 - 现在支持所有状态的记录
@@ -569,18 +589,13 @@
             $('#menu-guest').removeClass('selected');
             $('#menu-guest .Hui-menu-item li').removeClass('current');
 
-            // 添加CSRF token到所 有AJAX请求
+            // 添加CSRF token到所有AJAX请求
             $.ajaxSetup({
                 beforeSend: function(xhr, settings) {
                     if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
                         xhr.setRequestHeader("X-CSRFToken", $('[name=csrfmiddlewaretoken]').val());
                     }
                 }
-            });
-
-            // 调试：输出页面上的记录ID，帮助排查跳转问题
-            $('.record-checkbox').each(function() {
-                console.log('记录ID:', $(this).val());
             });
         });
 

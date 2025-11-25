@@ -516,7 +516,7 @@ def useBlockchain(request):
         assetLevel = "低敏感"
 
     # 上传到区块链
-    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+    blockchain_url = "http://202.112.151.253:9090/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -608,7 +608,7 @@ def useBlockchainshaxiang(request):#刘书琳新增
         assetLevel = "低敏感"
 
     # 上传到区块链
-    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+    blockchain_url = "http://202.112.151.253:9090/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -701,7 +701,7 @@ def createinterface(request):
 
 
     # 上传到区块链
-    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+    blockchain_url = "http://202.112.151.253:9090/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -773,7 +773,7 @@ def createinterfacesx(request):
         assetLevel = "低敏感"
     print("资产信息：", assetOwner, assetFormat, assetLevel, assetPath, assetID)
     # 上传到区块链
-    blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+    blockchain_url = "http://202.112.151.253:9090/datasharing/addRaw"
 
     payload = {
         "data": "anydata"
@@ -1743,7 +1743,7 @@ def add_data_asset(request):
             )
 
             # 上传到区块链
-            blockchain_url = "http://192.168.1.135:8080/datasharing/addRaw"
+            blockchain_url = "http://202.112.151.253:9090/datasharing/addRaw"
             payload = {
                 "assetID": str(asset.assetID),
                 "assetName": asset.assetName,
@@ -2320,7 +2320,7 @@ def submit_project_toblockchain(request):
             blockchainDataStr = json.dumps(blockchainData)
 
             try:
-                response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                response = requests.put('http://202.112.151.253:9090/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                 if response.status_code == 200:
                     print("区块链接口响应:", response.json())
                     # 解析区块链返回的 payload
@@ -2445,7 +2445,7 @@ def delete_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://202.112.151.253:9090/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -2563,7 +2563,7 @@ def audit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://202.112.151.253:9090/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -2637,7 +2637,7 @@ def submit_project(request):
                     blockchainDataStr = json.dumps(blockchainData)
 
                     try:
-                        response = requests.put('http://192.168.1.135:8080/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
+                        response = requests.put('http://202.112.151.253:9090/datasharing/addRaw', data=blockchainDataStr, headers={'Content-Type': 'application/json'})
                         if response.status_code == 200:
                             print("区块链接口响应:", response.json())
                             # 解析区块链返回的 payload
@@ -2946,30 +2946,11 @@ from .models import (
     #BUSINESS_STAGE_CHOICES
 )
 
-def get_company_code_from_name(company_name):
-    """
-    将中文公司名称转换为英文代码
-    """
-    # 创建反向映射字典：中文名称 -> 英文代码
-    name_to_code_mapping = {
-        name: code for code, name in DATA_SOURCE_CHOICES
-    }
-
-    # 查找 对应的英文代码
-    company_code = name_to_code_mapping.get(company_name)
-    return company_code
-
-
 def get_user_company_code(user):
     """
-    获取用户对应的公司英文代码
+    获取用户对应的公司名称
     """
-    if not hasattr(user, 'com') or not user.com:
-        return None
-
-    company_code = get_company_code_from_name(user.com)
-    return company_code
-
+    return getattr(user, 'com', None)
 
 @login_required(login_url='/login/')
 def data_right_application_add(request):
@@ -3025,18 +3006,547 @@ def data_right_application_add(request):
     return render(request, 'data-confirmation-add.html', context)
 
 
+# ==================== 共享数据集生成函数-新添加 ====================
+def generate_shared_dataset(record_or_application):
+    """
+    根据数据确权申请或确权记录生成共享数据集
+
+    参数:
+        record_or_application: DataRightApplication 对象 或 DataRightRecord 对象
+
+    返回:
+        SharedDataset 对象
+    """
+    import pandas as pd
+    import io
+    from datetime import datetime, timedelta
+    from django.db import connection
+    from .models import SharedDataset, AssetDimension, AssetDimensionDetail, DataRightRecord, DataRightApplication
+
+    try:
+        # ========== 0. 判断参数类型并获取application ==========
+        if isinstance(record_or_application, DataRightRecord):
+            # 如果传入的是DataRightRecord，从中获取application
+            application = record_or_application.original_application
+            if not application:
+                raise ValueError("确权记录没有关联的申请记录")
+        elif isinstance(record_or_application, DataRightApplication):
+            # 如果传入的是DataRightApplication，直接使用
+            application = record_or_application
+        else:
+            raise ValueError(f"参数类型错误: {type(record_or_application)}")
+        
+        # ========== 1. 提取申请信息 ==========
+        applicant_identity = application.applicant  # 申请人身份（如"工务"）
+        data_source = application.target_data_name  # 数据来源/表名（中文，如"沿线气象观测数据"）
+        application_time = application.created_at  # 申请时间
+
+        # 查看权和下载权
+        # 只要申请被审核通过，就可以查看数据集
+        has_view = True
+        
+        # 下载权：申请了以下任意权限即可下载
+        # - 资源持有权 (resource_holding_right)
+        # - 加工使用权 (processing_use_right)
+        # - 转授权权 (reauthorization_right)
+        # - 再分发权 (redistribution_right)
+        has_download = (
+            application.resource_holding_right or 
+            application.processing_use_right or 
+            application.reauthorization_right or 
+            application.redistribution_right
+        )
+
+        print(f"========== 开始生成共享数据集 ==========")
+        print(f"申请人身份: {applicant_identity}")
+        print(f"数据来源: {data_source}")
+        print(f"申请时间: {application_time}")
+
+        # ========== 2. 表名映射（中文 -> 英文）-可以添加 ==========
+        TABLE_NAME_MAPPING = {
+            '遥感影像变化检测数据': 'yaoganyingxiang',
+            '沿线气象观测数据': 'yanxianqixiang',
+            '桥隧病害库': 'qiaosuibinghai',
+            '静态检查超限信息': 'jingtaibiancha',
+            '静态病害库': 'jingtaibinghai',
+            '钢轨伤损病害库': 'gangguishangsun',
+            '动态病害库': 'dongtaibinghai',
+            '地震预警与震感强度数据': 'dizhenyujing',
+            '车载运行数据': 'chezaiyunxing',
+            '车载晃车': 'chezaihuangche',
+            '雷达激光异物移动轨迹数据': 'leidajiguang'
+        }
+
+        table_name_en = TABLE_NAME_MAPPING.get(data_source)
+        if not table_name_en:
+            raise ValueError(f"未找到数据源 '{data_source}' 对应的表名")
+
+        print(f"英文表名: {table_name_en}")
+
+        # ========== 3. 读取原始表数据 ==========
+        with connection.cursor() as cursor:
+            cursor.execute(f"SELECT * FROM {table_name_en}")
+            columns = [col[0] for col in cursor.description]
+            rows = cursor.fetchall()
+
+        if not rows:
+            raise ValueError(f"表 {table_name_en} 中没有数据")
+
+        # 转为 DataFrame
+        df = pd.DataFrame(rows, columns=columns)
+        original_shape = df.shape
+        print(f"原始数据: {original_shape[0]} 行 × {original_shape[1]} 列")
+
+        # ========== 4. 业务维度处理（对列操作） ==========
+        print("\n========== 业务维度处理 ==========")
+
+        # 查询该用户身份对应的业务维度配置
+        business_dimensions = AssetDimension.objects.filter(
+            asset__assetNameCN=data_source,  # 根据中文表名匹配
+            target_company=applicant_identity  # 目标公司/身份
+        )
+
+        # 构建列操作映射: {列名: 操作类型}
+        column_operations = {}
+        for dim in business_dimensions:
+            column_operations[dim.field_name] = dim.business_dimension
+
+        print(f"找到 {len(column_operations)} 个业务维度配置")
+
+        # 处理每一列
+        columns_to_keep = []  # 保留的列
+        columns_to_aggregate = []  # 需要汇总的列
+
+        for col in df.columns:
+            operation = column_operations.get(col, '保留')  # 默认保留
+
+            if operation == '隐藏':
+                print(f"  - 列 '{col}': 隐藏")
+                # 不添加到 columns_to_keep
+            elif operation == '汇总':
+                print(f"  - 列 '{col}': 汇总")
+                columns_to_aggregate.append(col)
+                columns_to_keep.append(col)
+            else:  # '保留'
+                print(f"  - 列 '{col}': 保留")
+                columns_to_keep.append(col)
+
+        # 筛选列
+        df = df[columns_to_keep]
+        print(f"业务维度处理后: {df.shape[0]} 行 × {df.shape[1]} 列")
+
+        # ========== 5. 时间维度处理（对行操作） ==========
+        print("\n========== 时间维度处理 ==========")
+
+        # 找到第一个包含"日期"或"时间"的列
+        time_column = None
+        for col in df.columns:
+            if '日期' in col or '时间' in col:
+                time_column = col
+                break
+
+        if time_column:
+            print(f"找到时间列: {time_column}")
+
+            # 查询时间维度配置
+            time_detail = AssetDimensionDetail.objects.filter(
+                asset__assetNameCN=data_source,
+                target_company=applicant_identity,
+                field_name=time_column,
+                sub_dimension='time'
+            ).first()
+
+            if time_detail:
+                time_value = time_detail.sub_dimension_detail  # 如 "1年"、"6月"
+                print(f"时间筛选值: {time_value}")
+
+                # 解析时间值
+                if '年' in time_value:
+                    years = int(time_value.replace('年', ''))
+                    time_delta = timedelta(days=365 * years)
+                elif '月' in time_value:
+                    months = int(time_value.replace('月', ''))
+                    time_delta = timedelta(days=30 * months)
+                elif '日' in time_value or '天' in time_value:
+                    days = int(time_value.replace('日', '').replace('天', ''))
+                    time_delta = timedelta(days=days)
+                else:
+                    raise ValueError(f"无法解析时间值: {time_value}")
+
+                # 计算截止日期（申请时间 - t）
+                cutoff_date = application_time - time_delta
+                print(f"申请时间: {application_time}")
+                print(f"截止日期: {cutoff_date} (保留此日期之前的数据)")
+
+                # 转换时间列为 datetime 类型
+                df[time_column] = pd.to_datetime(df[time_column], format='%Y/%m/%d', errors='coerce')
+
+                # 筛选数据：保留 <= cutoff_date 的数据
+                df = df[df[time_column] <= cutoff_date]
+                print(f"时间维度处理后: {df.shape[0]} 行")
+            else:
+                print("未找到时间维度配置，跳过时间筛选")
+        else:
+            print("未找到时间列，跳过时间筛选")
+
+        # ========== 6. 空间维度处理（对行操作） ==========
+        print("\n========== 空间维度处理 ==========")
+
+        # 查询所有空间维度配置
+        space_details = AssetDimensionDetail.objects.filter(
+            asset__assetNameCN=data_source,
+            target_company=applicant_identity,
+            sub_dimension='space'
+        )
+
+        print(f"找到 {space_details.count()} 个空间维度配置")
+
+        # 对每个空间维度进行筛选（AND 关系）
+        for space_detail in space_details:
+            field_name = space_detail.field_name
+            filter_value = space_detail.sub_dimension_detail
+
+            if field_name not in df.columns:
+                print(f"  - 列 '{field_name}' 不存在，跳过")
+                continue
+
+            print(f"  - 列 '{field_name}': 筛选值 = '{filter_value}'")
+
+            # 判断筛选值类型
+            if '-' in filter_value and filter_value.replace('-', '').replace('.', '').isdigit():
+                # 数值范围: a-b
+                parts = filter_value.split('-')
+                if len(parts) == 2:
+                    try:
+                        min_val = float(parts[0])
+                        max_val = float(parts[1])
+
+                        # 转换列为数值类型
+                        df[field_name] = pd.to_numeric(df[field_name], errors='coerce')
+
+                        # 筛选范围
+                        df = df[(df[field_name] >= min_val) & (df[field_name] <= max_val)]
+                        print(f"    数值范围筛选: [{min_val}, {max_val}]，剩余 {df.shape[0]} 行")
+                    except ValueError:
+                        print(f"    无法解析数值范围: {filter_value}")
+            else:
+                # 文字匹配（包含连字符）
+                df = df[df[field_name].astype(str).str.contains(filter_value, na=False)]
+                print(f"    文字包含筛选: '{filter_value}'，剩余 {df.shape[0]} 行")
+
+        print(f"空间维度处理后: {df.shape[0]} 行 × {df.shape[1]} 列")
+
+        # ========== 7. 检查结果是否为空 ==========
+        if df.empty:
+            print("\n⚠️ 警告: 筛选后数据集为空")
+            # 创建空数据集记录
+            dataset = SharedDataset.objects.create(
+                data_right_record=None,  # 暂时为空，后续关联
+                original_table_name=table_name_en,
+                original_table_name_cn=data_source,
+                user_identity=applicant_identity,
+                has_view_permission=has_view,
+                has_download_permission=has_download,
+                application_time=application_time,
+                file_name=f"{data_source}_{applicant_identity}_空数据集.xlsx",
+                file_size=0,
+                total_rows=0,
+                total_columns=0,
+                processing_status='empty',
+                error_message='筛选后数据为空'
+            )
+            return dataset
+
+        # ========== 8. 生成 Excel 文件 ==========
+        print("\n========== 生成 Excel 文件 ==========")
+
+        # 使用内存中的字节流
+        excel_buffer = io.BytesIO()
+
+        # 写入 Excel
+        with pd.ExcelWriter(excel_buffer, engine='openpyxl') as writer:
+            df.to_excel(writer, index=False, sheet_name='共享数据')
+
+        # 获取二进制数据
+        excel_buffer.seek(0)
+        excel_data = excel_buffer.read()
+        file_size = len(excel_data)
+
+        print(f"Excel 文件生成成功，大小: {file_size / 1024:.2f} KB")
+
+        # ========== 9. 保存到数据库 ==========
+        print("\n========== 保存到数据库 ==========")
+
+        file_name = f"{data_source}_{applicant_identity}_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
+
+        dataset = SharedDataset.objects.create(
+            data_right_record=None,  # 暂时为空，后续在 data_right_application_review 中关联
+            original_table_name=table_name_en,
+            original_table_name_cn=data_source,
+            user_identity=applicant_identity,
+            has_view_permission=has_view,
+            has_download_permission=has_download,
+            application_time=application_time,
+            time_filter_value=time_detail.sub_dimension_detail if time_detail else None,
+            file_data=excel_data,  # 存储二进制数据
+            file_name=file_name,
+            file_size=file_size,
+            total_rows=df.shape[0],
+            total_columns=df.shape[1],
+            processing_status='completed'
+        )
+
+        print(f"✅ 数据集保存成功: {dataset.dataset_id}")
+        print(f"   - 总行数: {dataset.total_rows}")
+        print(f"   - 总列数: {dataset.total_columns}")
+        print(f"   - 文件大小: {file_size / 1024:.2f} KB")
+        print("========== 数据集生成完成 ==========\n")
+
+        # 返回字典格式（兼容调用方）
+        return {
+            'dataset_id': dataset.dataset_id,
+            'dataset_name': data_source,
+            'file_path': '',  # 不再使用文件路径
+            'file_name': file_name,
+            'file_size': file_size,
+            'total_rows': dataset.total_rows,
+            'total_columns': dataset.total_columns,
+            'dataset_object': dataset  # 返回对象本身，方便后续关联
+        }
+
+    except Exception as e:
+        print(f"\n❌ 数据集生成失败: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
+        # 创建失败记录
+        dataset = SharedDataset.objects.create(
+            data_right_record=None,
+            original_table_name=table_name_en if 'table_name_en' in locals() else '',
+            original_table_name_cn=data_source if 'data_source' in locals() else '',
+            user_identity=applicant_identity if 'applicant_identity' in locals() else '',
+            has_view_permission=False,
+            has_download_permission=False,
+            application_time=application_time if 'application_time' in locals() else timezone.now(),
+            file_name='生成失败.xlsx',
+            file_size=0,
+            total_rows=0,
+            total_columns=0,
+            processing_status='failed',
+            error_message=str(e)
+        )
+
+        return dataset
+
+
+# ==================== 查看共享数据集-新添加 ====================
 @login_required(login_url='/login/')
-def data_right_application_review(request, application_id):
+def view_shared_dataset(request, application_id):
+    """
+    查看共享数据集页面
+
+    参数:
+        application_id: 申请记录ID
+    """
+    try:
+        from .models import SharedDataset, DataRightRecord
+        import pandas as pd
+        import io
+
+        # 查找数据确权记录
+        data_right_record = DataRightRecord.objects.filter(
+            original_application__application_id=application_id
+        ).first()
+
+        if not data_right_record:
+            return render(request, 'view-shared-dataset.html', {
+                'dataset': None,
+                'preview_html': None
+            })
+
+        # 查找共享数据集
+        dataset = SharedDataset.objects.filter(
+            data_right_record=data_right_record
+        ).first()
+
+        if not dataset:
+            return render(request, 'view-shared-dataset.html', {
+                'dataset': None,
+                'preview_html': None
+            })
+
+        # 生成数据预览（仅在有查看权限且数据集不为空时）
+        preview_html = None
+        if dataset.has_view_permission and dataset.processing_status == 'completed' and dataset.file_data:
+            try:
+                # 从二进制数据读取Excel
+                excel_buffer = io.BytesIO(dataset.file_data)
+                df = pd.read_excel(excel_buffer, engine='openpyxl')
+
+                # 只显示前50行
+                df_preview = df.head(50)
+
+                # 转为HTML表格
+                preview_html = df_preview.to_html(
+                    classes='data-preview-table',
+                    index=False,
+                    border=0,
+                    escape=False
+                )
+            except Exception as e:
+                print(f"生成预览失败: {str(e)}")
+                preview_html = f'<p class="text-danger">预览加载失败：{str(e)}</p>'
+
+        return render(request, 'view-shared-dataset.html', {
+            'dataset': dataset,
+            'preview_html': preview_html
+        })
+
+    except Exception as e:
+        print(f"查看数据集失败: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return render(request, 'view-shared-dataset.html', {
+            'dataset': None,
+            'preview_html': None
+        })
+
+
+# ==================== 通过record_id查看共享数据集 ====================
+@login_required(login_url='/login/')
+def view_shared_dataset_by_record(request, record_id):
+    """
+    通过数据确权记录ID查看共享数据集
+    
+    参数:
+        record_id: 数据确权记录ID
+    """
+    try:
+        from .models import SharedDataset, DataRightRecord
+        
+        # 查找数据确权记录
+        record = get_object_or_404(DataRightRecord, record_id=record_id)
+        
+        # 如果有关联的申请记录，重定向到原有的view_shared_dataset
+        if record.original_application:
+            return view_shared_dataset(request, record.original_application.application_id)
+        else:
+            # 如果没有申请记录，直接查找数据集
+            dataset = SharedDataset.objects.filter(data_right_record=record).first()
+            
+            if not dataset:
+                return render(request, 'view-shared-dataset.html', {
+                    'dataset': None,
+                    'preview_html': None
+                })
+            
+            # 生成数据预览
+            preview_html = None
+            if dataset.has_view_permission and dataset.processing_status == 'completed' and dataset.file_data:
+                try:
+                    import pandas as pd
+                    import io
+                    
+                    excel_buffer = io.BytesIO(dataset.file_data)
+                    df = pd.read_excel(excel_buffer, engine='openpyxl')
+                    df_preview = df.head(50)
+                    preview_html = df_preview.to_html(
+                        classes='data-preview-table',
+                        index=False,
+                        border=0,
+                        escape=False
+                    )
+                except Exception as e:
+                    print(f"生成预览失败: {str(e)}")
+                    preview_html = f'<p class="text-danger">预览加载失败：{str(e)}</p>'
+            
+            return render(request, 'view-shared-dataset.html', {
+                'dataset': dataset,
+                'preview_html': preview_html
+            })
+            
+    except Exception as e:
+        print(f"查看数据集失败: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return render(request, 'view-shared-dataset.html', {
+            'dataset': None,
+            'preview_html': None
+        })
+
+
+# ==================== 下载共享数据集-新添加 ====================
+@login_required(login_url='/login/')
+def download_shared_dataset(request, application_id):
+    """
+    下载共享数据集
+
+    参数:
+        application_id: 申请记录ID
+    """
+    try:
+        from .models import SharedDataset, DataRightRecord
+        from django.http import HttpResponse
+
+        # 查找数据确权记录
+        data_right_record = DataRightRecord.objects.filter(
+            original_application__application_id=application_id
+        ).first()
+
+        if not data_right_record:
+            return HttpResponse("未找到数据确权记录", status=404)
+
+        # 查找共享数据集
+        dataset = SharedDataset.objects.filter(
+            data_right_record=data_right_record
+        ).first()
+
+        if not dataset:
+            return HttpResponse("未找到共享数据集", status=404)
+
+        # 检查下载权限
+        if not dataset.has_download_permission:
+            return HttpResponse("您没有下载权限", status=403)
+
+        # 检查数据集状态
+        if dataset.processing_status != 'completed':
+            return HttpResponse("数据集未完成生成或生成失败", status=400)
+
+        if not dataset.file_data:
+            return HttpResponse("数据文件不存在", status=404)
+
+        # 返回Excel文件
+        response = HttpResponse(
+            dataset.file_data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{dataset.file_name}"'
+        response['Content-Length'] = dataset.file_size
+
+        print(f"用户下载数据集: {dataset.dataset_id}")
+        return response
+
+    except Exception as e:
+        print(f"下载数据集失败: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return HttpResponse(f"下载失败: {str(e)}", status=500)
+
+
+
+
+@login_required(login_url='/login/')
+def data_right_application_review(request, application_id): #修改返回用户身份
     """数据权利申请审核页面"""
     application = get_object_or_404(DataRightApplication, application_id=application_id)
 
     # 权限检查：普通用户只能审核向自己申请的记录或查看自己的申请
     if not request.user.is_superuser:
-        user_company_code = get_user_company_code(request.user)
-        if user_company_code and (
-                application.target_data_holder != user_company_code and application.applicant != user_company_code):
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
+        if user_company and (
+                application.target_data_holder != user_company and application.applicant != user_company):
             raise Http404("您没有权限查看此申请")
-        elif not user_company_code:
+        elif not user_company:
             raise Http404("用户公司信息异常")
 
     # 获取审核历史记录
@@ -3046,8 +3556,8 @@ def data_right_application_review(request, application_id):
 
     if request.method == 'POST':
         # 只有数据持有方或超级用户才能审核
-        user_company_code = get_user_company_code(request.user)
-        if not request.user.is_superuser and application.target_data_holder != user_company_code:
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
+        if not request.user.is_superuser and application.target_data_holder != user_company:
             messages.error(request, '您没有权限审核此申请')
             return redirect('data_right_application_list')
 
@@ -3101,6 +3611,29 @@ def data_right_application_review(request, application_id):
                     approval_comments=review_comments,
                 )
                 data_right_record.save()
+
+                # ========== 【新增】审核通过后自动生成数据集-新添加 ==========
+                if review_decision == 'approve':
+                    try:
+                        # 调用共享数据集生成函数，传入确权记录
+                        result = generate_shared_dataset(data_right_record)
+                        print(f"✓ 数据集生成成功: {result['dataset_id']}")
+                        print(f"  文件名: {result['file_name']}")
+                        print(f"  文件大小: {result['file_size']} bytes")
+                        print(f"  数据行数: {result['total_rows']}")
+                        print(f"  数据列数: {result['total_columns']}")
+                        
+                        # 关联数据集到确权记录
+                        if 'dataset_object' in result:
+                            dataset = result['dataset_object']
+                            dataset.data_right_record = data_right_record
+                            dataset.save()
+                            print(f"✓ 数据集已关联到确权记录: {data_right_record.record_id}")
+                    except Exception as e:
+                        print(f"❌ 数据集生成失败: {str(e)}")
+                        import traceback
+                        traceback.print_exc()
+                # ========== 数据集生成结束 ==========
 
                 # ========== 在messages之前添加状态同步代码 ==========
                 # 同步更新项目表中的状态
@@ -3161,7 +3694,7 @@ def data_right_application_review(request, application_id):
                                         "data": "anydata"
                                     }
 
-                                    response = requests.put('http://192.168.1.135:8080/datasharing/addRaw',
+                                    response = requests.put('http://202.112.151.253:9090/datasharing/addRaw',
                                                             data=json.dumps(anydata),
                                                             headers={'Content-Type': 'application/json'})
 
@@ -3242,32 +3775,66 @@ def data_right_application_review(request, application_id):
         'current_user': request.user.username if hasattr(request.user, 'username') else '系统用户',
         'current_time': timezone.now(),
         'is_superuser': request.user.is_superuser,
-        'can_review': request.user.is_superuser or application.target_data_holder == get_user_company_code(
-            request.user),
+        'can_review': request.user.is_superuser or application.target_data_holder == get_user_company_code(request.user),  # 这里也是中文比较
     }
     return render(request, 'data-right-application-review.html', context)
 
 
 
 @login_required(login_url='/login/')
-def data_confirmation_list(request):
+def data_confirmation_list(request): #修改返回用户身份
     """数据确权记录列表页面"""
+
+    # 【添加调试信息】
+    import logging
+    logger = logging.getLogger(__name__)
+    
+    logger.info(f"\n{'='*80}")
+    logger.info(f"用户访问数据确权列表")
+    logger.info(f"用户ID: {request.user.id}")
+    logger.info(f"用户账号: {request.user.account if hasattr(request.user, 'account') else 'N/A'}")
+    logger.info(f"用户公司: '{request.user.com if hasattr(request.user, 'com') else 'N/A'}'")
+    logger.info(f"是否超级用户: {request.user.is_superuser}")
+    logger.info(f"{'='*80}\n")
 
     # 根据用户权限获取记录
     if request.user.is_superuser:
         # 超级用户可以看到所有记录
         records = DataRightRecord.objects.all()
+        logger.info(f"超级用户，查询所有记录: {records.count()} 条")
     else:
         # 普通用户只能看到自己相关的记录
-        user_company_code = get_user_company_code(request.user)
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
+        logger.info(f"普通用户，公司: '{user_company}'")
 
-        if user_company_code:
+        if user_company:
             from django.db.models import Q
+            # 去除空格并使用不区分大小写的匹配
+            user_company_clean = user_company.strip()
+            
             records = DataRightRecord.objects.filter(
-                Q(right_recipient=user_company_code) | Q(data_holder=user_company_code)
+                Q(right_recipient__iexact=user_company_clean) | 
+                Q(data_holder__iexact=user_company_clean)
             )
+            
+            logger.info(f"查询条件: right_recipient='{user_company_clean}' OR data_holder='{user_company_clean}' (不区分大小写)")
+            logger.info(f"查询结果: {records.count()} 条记录")
+            
+            # 【调试】显示所有记录的公司名称
+            if records.count() == 0:
+                all_records = DataRightRecord.objects.all()
+                logger.warning(f"⚠️ 未找到匹配记录！数据库中所有记录的公司名称:")
+                for r in all_records[:10]:  # 只显示前10条
+                    logger.warning(f"  - 记录 {r.record_id}: 持有方='{r.data_holder}', 获得方='{r.right_recipient}'")
+                
+                # 检查是否有相似的公司名称
+                all_holders = set(DataRightRecord.objects.values_list('data_holder', flat=True))
+                all_recipients = set(DataRightRecord.objects.values_list('right_recipient', flat=True))
+                all_companies = all_holders | all_recipients
+                logger.warning(f"  数据库中的所有公司: {all_companies}")
         else:
             records = DataRightRecord.objects.none()
+            logger.warning("⚠️ 用户没有公司信息！")
 
     # 搜索功能
     search_query = request.GET.get('search', '')
@@ -3325,17 +3892,17 @@ def data_confirmation_list(request):
     return render(request, 'data-confirmation.html', context)
 
 @login_required(login_url='/login/')
-def data_confirmation_detail(request, record_id):
+def data_confirmation_detail(request, record_id):   #修改返回用户身份
     """数据确权记录详情页面"""
     record = get_object_or_404(DataRightRecord, record_id=record_id)
 
     # 权限检查：普通用户只能查看自己相关的记录
     if not request.user.is_superuser:
-        user_company_code = get_user_company_code(request.user)
-        if user_company_code and (
-                record.right_recipient != user_company_code and record.data_holder != user_company_code):
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
+        if user_company and (
+                record.right_recipient != user_company and record.data_holder != user_company):
             raise Http404("您没有权限查看此记录")
-        elif not user_company_code:
+        elif not user_company:
             raise Http404("用户公司信息异常")
 
     # 获取原始申请的历史记录
@@ -3364,13 +3931,13 @@ def data_right_application_list(request):
         applications = DataRightApplication.objects.all()
     else:
         # 普通用户只能看到相关的申请
-        user_company_code = get_user_company_code(request.user)
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
 
-        if user_company_code:
+        if user_company:
             from django.db.models import Q
             applications = DataRightApplication.objects.filter(
-                Q(target_data_holder=user_company_code) |  # 向自己申请的（需要审核的）
-                Q(applicant=user_company_code)  # 自己提交的申请
+                Q(target_data_holder=user_company) |  # 向自己申请的（需要审核的）
+                Q(applicant=user_company)  # 自己提交的申请
             )
         else:
             applications = DataRightApplication.objects.none()
@@ -3418,14 +3985,14 @@ def delete_data_confirmation_record(request, record_id):
 
         # 权限检查：普通用户只能删除自己相关的记录
         if not request.user.is_superuser:
-            user_company_code = get_user_company_code(request.user)
-            if not user_company_code:
+            user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
+            if not user_company:
                 return JsonResponse({
                     'success': False,
                     'message': '用户公司信息异常'
                 }, status=403)
 
-            if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+            if record.right_recipient != user_company and record.data_holder != user_company:
                 return JsonResponse({
                     'success': False,
                     'message': '您没有权限删除此记录'
@@ -3444,6 +4011,16 @@ def delete_data_confirmation_record(request, record_id):
 
         # 记录被删除的信息用于日志
         record_info = f"{record.record_id} - {record.data_name} ({record_status_desc})"
+
+        # 删除关联的共享数据集（如果存在）
+        try:
+            from myapp.models import SharedDataset
+            shared_dataset = SharedDataset.objects.filter(data_right_record=record).first()
+            if shared_dataset:
+                shared_dataset.delete()
+                print(f"✓ 已删除关联的共享数据集: {shared_dataset.dataset_id}")
+        except Exception as e:
+            print(f"⚠️ 删除共享数据集时出错: {e}")
 
         # 删除记录
         record.delete()
@@ -3478,7 +4055,7 @@ def batch_delete_data_confirmation_records(request):
                 'message': '未选择要删除的记录'
             }, status=400)
 
-        user_company_code = get_user_company_code(request.user)
+        user_company = get_user_company_code(request.user)  # 现在返回中文公司名称
         deleted_count = 0
         failed_records = []
 
@@ -3488,13 +4065,22 @@ def batch_delete_data_confirmation_records(request):
 
                 # 权限检查
                 if not request.user.is_superuser:
-                    if not user_company_code:
+                    if not user_company:
                         failed_records.append(f"{record_id}(权限异常)")
                         continue
 
-                    if record.right_recipient != user_company_code and record.data_holder != user_company_code:
+                    if record.right_recipient != user_company and record.data_holder != user_company:
                         failed_records.append(f"{record_id}(无权限)")
                         continue
+
+                # 删除关联的共享数据集（如果存在）
+                try:
+                    from myapp.models import SharedDataset
+                    shared_dataset = SharedDataset.objects.filter(data_right_record=record).first()
+                    if shared_dataset:
+                        shared_dataset.delete()
+                except Exception as e:
+                    print(f"⚠️ 删除共享数据集时出错: {e}")
 
                 # 删除记录（不再检查状态）
                 record.delete()
@@ -3557,6 +4143,9 @@ def get_application_detail(request, application_id):
         return JsonResponse({'success': True, 'data': data})
     except DataRightApplication.DoesNotExist:
         return JsonResponse({'success': False, 'message': '申请不存在'})
+
+
+# ========== 共享数据集相关函数结束 ==========
 # 数据确权相关视图函数AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 @login_required
 def asset_field_dimension(request, asset_id):
@@ -3793,3 +4382,64 @@ def add_field(request, asset_id):
             return JsonResponse({'success': False, 'message': str(e)})
 
     return JsonResponse({'success': False, 'message': '无效的请求方法'})
+
+
+# ==================== 共享数据集下载功能 ====================
+@login_required(login_url='/login/')
+def download_shared_dataset(request, dataset_id):
+    """
+    下载共享数据集Excel文件
+    
+    参数:
+        dataset_id: 数据集ID
+    
+    返回:
+        Excel文件的HTTP响应
+    """
+    try:
+        from myapp.models import SharedDataset
+        from django.http import HttpResponse
+        
+        # 获取数据集
+        dataset = get_object_or_404(SharedDataset, dataset_id=dataset_id)
+        
+        # 权限检查：只有数据获得方和持有方可以下载
+        if not request.user.is_superuser:
+            user_company = get_user_company_code(request.user)
+            if not user_company:
+                raise Http404("用户公司信息异常")
+            
+            # 检查用户是否是数据获得方或持有方
+            record = dataset.data_right_record
+            if user_company != record.right_recipient and user_company != record.data_holder:
+                raise Http404("您没有权限下载此数据集")
+        
+        # 检查是否有下载权限
+        if not dataset.has_download_permission:
+            messages.error(request, '此数据集不允许下载')
+            return redirect('data_confirmation_list')
+        
+        # 检查文件数据是否存在
+        if not dataset.file_data:
+            messages.error(request, '数据集文件不存在')
+            return redirect('data_confirmation_list')
+        
+        # 创建HTTP响应
+        response = HttpResponse(
+            dataset.file_data,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        
+        # 设置文件名（支持中文）
+        from urllib.parse import quote
+        filename = quote(dataset.file_name)
+        response['Content-Disposition'] = f'attachment; filename*=UTF-8\'\'{filename}'
+        response['Content-Length'] = dataset.file_size
+        
+        return response
+        
+    except SharedDataset.DoesNotExist:
+        raise Http404("数据集不存在")
+    except Exception as e:
+        messages.error(request, f'下载失败：{str(e)}')
+        return redirect('data_confirmation_list')

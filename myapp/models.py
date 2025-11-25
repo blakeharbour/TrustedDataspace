@@ -352,6 +352,102 @@ class DataRightApplicationHistory(models.Model):
 
     def __str__(self):
         return f"{self.application.application_id} - {self.action_type}"
+
+
+# ==================== 共享数据集模型 ====================
+class SharedDataset(models.Model):
+    """
+    存储经过维度筛选后生成的共享数据集
+    """
+    # 关联的数据确权记录
+    data_right_record = models.OneToOneField(
+        DataRightRecord,
+        on_delete=models.CASCADE,
+        related_name='shared_dataset',
+        verbose_name="关联的数据确权记录"
+    )
+
+    # 基本信息
+    dataset_id = models.CharField(max_length=50, unique=True, verbose_name="数据集编号")
+    original_table_name = models.CharField(max_length=100, verbose_name="原始表名（英文）")
+    original_table_name_cn = models.CharField(max_length=100, verbose_name="原始表名（中文）")
+
+    # 申请用户身份（从确权记录继承）
+    user_identity = models.CharField(max_length=50, choices=DATA_SOURCE_CHOICES, verbose_name="申请用户身份")
+
+    # 权限类型
+    has_view_permission = models.BooleanField(default=False, verbose_name="是否有查看权")
+    has_download_permission = models.BooleanField(default=False, verbose_name="是否有下载权")
+
+    # 生成时的参数记录（用于追溯）
+    application_time = models.DateTimeField(verbose_name="申请时间")
+    time_filter_value = models.CharField(max_length=50, blank=True, null=True, verbose_name="时间筛选值（如1年、1月）")
+
+    # 存储生成的Excel文件
+    file_path = models.CharField(max_length=500, blank=True, null=True, verbose_name="文件存储路径")
+    file_data = models.BinaryField(blank=True, null=True, verbose_name="文件二进制数据")
+    file_name = models.CharField(max_length=255, verbose_name="文件名")
+    file_size = models.IntegerField(default=0, verbose_name="文件大小（字节）")
+
+    # 数据集统计信息
+    total_rows = models.IntegerField(default=0, verbose_name="总行数")
+    total_columns = models.IntegerField(default=0, verbose_name="总列数")
+
+    # 处理状态
+    PROCESSING_STATUS_CHOICES = [
+        ('pending', '处理中'),
+        ('completed', '已完成'),
+        ('failed', '失败'),
+        ('empty', '筛选结果为空'),
+    ]
+    processing_status = models.CharField(
+        max_length=20,
+        choices=PROCESSING_STATUS_CHOICES,
+        default='pending',
+        verbose_name="处理状态"
+    )
+    error_message = models.TextField(blank=True, null=True, verbose_name="错误信息")
+
+    # 时间戳
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="生成时间")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="更新时间")
+
+    class Meta:
+        db_table = 'shared_dataset'
+        verbose_name = '共享数据集'
+        verbose_name_plural = '共享数据集'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.dataset_id} - {self.original_table_name_cn}"
+
+    def save(self, *args, **kwargs):
+        # 自动生成数据集编号
+        if not self.dataset_id:
+            from datetime import datetime
+            import uuid
+            date_str = datetime.now().strftime('%Y%m%d')
+            random_str = str(uuid.uuid4())[:8].upper()
+            self.dataset_id = f"SD{date_str}{random_str}"
+        super().save(*args, **kwargs)
+
+    def get_permission_display(self):
+        """获取权限显示文本"""
+        if self.has_download_permission:
+            return "查看 + 下载"
+        elif self.has_view_permission:
+            return "仅查看"
+        return "无权限"
+
+    def get_file_size_display(self):
+        """获取文件大小的友好显示"""
+        if self.file_size < 1024:
+            return f"{self.file_size} B"
+        elif self.file_size < 1024 * 1024:
+            return f"{self.file_size / 1024:.2f} KB"
+        else:
+            return f"{self.file_size / (1024 * 1024):.2f} MB"
+
 ##数据确权AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 ###
 # myapp/models.py
