@@ -3173,16 +3173,22 @@ def generate_shared_dataset(record_or_application):
                 else:
                     raise ValueError(f"无法解析时间值: {time_value}")
 
-                # 计算截止日期（申请时间 - t）
-                cutoff_date = application_time - time_delta
+                # 计算时间范围：[起始日期, 申请时间]
+                start_date = application_time - time_delta  # 起始日期
+                end_date = application_time  # 结束日期（申请时间）
+                
                 print(f"申请时间: {application_time}")
-                print(f"截止日期: {cutoff_date} (保留此日期之前的数据)")
+                print(f"时间范围: {start_date.date()} 到 {end_date.date()} (保留最近{time_value}的数据)")
 
                 # 转换时间列为 datetime 类型
                 df[time_column] = pd.to_datetime(df[time_column], format='%Y/%m/%d', errors='coerce')
 
-                # 筛选数据：保留 <= cutoff_date 的数据
-                df = df[df[time_column] <= cutoff_date]
+                # 移除时区信息进行比较
+                start_date_naive = start_date.replace(tzinfo=None)
+                end_date_naive = end_date.replace(tzinfo=None)
+
+                # 筛选数据：保留 >= start_date AND <= end_date 的数据
+                df = df[(df[time_column] >= start_date_naive) & (df[time_column] <= end_date_naive)]
                 print(f"时间维度处理后: {df.shape[0]} 行")
             else:
                 print("未找到时间维度配置，跳过时间筛选")
