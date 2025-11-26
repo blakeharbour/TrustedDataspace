@@ -3021,18 +3021,23 @@ def generate_shared_dataset(record_or_application):
     import io
     from datetime import datetime, timedelta
     from django.db import connection
-    from .models import SharedDataset, AssetDimension, AssetDimensionDetail, DataRightRecord, DataRightApplication
+    from .models import SharedDataset, AssetDimension, AssetDimensionDetail, DataRightRecord, DataRightApplication, DataAsset
 
+    # 保存传入的参数，用于异常处理时创建失败记录
+    data_right_record = None
+    
     try:
         # ========== 0. 判断参数类型并获取application ==========
         if isinstance(record_or_application, DataRightRecord):
             # 如果传入的是DataRightRecord，从中获取application
+            data_right_record = record_or_application
             application = record_or_application.original_application
             if not application:
                 raise ValueError("确权记录没有关联的申请记录")
         elif isinstance(record_or_application, DataRightApplication):
             # 如果传入的是DataRightApplication，直接使用
             application = record_or_application
+            data_right_record = None  # 申请阶段还没有确权记录
         else:
             raise ValueError(f"参数类型错误: {type(record_or_application)}")
         
@@ -3100,11 +3105,17 @@ def generate_shared_dataset(record_or_application):
         # ========== 4. 业务维度处理（对列操作） ==========
         print("\n========== 业务维度处理 ==========")
 
-        # 查询该用户身份对应的业务维度配置
-        business_dimensions = AssetDimension.objects.filter(
-            asset__assetNameCN=data_source,  # 根据中文表名匹配
-            target_company=applicant_identity  # 目标公司/身份
-        )
+        # 先查找对应的DataAsset
+        try:
+            data_asset = DataAsset.objects.get(assetName=data_source)
+            # 查询该用户身份对应的业务维度配置
+            business_dimensions = AssetDimension.objects.filter(
+                asset=data_asset,  # 使用asset对象
+                target_company=applicant_identity  # 目标公司/身份
+            )
+        except DataAsset.DoesNotExist:
+            print(f"未找到数据资产: {data_source}，跳过业务维度处理")
+            business_dimensions = AssetDimension.objects.none()
 
         # 构建列操作映射: {列名: 操作类型}
         column_operations = {}
@@ -3149,12 +3160,17 @@ def generate_shared_dataset(record_or_application):
             print(f"找到时间列: {time_column}")
 
             # 查询时间维度配置
-            time_detail = AssetDimensionDetail.objects.filter(
-                asset__assetNameCN=data_source,
-                target_company=applicant_identity,
-                field_name=time_column,
-                sub_dimension='time'
-            ).first()
+            try:
+                data_asset = DataAsset.objects.get(assetName=data_source)
+                time_detail = AssetDimensionDetail.objects.filter(
+                    asset=data_asset,
+                    target_company=applicant_identity,
+                    field_name=time_column,
+                    sub_dimension='time'
+                ).first()
+            except DataAsset.DoesNotExist:
+                print(f"未找到数据资产: {data_source}，跳过时间维度处理")
+                time_detail = None
 
             if time_detail:
                 time_value = time_detail.sub_dimension_detail  # 如 "1年"、"6月"
@@ -3199,11 +3215,16 @@ def generate_shared_dataset(record_or_application):
         print("\n========== 空间维度处理 ==========")
 
         # 查询所有空间维度配置
-        space_details = AssetDimensionDetail.objects.filter(
-            asset__assetNameCN=data_source,
-            target_company=applicant_identity,
-            sub_dimension='space'
-        )
+        try:
+            data_asset = DataAsset.objects.get(assetName=data_source)
+            space_details = AssetDimensionDetail.objects.filter(
+                asset=data_asset,
+                target_company=applicant_identity,
+                sub_dimension='space'
+            )
+        except DataAsset.DoesNotExist:
+            print(f"未找到数据资产: {data_source}，跳过空间维度处理")
+            space_details = AssetDimensionDetail.objects.none()
 
         print(f"找到 {space_details.count()} 个空间维度配置")
 
@@ -3247,7 +3268,7 @@ def generate_shared_dataset(record_or_application):
             print("\n⚠️ 警告: 筛选后数据集为空")
             # 创建空数据集记录
             dataset = SharedDataset.objects.create(
-                data_right_record=None,  # 暂时为空，后续关联
+                data_right_record=data_right_record,  # 关联确权记录
                 original_table_name=table_name_en,
                 original_table_name_cn=data_source,
                 user_identity=applicant_identity,
@@ -3261,7 +3282,16 @@ def generate_shared_dataset(record_or_application):
                 processing_status='empty',
                 error_message='筛选后数据为空'
             )
-            return dataset
+            return {
+                'dataset_id': dataset.dataset_id,
+                'dataset_name': data_source,
+                'file_path': '',
+                'file_name': dataset.file_name,
+                'file_size': 0,
+                'total_rows': 0,
+                'total_columns': 0,
+                'dataset_object': dataset
+            }
 
         # ========== 8. 生成 Excel 文件 ==========
         print("\n========== 生成 Excel 文件 ==========")
@@ -3286,7 +3316,7 @@ def generate_shared_dataset(record_or_application):
         file_name = f"{data_source}_{applicant_identity}_{datetime.now().strftime('%Y%m%d%H%M%S')}.xlsx"
 
         dataset = SharedDataset.objects.create(
-            data_right_record=None,  # 暂时为空，后续在 data_right_application_review 中关联
+            data_right_record=data_right_record,  # 关联确权记录
             original_table_name=table_name_en,
             original_table_name_cn=data_source,
             user_identity=applicant_identity,
@@ -3327,7 +3357,7 @@ def generate_shared_dataset(record_or_application):
 
         # 创建失败记录
         dataset = SharedDataset.objects.create(
-            data_right_record=None,
+            data_right_record=data_right_record,
             original_table_name=table_name_en if 'table_name_en' in locals() else '',
             original_table_name_cn=data_source if 'data_source' in locals() else '',
             user_identity=applicant_identity if 'applicant_identity' in locals() else '',
@@ -3342,7 +3372,16 @@ def generate_shared_dataset(record_or_application):
             error_message=str(e)
         )
 
-        return dataset
+        return {
+            'dataset_id': dataset.dataset_id,
+            'dataset_name': data_source if 'data_source' in locals() else '未知',
+            'file_path': '',
+            'file_name': '生成失败.xlsx',
+            'file_size': 0,
+            'total_rows': 0,
+            'total_columns': 0,
+            'dataset_object': dataset
+        }
 
 
 # ==================== 查看共享数据集-新添加 ====================
@@ -3618,29 +3657,6 @@ def data_right_application_review(request, application_id): #修改返回用户�
                 )
                 data_right_record.save()
 
-                # ========== 【新增】审核通过后自动生成数据集-新添加 ==========
-                if review_decision == 'approve':
-                    try:
-                        # 调用共享数据集生成函数，传入确权记录
-                        result = generate_shared_dataset(data_right_record)
-                        print(f"✓ 数据集生成成功: {result['dataset_id']}")
-                        print(f"  文件名: {result['file_name']}")
-                        print(f"  文件大小: {result['file_size']} bytes")
-                        print(f"  数据行数: {result['total_rows']}")
-                        print(f"  数据列数: {result['total_columns']}")
-                        
-                        # 关联数据集到确权记录
-                        if 'dataset_object' in result:
-                            dataset = result['dataset_object']
-                            dataset.data_right_record = data_right_record
-                            dataset.save()
-                            print(f"✓ 数据集已关联到确权记录: {data_right_record.record_id}")
-                    except Exception as e:
-                        print(f"❌ 数据集生成失败: {str(e)}")
-                        import traceback
-                        traceback.print_exc()
-                # ========== 数据集生成结束 ==========
-
                 # ========== 在messages之前添加状态同步代码 ==========
                 # 同步更新项目表中的状态
                 try:
@@ -3760,12 +3776,36 @@ def data_right_application_review(request, application_id): #修改返回用户�
                     traceback.print_exc()
                 # =============================================
 
-                if review_decision == 'approve':
-                    messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
-                else:
-                    messages.success(request, f'审核已拒绝！已生成拒绝记录：{data_right_record.record_id}')
+            # ========== 事务已提交，现在生成数据集（失败不影响审核结果）==========
+            if review_decision == 'approve':
+                try:
+                    # 调用共享数据集生成函数，传入确权记录
+                    result = generate_shared_dataset(data_right_record)
+                    print(f"✓ 数据集生成成功: {result['dataset_id']}")
+                    print(f"  文件名: {result['file_name']}")
+                    print(f"  文件大小: {result['file_size']} bytes")
+                    print(f"  数据行数: {result['total_rows']}")
+                    print(f"  数据列数: {result['total_columns']}")
+                    
+                    # 关联数据集到确权记录
+                    if 'dataset_object' in result:
+                        dataset = result['dataset_object']
+                        dataset.data_right_record = data_right_record
+                        dataset.save()
+                        print(f"✓ 数据集已关联到确权记录: {data_right_record.record_id}")
+                except Exception as e:
+                    print(f"❌ 数据集生成失败: {str(e)}")
+                    import traceback
+                    traceback.print_exc()
+                    # 数据集生成失败，但审核已经成功，不影响审核结果
+            # ========== 数据集生成结束 ==========
 
-                return redirect('data_confirmation_list')
+            if review_decision == 'approve':
+                messages.success(request, f'审核通过！已生成数据确权记录：{data_right_record.record_id}')
+            else:
+                messages.success(request, f'审核已拒绝！已生成拒绝记录：{data_right_record.record_id}')
+
+            return redirect('data_confirmation_list')
 
         except Exception as e:
             messages.error(request, f'审核失败：{str(e)}')
